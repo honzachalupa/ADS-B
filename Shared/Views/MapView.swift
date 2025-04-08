@@ -5,13 +5,17 @@ struct MapView: View {
     var aircrafts: [Aircraft]
     var onAircraftSelected: ((Aircraft) -> Void)? = nil
     @EnvironmentObject private var locationManager: LocationManager
-    @State private var position: MapCameraPosition = .automatic
+    
+    @State private var cameraPosition = MapCameraPosition.automatic
+    @State private var followingAircraft: Aircraft? = nil
+    @State private var isFollowingAircraft = false
+    @State private var lastKnownPosition: CLLocationCoordinate2D? = nil
     
     var body: some View {
-        Map(position: $position) {
+        Map(position: $cameraPosition) {
             UserAnnotation()
             
-            ForEach(aircrafts.filter { $0.hasValidCoordinates }) { aircraft in
+            ForEach(aircrafts) { aircraft in
                 Annotation(
                     aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight,
                     coordinate: CLLocationCoordinate2D(
@@ -34,53 +38,66 @@ struct MapView: View {
                                 .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
                         }
                         .onTapGesture {
-                            onAircraftSelected?(aircraft)
+                            if let onAircraftSelected {
+                                onAircraftSelected(aircraft)
+                                followingAircraft = aircraft
+                                isFollowingAircraft = true
+                                moveToAircraft(aircraft)
+                            }
                         }
                     }
                 }
             }
         }
-        #if os(iOS)
         .mapControls {
+#if os(iOS)
             MapScaleView()
+#endif
             MapUserLocationButton()
         }
-        #endif
-        .onAppear {
-            // Center map on user's location if available
-            if let userLocation = locationManager.location {
-                position = .region(MKCoordinateRegion(
-                    center: userLocation.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
-                ))
+        .onChange(of: aircrafts) { _, newAircrafts in
+            if isFollowingAircraft, let selectedHex = followingAircraft?.hex {
+                if let updatedAircraft = newAircrafts.first(where: { $0.hex == selectedHex }) {
+                    moveToAircraft(updatedAircraft)
+                }
             }
-            // Fallback to first aircraft if user location is not available
-            else if let firstAircraft = aircrafts.first(where: { $0.hasValidCoordinates }),
-                    let lat = firstAircraft.lat,
-                    let lon = firstAircraft.lon {
-                position = .region(MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
+        }
+        .onAppear {
+            if let userLocation = locationManager.location {
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: userLocation.coordinate,
                     span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
                 ))
             }
         }
         .onChange(of: locationManager.location) { _, newLocation in
-            // Update map center when location changes, if we have no aircraft selected
-            if let location = newLocation, aircrafts.isEmpty {
-                position = .region(MKCoordinateRegion(
+            if !isFollowingAircraft, let location = newLocation, aircrafts.isEmpty {
+                cameraPosition = .region(MKCoordinateRegion(
                     center: location.coordinate,
                     span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
                 ))
             }
         }
     }
+    
+    private func moveToAircraft(_ aircraft: Aircraft) {
+        guard let lat = aircraft.lat, let lon = aircraft.lon else {
+            return
+        }
+        
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+        )
+        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            cameraPosition = .region(region)
+        }
+    }
 }
 
 #Preview {
-    @Previewable
-    @State var selectedAircraft: Aircraft? = nil
-    
-    MapView(aircrafts: []) { aircraft in
-        selectedAircraft = aircraft
-    }
+    MapView(aircrafts: []) { _ in }
 }

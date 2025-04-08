@@ -2,16 +2,15 @@ import Foundation
 import MapKit
 import SwiftUI
 
-// MARK: - Helper Types
-// Flexible value type to handle different data formats from the API
+
 struct FlexibleValue: Codable {
-    // Private storage properties
+
     private let _stringValue: String?
     private let _intValue: Int?
     private let _doubleValue: Double?
     private let _boolValue: Bool?
     
-    // Computed properties to get values in different formats
+
     var intValue: Int? {
         if let intVal = _intValue {
             return intVal
@@ -64,11 +63,11 @@ struct FlexibleValue: Codable {
         return nil
     }
     
-    // Custom init to handle different types
+
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
-        // Try to decode as different types
+    
         if let intVal = try? container.decode(Int.self) {
             _intValue = intVal
             _doubleValue = nil
@@ -90,13 +89,13 @@ struct FlexibleValue: Codable {
             _doubleValue = nil
             _stringValue = nil
         } else if container.decodeNil() {
-            // If explicitly nil, set all to nil
+
             _intValue = nil
             _doubleValue = nil
             _stringValue = nil
             _boolValue = nil
         } else {
-            // If we can't decode as any of the expected types, set all to nil
+
             _intValue = nil
             _doubleValue = nil
             _stringValue = nil
@@ -104,7 +103,7 @@ struct FlexibleValue: Codable {
         }
     }
     
-    // Encode function - encode in the most appropriate format
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         if let intVal = _intValue {
@@ -121,11 +120,10 @@ struct FlexibleValue: Codable {
     }
 }
 
-// Use FlexibleValue for altitude as well
+
 typealias AltitudeValue = FlexibleValue
 
-// MARK: - Aircraft Models
-// A simplified model for the API response
+
 struct AircraftResponse: Codable {
     let ac: [Aircraft]
     let ctime: Int
@@ -135,13 +133,13 @@ struct AircraftResponse: Codable {
     let total: Int
 }
 
-// Basic Aircraft model with essential fields
+
 struct Aircraft: Codable, Identifiable, Equatable {
-    // Implement Equatable
+
     static func == (lhs: Aircraft, rhs: Aircraft) -> Bool {
         return lhs.hex == rhs.hex
     }
-    // Basic identification
+
     let hex: String
     let type: String?
     let flight: String?
@@ -149,13 +147,13 @@ struct Aircraft: Codable, Identifiable, Equatable {
     let t: String?
     let category: String?
     
-    // Position
+
     let lat: Double?
     let lon: Double?
     private let _alt_baro: AltitudeValue?
     private let _alt_geom: AltitudeValue?
     
-    // Computed properties to handle different altitude formats
+
     var alt_baro: Int? {
         return _alt_baro?.intValue
     }
@@ -164,7 +162,7 @@ struct Aircraft: Codable, Identifiable, Equatable {
         return _alt_geom?.intValue
     }
     
-    // Custom CodingKeys to map our private properties
+
     private enum CodingKeys: String, CodingKey {
         case hex, type, flight, r, t, category
         case lat, lon
@@ -177,25 +175,25 @@ struct Aircraft: Codable, Identifiable, Equatable {
         case _baro_rate = "baro_rate", _geom_rate = "geom_rate", nav_modes
     }
     
-    // Speed and direction
+
     private let _gs: FlexibleValue?
     private let _track: FlexibleValue?
     private let _ias: FlexibleValue?
     private let _tas: FlexibleValue?
     private let _mach: FlexibleValue?
     
-    // Computed properties for speed values
+
     var gs: Double? { return _gs?.doubleValue }
     var track: Double? { return _track?.doubleValue }
     var ias: Int? { return _ias?.intValue }
     var tas: Int? { return _tas?.intValue }
     var mach: Double? { return _mach?.doubleValue }
     
-    // Status
+
     let squawk: String?
     let emergency: String?
     
-    // Computed property to check if aircraft has a real emergency
+
     var isEmergency: Bool {
         return emergency != nil && emergency != "none"
     }

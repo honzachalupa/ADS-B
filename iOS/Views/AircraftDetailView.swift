@@ -99,7 +99,6 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                // Transponder data
                 Section("Transponder") {
                     LabeledContent("Squawk") {
                         Text(aircraftUpdated.squawk ?? "-")
@@ -110,7 +109,6 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                // Position data
                 Section("Position") {
                     LabeledContent("Coordinates") {
                         Text(aircraftUpdated.lat != nil && aircraftUpdated.lon != nil ? String(format: "%.6f, %.6f", aircraftUpdated.lat!, aircraftUpdated.lon!) : "-")
