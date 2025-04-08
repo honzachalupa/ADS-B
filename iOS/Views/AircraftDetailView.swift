@@ -30,6 +30,7 @@ func formatSpeed(_ knots: Double?) -> String {
 struct AircraftDetailView: View {
     let aircraft: Aircraft
     @EnvironmentObject private var aircraftService: AircraftService
+    @StateObject private var photoService = AircraftPhotoService()
     
     var aircraftUpdated: Aircraft { aircraftService.aircrafts.first { $0.hex == aircraft.hex } ?? aircraft }
     
@@ -42,6 +43,16 @@ struct AircraftDetailView: View {
                 .padding(.horizontal)
             
             List {
+                if let photo = photoService.photo {
+                    Section {
+                        photo
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity)
+                    }
+                    .listRowInsets(EdgeInsets())
+                }
+                
                 if let emergency = aircraftUpdated.emergency, aircraftUpdated.isEmergency {
                     Section("Emergency") {
                         LabeledContent("Status") {
@@ -169,6 +180,9 @@ struct AircraftDetailView: View {
                     LabeledContent("Aircraft Model") { Text(aircraftUpdated.t ?? "-") }
                 }
             }
+        }
+        .onAppear {
+            photoService.fetchPhoto(for: aircraftUpdated)
         }
     }
 
