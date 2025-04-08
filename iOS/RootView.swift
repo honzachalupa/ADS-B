@@ -2,13 +2,17 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
-struct ContentView: View {
+struct RootView: View {
     @StateObject private var aircraftService = AircraftService()
     @StateObject private var locationManager = LocationManager()
     @State private var selectedAircraft: Aircraft? = nil
     
     var body: some View {
-        TabView {
+        MapView(aircrafts: aircraftService.aircrafts) { aircraft in
+            selectedAircraft = aircraft
+        }
+        .edgesIgnoringSafeArea(.all)
+        /* TabView {
             Tab("Map", systemImage: "airplane") {
                 MapView(aircrafts: aircraftService.aircrafts) { aircraft in
                     selectedAircraft = aircraft
@@ -19,7 +23,7 @@ struct ContentView: View {
             Tab("Settings", systemImage: "gearshape.fill") {
                 Text("Settings")
             }
-        }
+        } */
         .environmentObject(locationManager)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -65,5 +69,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    RootView()
 }

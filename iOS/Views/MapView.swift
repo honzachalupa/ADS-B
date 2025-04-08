@@ -40,6 +40,10 @@ struct MapView: View {
                 }
             }
         }
+        .mapControls {
+            MapScaleView()
+            MapUserLocationButton()
+        }
         .onAppear {
             // Center map on user's location if available
             if let userLocation = locationManager.location {
@@ -68,6 +72,13 @@ struct MapView: View {
             }
         }
     }
-    
+}
 
+#Preview {
+    @Previewable
+    @State var selectedAircraft: Aircraft? = nil
+    
+    MapView(aircrafts: []) { aircraft in
+        selectedAircraft = aircraft
+    }
 }

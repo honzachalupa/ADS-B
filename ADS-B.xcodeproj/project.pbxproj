@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		21ECABA82DA518370088F44B /* Exceptions for "ADS-B" folder in "ADS-B" target */ = {
+		21ECABA82DA518370088F44B /* Exceptions for "iOS" folder in "ADS-B" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -21,12 +21,12 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		21ECAB882DA5109C0088F44B /* ADS-B */ = {
+		21ECAB882DA5109C0088F44B /* iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				21ECABA82DA518370088F44B /* Exceptions for "ADS-B" folder in "ADS-B" target */,
+				21ECABA82DA518370088F44B /* Exceptions for "iOS" folder in "ADS-B" target */,
 			);
-			path = "ADS-B";
+			path = iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		21ECAB7D2DA5109C0088F44B = {
 			isa = PBXGroup;
 			children = (
-				21ECAB882DA5109C0088F44B /* ADS-B */,
+				21ECAB882DA5109C0088F44B /* iOS */,
 				21ECAB872DA5109C0088F44B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,7 +74,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				21ECAB882DA5109C0088F44B /* ADS-B */,
+				21ECAB882DA5109C0088F44B /* iOS */,
 			);
 			name = "ADS-B";
 			packageProductDependencies = (
@@ -272,7 +272,7 @@
 				DEVELOPMENT_TEAM = 4XV9V3GJPT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ADS-B/Info.plist";
+				INFOPLIST_FILE = iOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ADS-B";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -305,7 +305,7 @@
 				DEVELOPMENT_TEAM = 4XV9V3GJPT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ADS-B/Info.plist";
+				INFOPLIST_FILE = iOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ADS-B";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
