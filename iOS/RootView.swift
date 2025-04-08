@@ -37,7 +37,8 @@ struct RootView: View {
         .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
             AircraftDetailView(aircraft: aircraft)
                 .environmentObject(aircraftService)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.height(200), .medium, .large])
+                .presentationBackgroundInteraction(.enabled)
         }
         .onAppear {
             locationManager.requestPermission()

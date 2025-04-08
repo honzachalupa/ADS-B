@@ -172,9 +172,6 @@ struct AircraftDetailView: View {
                 }
             }
         }
-        .onChange(of: aircraftService.aircrafts) {
-            print(666, "Aircraft updated", aircraftService.aircrafts.count)
-        }
     }
 
 }
