@@ -3,7 +3,7 @@ import MapKit
 
 struct MapView: View {
     var aircrafts: [Aircraft]
-    var onAircraftSelected: (Aircraft) -> Void
+    var onAircraftSelected: ((Aircraft) -> Void)? = nil
     @EnvironmentObject private var locationManager: LocationManager
     @State private var position: MapCameraPosition = .automatic
     
@@ -23,7 +23,7 @@ struct MapView: View {
                     VStack(spacing: 0) {
                         ZStack {
                             Circle()
-                                .fill(aircraft.emergency != nil ? Color.red : Color.blue)
+                                .fill(aircraft.isEmergency ? Color.red : Color.blue)
                                 .frame(width: 30, height: 30)
                             
                             Image(systemName: "airplane")
@@ -34,16 +34,18 @@ struct MapView: View {
                                 .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
                         }
                         .onTapGesture {
-                            onAircraftSelected(aircraft)
+                            onAircraftSelected?(aircraft)
                         }
                     }
                 }
             }
         }
+        #if os(iOS)
         .mapControls {
             MapScaleView()
             MapUserLocationButton()
         }
+        #endif
         .onAppear {
             // Center map on user's location if available
             if let userLocation = locationManager.location {

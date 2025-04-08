@@ -195,6 +195,11 @@ struct Aircraft: Codable, Identifiable, Equatable {
     let squawk: String?
     let emergency: String?
     
+    // Computed property to check if aircraft has a real emergency
+    var isEmergency: Bool {
+        return emergency != nil && emergency != "none"
+    }
+    
     // Metadata
     let mlat: [String]?
     let tisb: [String]?

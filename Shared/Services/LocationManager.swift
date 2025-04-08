@@ -24,16 +24,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         } else {
             print("Location authorization status: \(authorizationStatus.rawValue)")
             
-            // Start updating location if we have permission
-            #if os(iOS)
             if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
                 locationManager.startUpdatingLocation()
             }
-            #else
-            if authorizationStatus == .authorized {
-                locationManager.startUpdatingLocation()
-            }
-            #endif
         }
     }
     
@@ -52,16 +45,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         authorizationStatus = manager.authorizationStatus
         print("Location authorization status changed to: \(authorizationStatus.rawValue)")
         
-        // Start updating location if authorized
-        #if os(iOS)
         if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
             locationManager.startUpdatingLocation()
         }
-        #else
-        if authorizationStatus == .authorized {
-            locationManager.startUpdatingLocation()
-        }
-        #endif
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
