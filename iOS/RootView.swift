@@ -11,7 +11,6 @@ struct RootView: View {
         MapView(aircrafts: aircraftService.aircrafts) { aircraft in
             selectedAircraft = aircraft
         }
-        .ignoresSafeArea()
 
         .environmentObject(locationManager)
         .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in

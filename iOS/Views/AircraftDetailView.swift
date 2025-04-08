@@ -31,17 +31,12 @@ struct AircraftDetailView: View {
     let aircraft: Aircraft
     @EnvironmentObject private var aircraftService: AircraftService
     @StateObject private var photoService = AircraftPhotoService()
+    @AppStorage("detail_isShowDetails") private var isShowDetails: Bool = false
     
     var aircraftUpdated: Aircraft { aircraftService.aircrafts.first { $0.hex == aircraft.hex } ?? aircraft }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(aircraftUpdated.formattedFlight)
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.top)
-                .padding(.horizontal)
-            
+        NavigationStack {
             List {
                 if let photo = photoService.photo {
                     Section {
@@ -64,14 +59,28 @@ struct AircraftDetailView: View {
                 
                 Section("Aircraft Information") {
                     LabeledContent("Registration") { Text(aircraftUpdated.r ?? "-") }
-                    LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
-                    LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
-                    LabeledContent("Category") { Text(aircraftUpdated.category ?? "-") }
+                    
+                    if isShowDetails {
+                        LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
+                        LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
+                        LabeledContent("Category") { Text(aircraftUpdated.category ?? "-") }
+                    }
+                }
+                
+                Section("Category Details") {
+                    if isShowDetails {
+                        LabeledContent("Category Description") { Text(aircraftUpdated.formattedCategoryDescription) }
+                    }
+                    
+                    LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
+                    LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
                 }
                 
                 Section("Flight Data") {
-                    LabeledContent("Barometric Altitude") {
-                        Text(formatAltitude(aircraftUpdated.alt_baro))
+                    if isShowDetails {
+                        LabeledContent("Barometric Altitude") {
+                            Text(formatAltitude(aircraftUpdated.alt_baro))
+                        }
                     }
                     
                     LabeledContent("Geometric Altitude") {
@@ -82,16 +91,18 @@ struct AircraftDetailView: View {
                         Text(formatSpeed(aircraftUpdated.gs))
                     }
                     
-                    LabeledContent("Indicated Airspeed") {
-                        Text("\(formatNumber(aircraftUpdated.ias)) kts")
-                    }
+                    if isShowDetails {
+                        LabeledContent("Indicated Airspeed") {
+                            Text("\(formatNumber(aircraftUpdated.ias)) kts")
+                        }
+                        
+                        LabeledContent("True Airspeed") {
+                            Text("\(formatNumber(aircraftUpdated.tas)) kts")
+                        }
                     
-                    LabeledContent("True Airspeed") {
-                        Text("\(formatNumber(aircraftUpdated.tas)) kts")
-                    }
-                    
-                    LabeledContent("Mach") {
-                        Text(aircraftUpdated.mach != nil ? String(format: "%.2f", aircraftUpdated.mach!) : "-")
+                        LabeledContent("Mach") {
+                            Text(aircraftUpdated.mach != nil ? String(format: "%.2f", aircraftUpdated.mach!) : "-")
+                        }
                     }
                     
                     LabeledContent("Heading") {
@@ -110,76 +121,81 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                Section("Transponder") {
-                    LabeledContent("Squawk") {
-                        Text(aircraftUpdated.squawk ?? "-")
-                    }
-                    
-                    LabeledContent("Navigation Modes") {
-                        Text(aircraftUpdated.nav_modes?.joined(separator: ", ") ?? "-")
+                if isShowDetails {
+                    Section("Transponder") {
+                        LabeledContent("Squawk") {
+                            Text(aircraftUpdated.squawk ?? "-")
+                        }
+                        
+                        LabeledContent("Navigation Modes") {
+                            Text(aircraftUpdated.nav_modes?.joined(separator: ", ") ?? "-")
+                        }
                     }
                 }
                 
-                Section("Position") {
-                    LabeledContent("Coordinates") {
-                        Text(aircraftUpdated.lat != nil && aircraftUpdated.lon != nil ? String(format: "%.6f, %.6f", aircraftUpdated.lat!, aircraftUpdated.lon!) : "-")
-                    }
-                    
-                    LabeledContent("Geometric Rate") {
-                        if let geomRate = aircraftUpdated.geom_rate {
-                            HStack(spacing: 4) {
-                                Text("\(formatNumber(abs(geomRate))) ft/min")
-                                Image(systemName: geomRate > 0 ? "arrow.up" : "arrow.down")
+                if isShowDetails {
+                    Section("Position") {
+                        LabeledContent("Coordinates") {
+                            Text(aircraftUpdated.lat != nil && aircraftUpdated.lon != nil ? String(format: "%.6f, %.6f", aircraftUpdated.lat!, aircraftUpdated.lon!) : "-")
+                        }
+                        
+                        LabeledContent("Geometric Rate") {
+                            if let geomRate = aircraftUpdated.geom_rate {
+                                HStack(spacing: 4) {
+                                    Text("\(formatNumber(abs(geomRate))) ft/min")
+                                    Image(systemName: geomRate > 0 ? "arrow.up" : "arrow.down")
+                                }
+                            } else {
+                                Text("-")
                             }
-                        } else {
-                            Text("-")
                         }
                     }
                 }
                 
-                Section("Signal Data") {
-                    LabeledContent("Messages Received") { 
-                        Text(formatNumber(aircraftUpdated.messages))
-                    }
-                    
-                    LabeledContent("Last Seen") { 
-                        if let seen = aircraftUpdated.seen {
-                            Text(String(format: "%.1f seconds ago", seen))
-                        } else {
-                            Text("-")
+                if isShowDetails {
+                    Section("Signal Data") {
+                        LabeledContent("Messages Received") {
+                            Text(formatNumber(aircraftUpdated.messages))
                         }
-                    }
-                    
-                    LabeledContent("Signal Strength") { 
-                        if let rssi = aircraftUpdated.rssi {
-                            Text(String(format: "%.1f dBFS", rssi))
-                        } else {
-                            Text("-")
+                        
+                        LabeledContent("Last Seen") {
+                            if let seen = aircraftUpdated.seen {
+                                Text(String(format: "%.1f seconds ago", seen))
+                            } else {
+                                Text("-")
+                            }
                         }
-                    }
-                    
-                    LabeledContent("MLAT") { 
-                        if let mlat = aircraftUpdated.mlat, !mlat.isEmpty {
-                            Text(mlat.joined(separator: ", "))
-                        } else {
-                            Text("-")
+                        
+                        LabeledContent("Signal Strength") {
+                            if let rssi = aircraftUpdated.rssi {
+                                Text(String(format: "%.1f dBFS", rssi))
+                            } else {
+                                Text("-")
+                            }
                         }
-                    }
-                    
-                    LabeledContent("TIS-B") { 
-                        if let tisb = aircraftUpdated.tisb, !tisb.isEmpty {
-                            Text(tisb.joined(separator: ", "))
-                        } else {
-                            Text("-")
+                        
+                        LabeledContent("MLAT") {
+                            if let mlat = aircraftUpdated.mlat, !mlat.isEmpty {
+                                Text(mlat.joined(separator: ", "))
+                            } else {
+                                Text("-")
+                            }
+                        }
+                        
+                        LabeledContent("TIS-B") {
+                            if let tisb = aircraftUpdated.tisb, !tisb.isEmpty {
+                                Text(tisb.joined(separator: ", "))
+                            } else {
+                                Text("-")
+                            }
                         }
                     }
                 }
                 
-                Section("Category Details") {
-                    LabeledContent("Category Description") { Text(aircraftUpdated.formattedCategoryDescription) }
-                    LabeledContent("Aircraft Model") { Text(aircraftUpdated.t ?? "-") }
-                }
+                Toggle("Show details", isOn: $isShowDetails)
             }
+            .navigationTitle(aircraftUpdated.formattedFlight)
+            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
             photoService.fetchPhoto(for: aircraftUpdated)

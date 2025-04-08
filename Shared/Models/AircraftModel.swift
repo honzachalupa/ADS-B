@@ -285,16 +285,57 @@ struct Aircraft: Codable, Identifiable, Equatable {
         guard let category = category else { return "Unknown" }
         
         switch category {
-        case "A0": return "No ADS-B Emitter Category Information"
-        case "A1": return "Light Aircraft"
-        case "A2": return "Small Aircraft"
-        case "A3": return "Medium Aircraft"
-        case "A4": return "High Vortex Large Aircraft"
-        case "A5": return "Heavy Aircraft"
-        case "A6": return "High Performance Aircraft"
-        case "A7": return "Rotorcraft"
-        default: return "Category: \(category)"
+            case "A0": return "No ADS-B Emitter Category Information (A0)"
+            case "A1": return "Light Aircraft (A1)"
+            case "A2": return "Small Aircraft (A2)"
+            case "A3": return "Medium Aircraft (A3)"
+            case "A4": return "High Vortex Large Aircraft (A4)"
+            case "A5": return "Heavy Aircraft (A5)"
+            case "A6": return "High Performance Aircraft (A6)"
+            case "A7": return "Rotorcraft (A7)"
+            default: return "Category: \(category)"
         }
+    }
+}
+
+// MARK: - Manufacturer Helper
+
+extension Aircraft {
+    func getManufacturer() -> String {
+        guard let type = t else { return "-" }
+        
+        // Common aircraft type code prefixes and their manufacturers
+        let manufacturerPrefixes: [String: String] = [
+            "A3": "Airbus",
+            "A2": "Airbus",
+            "A1": "Airbus",
+            "B7": "Boeing",
+            "B6": "Boeing",
+            "B5": "Boeing",
+            "B4": "Boeing",
+            "B3": "Boeing",
+            "B2": "Boeing",
+            "B1": "Boeing",
+            "E": "Embraer",
+            "CRJ": "Bombardier",
+            "DH": "De Havilland",
+            "AT": "ATR",
+            "BE": "Beechcraft",
+            "C": "Cessna",
+            "PA": "Piper",
+            "G": "Gulfstream",
+            "MD": "McDonnell Douglas",
+            "F": "Fokker"
+        ]
+        
+        // Check for manufacturer prefix in the type code
+        for (prefix, manufacturer) in manufacturerPrefixes {
+            if type.hasPrefix(prefix) {
+                return manufacturer
+            }
+        }
+        
+        return "-"
     }
 }
 
