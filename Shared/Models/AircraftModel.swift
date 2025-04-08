@@ -135,7 +135,6 @@ struct AircraftResponse: Codable {
 
 
 struct Aircraft: Codable, Identifiable, Equatable {
-
     static func == (lhs: Aircraft, rhs: Aircraft) -> Bool {
         return lhs.hex == rhs.hex
     }
@@ -225,6 +224,33 @@ struct Aircraft: Codable, Identifiable, Equatable {
     // Helper computed properties
     var hasValidCoordinates: Bool {
         return lat != nil && lon != nil
+    }
+    
+    enum FeederType {
+        case aircraft
+        case tower
+        case groundStation
+        case groundVehicle
+    }
+    
+    var feederType: FeederType {
+        guard let t else {
+            return .groundVehicle
+        }
+        
+        if t.contains("TWR") {
+            return .tower
+        }
+        
+        if t.contains("GND") {
+            return .groundStation
+        }
+        
+        return .aircraft
+    }
+    
+    var isTowerOrGroundStation: Bool {
+        return feederType != .aircraft
     }
     
     var formattedFlight: String {

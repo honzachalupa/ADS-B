@@ -57,26 +57,23 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                Section("Aircraft Information") {
-                    LabeledContent("Registration") { Text(aircraftUpdated.r ?? "-") }
-                    
-                    if isShowDetails {
+                if isShowDetails {
+                    Section {
                         LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
                         LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
-                        LabeledContent("Category") { Text(aircraftUpdated.category ?? "-") }
                     }
                 }
                 
-                Section("Category Details") {
+                Section("Category") {
                     if isShowDetails {
-                        LabeledContent("Category Description") { Text(aircraftUpdated.formattedCategoryDescription) }
+                        LabeledContent("Description") { Text(aircraftUpdated.formattedCategoryDescription) }
                     }
                     
                     LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
                     LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
                 }
                 
-                Section("Flight Data") {
+                Section("Flight") {
                     if isShowDetails {
                         LabeledContent("Barometric Altitude") {
                             Text(formatAltitude(aircraftUpdated.alt_baro))
@@ -153,7 +150,7 @@ struct AircraftDetailView: View {
                 }
                 
                 if isShowDetails {
-                    Section("Signal Data") {
+                    Section("Signal") {
                         LabeledContent("Messages Received") {
                             Text(formatNumber(aircraftUpdated.messages))
                         }
@@ -194,7 +191,7 @@ struct AircraftDetailView: View {
                 
                 Toggle("Show details", isOn: $isShowDetails)
             }
-            .navigationTitle(aircraftUpdated.formattedFlight)
+            .navigationTitle(aircraftUpdated.formattedFlight + " - " + (aircraftUpdated.r ?? ""))
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {

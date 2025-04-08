@@ -75,8 +75,11 @@ class AircraftService: ObservableObject {
                     }
                 }
             } receiveValue: { response in
-                // Filter out aircraft without valid coordinates
-                let validAircraft = response.ac.filter { $0.hasValidCoordinates }
+                // Only filter out aircraft without valid coordinates
+                let validAircraft = response.ac.filter { aircraft in 
+                    // Only include items with valid coordinates
+                    return aircraft.hasValidCoordinates
+                }
                 
                 // Update the cache with new aircraft data
                 self.updateAircraftCache(with: validAircraft)

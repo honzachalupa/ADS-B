@@ -26,19 +26,22 @@ struct MapView: View {
                 ) {
                     VStack(spacing: 0) {
                         ZStack {
+                            // Different background colors based on station type
                             Circle()
-                                .fill(aircraft.isEmergency ? Color.red : Color.blue)
+                                .fill(getMarkerColor(for: aircraft))
                                 .frame(width: 30, height: 30)
                             
-                            Image(systemName: "airplane")
+                            // Different icons based on station type
+                            Image(systemName: getMarkerIcon(for: aircraft))
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 15, height: 15)
                                 .foregroundColor(.white)
-                                .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
+                                .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                         }
                         .onTapGesture {
-                            if let onAircraftSelected {
+                            // Only aircraft are clickable, not towers or ground stations
+                            if aircraft.feederType == .aircraft, let onAircraftSelected {
                                 onAircraftSelected(aircraft)
                                 followingAircraft = aircraft
                                 isFollowingAircraft = true
@@ -94,6 +97,32 @@ struct MapView: View {
         
         withAnimation(.easeInOut(duration: 0.2)) {
             cameraPosition = .region(region)
+        }
+    }
+    
+    private func getMarkerColor(for aircraft: Aircraft) -> Color {
+        if aircraft.isEmergency {
+            return .red
+        }
+        
+        switch aircraft.feederType {
+        case .aircraft:
+            return .blue
+        case .tower:
+            return .purple
+        case .groundStation:
+            return .green
+        case .groundVehicle:
+            return .orange
+        }
+    }
+    
+    private func getMarkerIcon(for aircraft: Aircraft) -> String {
+        switch aircraft.feederType {
+        case .aircraft:
+            return "airplane"
+        default:
+            return "antenna.radiowaves.left.and.right"
         }
     }
 }
