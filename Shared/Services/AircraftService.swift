@@ -1,13 +1,15 @@
-import Foundation
-import Combine
-
-// Import models
 import SwiftUI
+import Combine
 
 class AircraftService: ObservableObject {
     @Published var aircrafts: [Aircraft] = []
     @Published var isLoading: Bool = false
     @Published var error: Error? = nil
+    
+    // Cache to store recently seen aircraft with timestamps
+    private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date)] = [:]
+    // How long to keep aircraft in cache (in seconds)
+    private let cacheRetentionTime: TimeInterval = 10.0
     
     private var cancellables = Set<AnyCancellable>()
     private let baseURL = "https://api.adsb.lol/v2"
@@ -17,7 +19,7 @@ class AircraftService: ObservableObject {
         isLoading = true
         error = nil
         
-        let urlString = "\(baseURL)/lat/\(latitude)/lon/\(longitude)/dist/54" // 54 nm == 100 km
+        let urlString = "\(baseURL)/lat/\(latitude)/lon/\(longitude)/dist/100"
         print("🔍 Fetching aircraft data from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
@@ -75,8 +77,16 @@ class AircraftService: ObservableObject {
             } receiveValue: { response in
                 // Filter out aircraft without valid coordinates
                 let validAircraft = response.ac.filter { $0.hasValidCoordinates }
-                self.aircrafts = validAircraft
-                print("✅ Successfully fetched \(response.ac.count) aircraft (\(validAircraft.count) with valid coordinates)")
+                
+                // Update the cache with new aircraft data
+                self.updateAircraftCache(with: validAircraft)
+                
+                // Get all valid aircraft (from current response and recent cache)
+                let combinedAircraft = self.getCombinedAircraftList()
+                
+                // Update the published aircraft list
+                self.aircrafts = combinedAircraft
+                print("✅ Successfully fetched \(response.ac.count) aircraft (\(validAircraft.count) with valid coordinates, \(combinedAircraft.count) after caching)")
             }
             .store(in: &cancellables)
     }
@@ -103,5 +113,38 @@ class AircraftService: ObservableObject {
     func stopPolling() {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
+    }
+    
+    // MARK: - Cache Management
+    
+    // Update the cache with new aircraft data
+    private func updateAircraftCache(with newAircraft: [Aircraft]) {
+        let currentTime = Date()
+        
+        // Add or update aircraft in the cache
+        for aircraft in newAircraft {
+            aircraftCache[aircraft.hex] = (aircraft: aircraft, timestamp: currentTime)
+        }
+        
+        // Remove expired aircraft from cache
+        cleanupCache()
+    }
+    
+    // Get combined list of current aircraft and cached aircraft
+    private func getCombinedAircraftList() -> [Aircraft] {
+        // Get all aircraft from cache that haven't expired
+        return Array(aircraftCache.values.map { $0.aircraft })
+    }
+    
+    // Remove expired aircraft from cache
+    private func cleanupCache() {
+        let currentTime = Date()
+        let keysToRemove = aircraftCache.filter { entry in
+            currentTime.timeIntervalSince(entry.value.timestamp) > cacheRetentionTime
+        }.keys
+        
+        for key in keysToRemove {
+            aircraftCache.removeValue(forKey: key)
+        }
     }
 }

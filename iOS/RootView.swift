@@ -36,6 +36,7 @@ struct RootView: View {
         }
         .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
             AircraftDetailView(aircraft: aircraft)
+                .environmentObject(aircraftService)
                 .presentationDetents([.medium, .large])
         }
         .onAppear {
