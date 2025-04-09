@@ -188,7 +188,9 @@ struct Aircraft: Codable, Identifiable, Equatable {
     var baro_rate: Int? { return _baro_rate?.intValue }
     var geom_rate: Int? { return _geom_rate?.intValue }
     var id: String { hex }
-    var hasValidCoordinates: Bool { lat != nil && lon != nil }
+    var formattedFlight: String { flight?.trimmingCharacters(in: .whitespaces) ?? "" }
+    var formattedAircraftType: String { t ?? "Unknown" }
+    var isValid: Bool { lat != nil && lon != nil && !formattedFlight.isEmpty }
     
     enum FeederType {
         case aircraft
@@ -212,9 +214,6 @@ struct Aircraft: Codable, Identifiable, Equatable {
         
         return .aircraft
     }
-    
-    var formattedFlight: String { flight?.trimmingCharacters(in: .whitespaces) ?? "N/A" }
-    var formattedAircraftType: String { t ?? "Unknown" }
     
     var formattedCategoryDescription: String {
         guard let category = category else { return "Unknown" }

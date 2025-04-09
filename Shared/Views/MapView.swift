@@ -46,7 +46,7 @@ struct MapView: View {
                                 .font(.caption)
                             
                             if isInfoBoxEnabled {
-                                if let groundSpeed = aircraft.gs {
+                                if let groundSpeed = aircraft.gs, groundSpeed > 0 {
                                     Text(formatSpeed(groundSpeed))
                                         .font(.caption2)
                                 }
