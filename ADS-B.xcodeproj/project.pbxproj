@@ -46,6 +46,7 @@
 				Models/AircraftModel.swift,
 				Services/AircraftService.swift,
 				Services/LocationManager.swift,
+				Utilities/FlightData.swift,
 				Views/MapView.swift,
 			);
 			target = 21ECABC42DA53F840088F44B /* ADS-B-Watch Watch App */;

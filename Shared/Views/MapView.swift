@@ -30,6 +30,7 @@ struct MapView: View {
                             Circle()
                                 .fill(getMarkerColor(for: aircraft))
                                 .frame(width: 30, height: 30)
+                                .opacity(0.7)
                             
                             // Different icons based on station type
                             Image(systemName: getMarkerIcon(for: aircraft))
@@ -39,14 +40,16 @@ struct MapView: View {
                                 .foregroundColor(.white)
                                 .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                         }
-                        .onTapGesture {
-                            // Only aircraft are clickable, not towers or ground stations
-                            if aircraft.feederType == .aircraft, let onAircraftSelected {
-                                onAircraftSelected(aircraft)
-                                followingAircraft = aircraft
-                                isFollowingAircraft = true
-                                moveToAircraft(aircraft)
-                            }
+                        
+                        Text(formatSpeed(aircraft.gs))
+                    }
+                    .onTapGesture {
+                        // Only aircraft are clickable, not towers or ground stations
+                        if aircraft.feederType == .aircraft, let onAircraftSelected {
+                            onAircraftSelected(aircraft)
+                            followingAircraft = aircraft
+                            isFollowingAircraft = true
+                            moveToAircraft(aircraft)
                         }
                     }
                 }
@@ -108,12 +111,8 @@ struct MapView: View {
         switch aircraft.feederType {
         case .aircraft:
             return .blue
-        case .tower:
-            return .purple
-        case .groundStation:
-            return .green
-        case .groundVehicle:
-            return .orange
+        default:
+            return .gray
         }
     }
     
@@ -129,4 +128,5 @@ struct MapView: View {
 
 #Preview {
     MapView(aircrafts: []) { _ in }
+        .environmentObject(LocationManager())
 }
