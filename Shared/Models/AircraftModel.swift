@@ -4,13 +4,11 @@ import SwiftUI
 
 
 struct FlexibleValue: Codable {
-
     private let _stringValue: String?
     private let _intValue: Int?
     private let _doubleValue: Double?
     private let _boolValue: Bool?
     
-
     var intValue: Int? {
         if let intVal = _intValue {
             return intVal
@@ -63,7 +61,6 @@ struct FlexibleValue: Codable {
         return nil
     }
     
-
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
@@ -103,7 +100,6 @@ struct FlexibleValue: Codable {
         }
     }
     
-
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         if let intVal = _intValue {
@@ -120,9 +116,7 @@ struct FlexibleValue: Codable {
     }
 }
 
-
 typealias AltitudeValue = FlexibleValue
-
 
 struct AircraftResponse: Codable {
     let ac: [Aircraft]
@@ -132,7 +126,6 @@ struct AircraftResponse: Codable {
     let ptime: Int
     let total: Int
 }
-
 
 struct Aircraft: Codable, Identifiable, Equatable {
     static func == (lhs: Aircraft, rhs: Aircraft) -> Bool {
@@ -145,14 +138,11 @@ struct Aircraft: Codable, Identifiable, Equatable {
     let r: String?
     let t: String?
     let category: String?
-    
-
     let lat: Double?
     let lon: Double?
     private let _alt_baro: AltitudeValue?
     private let _alt_geom: AltitudeValue?
     
-
     var alt_baro: Int? {
         return _alt_baro?.intValue
     }
@@ -161,7 +151,6 @@ struct Aircraft: Codable, Identifiable, Equatable {
         return _alt_geom?.intValue
     }
     
-
     private enum CodingKeys: String, CodingKey {
         case hex, type, flight, r, t, category
         case lat, lon
@@ -174,57 +163,40 @@ struct Aircraft: Codable, Identifiable, Equatable {
         case _baro_rate = "baro_rate", _geom_rate = "geom_rate", nav_modes
     }
     
-
     private let _gs: FlexibleValue?
     private let _track: FlexibleValue?
     private let _ias: FlexibleValue?
     private let _tas: FlexibleValue?
     private let _mach: FlexibleValue?
     
-
     var gs: Double? { return _gs?.doubleValue }
     var track: Double? { return _track?.doubleValue }
     var ias: Int? { return _ias?.intValue }
     var tas: Int? { return _tas?.intValue }
     var mach: Double? { return _mach?.doubleValue }
     
-
     let squawk: String?
     let emergency: String?
     
-
     var isEmergency: Bool {
         return emergency != nil && emergency != "none"
     }
     
-    // Metadata
     let mlat: [String]?
     let tisb: [String]?
     private let _messages: FlexibleValue?
     private let _seen: FlexibleValue?
     private let _rssi: FlexibleValue?
-    
-    // Computed properties for metadata
     var messages: Int? { return _messages?.intValue }
     var seen: Double? { return _seen?.doubleValue }
     var rssi: Double? { return _rssi?.doubleValue }
-    
-    // Additional fields
     private let _baro_rate: FlexibleValue?
     private let _geom_rate: FlexibleValue?
     let nav_modes: [String]?
-    
-    // Computed properties for rate values
     var baro_rate: Int? { return _baro_rate?.intValue }
     var geom_rate: Int? { return _geom_rate?.intValue }
-    
-    // Computed property for SwiftUI's Identifiable protocol
     var id: String { hex }
-    
-    // Helper computed properties
-    var hasValidCoordinates: Bool {
-        return lat != nil && lon != nil
-    }
+    var hasValidCoordinates: Bool { lat != nil && lon != nil }
     
     enum FeederType {
         case aircraft
@@ -249,17 +221,9 @@ struct Aircraft: Codable, Identifiable, Equatable {
         return .aircraft
     }
     
-    var isTowerOrGroundStation: Bool {
-        return feederType != .aircraft
-    }
-    
-    var formattedFlight: String {
-        return flight?.trimmingCharacters(in: .whitespaces) ?? "N/A"
-    }
-    
-    var formattedRegistration: String {
-        return r ?? hex
-    }
+    var isTowerOrGroundStation: Bool { feederType != .aircraft }
+    var formattedFlight: String { flight?.trimmingCharacters(in: .whitespaces) ?? "N/A" }
+    var formattedRegistration: String { r ?? hex}
     
     var formattedAltitude: String {
         if let altitude = alt_baro {
@@ -303,9 +267,7 @@ struct Aircraft: Codable, Identifiable, Equatable {
         }
     }
     
-    var formattedAircraftType: String {
-        return t ?? "Unknown"
-    }
+    var formattedAircraftType: String { t ?? "Unknown" }
     
     var formattedCategoryDescription: String {
         guard let category = category else { return "Unknown" }
@@ -324,13 +286,10 @@ struct Aircraft: Codable, Identifiable, Equatable {
     }
 }
 
-// MARK: - Manufacturer Helper
-
 extension Aircraft {
     func getManufacturer() -> String {
         guard let type = t else { return "-" }
         
-        // Common aircraft type code prefixes and their manufacturers
         let manufacturerPrefixes: [String: String] = [
             "A3": "Airbus",
             "A2": "Airbus",
@@ -354,7 +313,6 @@ extension Aircraft {
             "F": "Fokker"
         ]
         
-        // Check for manufacturer prefix in the type code
         for (prefix, manufacturer) in manufacturerPrefixes {
             if type.hasPrefix(prefix) {
                 return manufacturer
@@ -365,7 +323,6 @@ extension Aircraft {
     }
 }
 
-// MARK: - Map Annotation
 class AircraftAnnotation: NSObject, MKAnnotation {
     let aircraft: Aircraft
     var coordinate: CLLocationCoordinate2D
@@ -379,11 +336,6 @@ class AircraftAnnotation: NSObject, MKAnnotation {
         super.init()
     }
     
-    var title: String? {
-        return aircraft.formattedFlight != "N/A" ? aircraft.formattedFlight : aircraft.hex
-    }
-    
-    var subtitle: String? {
-        return "\(aircraft.formattedAltitude) | \(aircraft.formattedGroundSpeed)"
-    }
+    var title: String? { aircraft.formattedFlight != "N/A" ? aircraft.formattedFlight : aircraft.hex }
+    var subtitle: String? { "\(aircraft.formattedAltitude) | \(aircraft.formattedGroundSpeed)" }
 }

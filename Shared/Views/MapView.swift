@@ -17,22 +17,20 @@ struct MapView: View {
             
             ForEach(aircrafts) { aircraft in
                 Annotation(
-                    aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight,
+                    "",
                     coordinate: CLLocationCoordinate2D(
                         latitude: aircraft.lat ?? 0,
                         longitude: aircraft.lon ?? 0
                     ),
-                    anchor: .bottom
+                    anchor: .top
                 ) {
                     VStack(spacing: 0) {
                         ZStack {
-                            // Different background colors based on station type
                             Circle()
                                 .fill(getMarkerColor(for: aircraft))
                                 .frame(width: 30, height: 30)
                                 .opacity(0.7)
                             
-                            // Different icons based on station type
                             Image(systemName: getMarkerIcon(for: aircraft))
                                 .resizable()
                                 .scaledToFit()
@@ -41,10 +39,29 @@ struct MapView: View {
                                 .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                         }
                         
-                        Text(formatSpeed(aircraft.gs))
+                        VStack {
+                            Text(aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight)
+                                .fontWeight(.semibold)
+                                .font(.caption)
+                            
+                            if let groundSpeed = aircraft.gs {
+                                Text(formatSpeed(groundSpeed))
+                                    .font(.caption2)
+                            }
+                            
+                            if let altitude = aircraft.alt_baro {
+                                Text(formatAltitude(altitude))
+                                    .font(.caption2)
+                            }
+                            
+                        }
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(4)
+                        .padding(.top, 3)
                     }
                     .onTapGesture {
-                        // Only aircraft are clickable, not towers or ground stations
                         if aircraft.feederType == .aircraft, let onAircraftSelected {
                             onAircraftSelected(aircraft)
                             followingAircraft = aircraft
@@ -109,24 +126,24 @@ struct MapView: View {
         }
         
         switch aircraft.feederType {
-        case .aircraft:
-            return .blue
-        default:
-            return .gray
+            case .aircraft:
+                return .blue
+            default:
+                return .gray
         }
     }
     
     private func getMarkerIcon(for aircraft: Aircraft) -> String {
         switch aircraft.feederType {
-        case .aircraft:
-            return "airplane"
-        default:
-            return "antenna.radiowaves.left.and.right"
+            case .aircraft:
+                return "airplane"
+            default:
+                return "antenna.radiowaves.left.and.right"
         }
     }
 }
 
 #Preview {
-    MapView(aircrafts: []) { _ in }
+    MapView(aircrafts: PreviewAircraftData.getAircrafts())
         .environmentObject(LocationManager())
 }

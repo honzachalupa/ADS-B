@@ -9,19 +9,34 @@ func formatNumber(_ value: Int?) -> String {
 }
 
 func formatAltitude(_ feet: Int?) -> String {
+    let isMetricUnits = UserDefaults.standard.bool(forKey: SETTINGS_IS_METRIC_UNITS_KEY)
+    
     if let feet {
-        let meters = Int(Double(feet) * 0.3048)
-        return "\(formatNumber(feet)) ft (\(formatNumber(meters)) m)"
+        if isMetricUnits {
+            let meters = Int(Double(feet) * 0.3048)
+            
+            return formatNumber(meters) + " m"
+        } else {
+            return formatNumber(feet) + " ft"
+        }
     }
     
     return "-"
 }
 
 func formatSpeed(_ knots: Double?) -> String {
+    let isMetricUnits = UserDefaults.standard.bool(forKey: SETTINGS_IS_METRIC_UNITS_KEY)
+    
     if let knots {
-        let knotsValue = Int(knots)
-        let kmhValue = Int(knots * 1.852)
-        return "\(formatNumber(knotsValue)) kts (\(formatNumber(kmhValue)) km/h)"
+        if isMetricUnits {
+            let kmhValue = Int(knots * 1.852)
+            
+            return formatNumber(kmhValue) + " km/h"
+        } else {
+            let knotsValue = Int(knots)
+            
+            return formatNumber(knotsValue) + " kts"
+        }
     }
     
     return "-"

@@ -44,10 +44,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Models/AircraftModel.swift,
+				PreviewData/AircraftData.swift,
 				Services/AircraftService.swift,
 				Services/LocationManager.swift,
 				Utilities/FlightData.swift,
 				Views/MapView.swift,
+				Views/SettingsView.swift,
 			);
 			target = 21ECABC42DA53F840088F44B /* ADS-B-Watch Watch App */;
 		};

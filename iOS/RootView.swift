@@ -8,18 +8,26 @@ struct RootView: View {
     @State private var selectedAircraft: Aircraft? = nil
     
     var body: some View {
-        MapView(aircrafts: aircraftService.aircrafts) { aircraft in
-            selectedAircraft = aircraft
+        TabView {
+            Tab("Map", systemImage: "map") {
+                MapView(aircrafts: aircraftService.aircrafts) { aircraft in
+                    selectedAircraft = aircraft
+                }
+                .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
+                    AircraftDetailView(aircraft: aircraft)
+                        .environmentObject(aircraftService)
+                        .presentationDetents([.height(200), .medium, .large])
+                        .presentationBackgroundInteraction(.enabled)
+                }
+                .environmentObject(locationManager)
+            }
+            
+            Tab("List", systemImage: "list.bullet.rectangle.fill") {}
+            
+            Tab("Settings", systemImage: "gearshape.fill") {
+                SettingsView()
+            }
         }
-
-        .environmentObject(locationManager)
-        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-            AircraftDetailView(aircraft: aircraft)
-                .environmentObject(aircraftService)
-                .presentationDetents([.height(200), .medium, .large])
-                .presentationBackgroundInteraction(.enabled)
-        }
-
         .onAppear {
             locationManager.requestPermission()
             locationManager.requestLocation()
@@ -46,4 +54,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environmentObject(LocationManager())
 }
