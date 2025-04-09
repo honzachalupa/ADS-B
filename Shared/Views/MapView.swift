@@ -5,6 +5,7 @@ struct MapView: View {
     var aircrafts: [Aircraft]
     var onAircraftSelected: ((Aircraft) -> Void)? = nil
     @EnvironmentObject private var locationManager: LocationManager
+    @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
     @State private var cameraPosition = MapCameraPosition.automatic
     @State private var followingAircraft: Aircraft? = nil
@@ -44,14 +45,16 @@ struct MapView: View {
                                 .fontWeight(.semibold)
                                 .font(.caption)
                             
-                            if let groundSpeed = aircraft.gs {
-                                Text(formatSpeed(groundSpeed))
-                                    .font(.caption2)
-                            }
-                            
-                            if let altitude = aircraft.alt_baro {
-                                Text(formatAltitude(altitude))
-                                    .font(.caption2)
+                            if isInfoBoxEnabled {
+                                if let groundSpeed = aircraft.gs {
+                                    Text(formatSpeed(groundSpeed))
+                                        .font(.caption2)
+                                }
+                                
+                                if let altitude = aircraft.alt_baro {
+                                    Text(formatAltitude(altitude))
+                                        .font(.caption2)
+                                }
                             }
                             
                         }

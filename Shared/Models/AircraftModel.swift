@@ -1,7 +1,4 @@
 import Foundation
-import MapKit
-import SwiftUI
-
 
 struct FlexibleValue: Codable {
     private let _stringValue: String?
@@ -19,6 +16,7 @@ struct FlexibleValue: Codable {
         } else if let boolVal = _boolValue {
             return boolVal ? 1 : 0
         }
+        
         return nil
     }
     
@@ -32,6 +30,7 @@ struct FlexibleValue: Codable {
         } else if let boolVal = _boolValue {
             return boolVal ? 1.0 : 0.0
         }
+        
         return nil
     }
     
@@ -45,6 +44,7 @@ struct FlexibleValue: Codable {
         } else if let boolVal = _boolValue {
             return String(boolVal)
         }
+        
         return nil
     }
     
@@ -58,12 +58,12 @@ struct FlexibleValue: Codable {
         } else if let stringVal = _stringValue?.lowercased() {
             return stringVal == "true" || stringVal == "yes" || stringVal == "1"
         }
+        
         return nil
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
     
         if let intVal = try? container.decode(Int.self) {
             _intValue = intVal
@@ -86,13 +86,11 @@ struct FlexibleValue: Codable {
             _doubleValue = nil
             _stringValue = nil
         } else if container.decodeNil() {
-
             _intValue = nil
             _doubleValue = nil
             _stringValue = nil
             _boolValue = nil
         } else {
-
             _intValue = nil
             _doubleValue = nil
             _stringValue = nil
@@ -143,13 +141,8 @@ struct Aircraft: Codable, Identifiable, Equatable {
     private let _alt_baro: AltitudeValue?
     private let _alt_geom: AltitudeValue?
     
-    var alt_baro: Int? {
-        return _alt_baro?.intValue
-    }
-    
-    var alt_geom: Int? {
-        return _alt_geom?.intValue
-    }
+    var alt_baro: Int? { _alt_baro?.intValue }
+    var alt_geom: Int? {  _alt_geom?.intValue }
     
     private enum CodingKeys: String, CodingKey {
         case hex, type, flight, r, t, category
@@ -174,7 +167,6 @@ struct Aircraft: Codable, Identifiable, Equatable {
     var ias: Int? { return _ias?.intValue }
     var tas: Int? { return _tas?.intValue }
     var mach: Double? { return _mach?.doubleValue }
-    
     let squawk: String?
     let emergency: String?
     
@@ -221,52 +213,7 @@ struct Aircraft: Codable, Identifiable, Equatable {
         return .aircraft
     }
     
-    var isTowerOrGroundStation: Bool { feederType != .aircraft }
     var formattedFlight: String { flight?.trimmingCharacters(in: .whitespaces) ?? "N/A" }
-    var formattedRegistration: String { r ?? hex}
-    
-    var formattedAltitude: String {
-        if let altitude = alt_baro {
-            return "\(altitude) ft"
-        } else if let geoAltitude = alt_geom {
-            return "\(geoAltitude) ft (geo)"
-        } else {
-            return "N/A"
-        }
-    }
-    
-    var formattedGroundSpeed: String {
-        if let groundSpeed = gs {
-            return "\(Int(groundSpeed)) kts"
-        } else {
-            return "N/A"
-        }
-    }
-    
-    var formattedIndicatedAirSpeed: String {
-        if let speed = ias {
-            return "\(speed) kts"
-        } else {
-            return "N/A"
-        }
-    }
-    
-    var formattedTrueAirSpeed: String {
-        if let speed = tas {
-            return "\(speed) kts"
-        } else {
-            return "N/A"
-        }
-    }
-    
-    var formattedMach: String {
-        if let mach = mach {
-            return String(format: "%.2f", mach)
-        } else {
-            return "N/A"
-        }
-    }
-    
     var formattedAircraftType: String { t ?? "Unknown" }
     
     var formattedCategoryDescription: String {
@@ -321,21 +268,4 @@ extension Aircraft {
         
         return "-"
     }
-}
-
-class AircraftAnnotation: NSObject, MKAnnotation {
-    let aircraft: Aircraft
-    var coordinate: CLLocationCoordinate2D
-    
-    init(aircraft: Aircraft) {
-        self.aircraft = aircraft
-        self.coordinate = CLLocationCoordinate2D(
-            latitude: aircraft.lat ?? 0,
-            longitude: aircraft.lon ?? 0
-        )
-        super.init()
-    }
-    
-    var title: String? { aircraft.formattedFlight != "N/A" ? aircraft.formattedFlight : aircraft.hex }
-    var subtitle: String? { "\(aircraft.formattedAltitude) | \(aircraft.formattedGroundSpeed)" }
 }

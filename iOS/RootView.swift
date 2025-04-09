@@ -22,7 +22,11 @@ struct RootView: View {
                 .environmentObject(locationManager)
             }
             
-            Tab("List", systemImage: "list.bullet.rectangle.fill") {}
+            Tab("List", systemImage: "list.bullet.rectangle.fill") {
+                ListView(aircrafts: aircraftService.aircrafts) { aircraft in
+                    selectedAircraft = aircraft
+                }
+            }
             
             Tab("Settings", systemImage: "gearshape.fill") {
                 SettingsView()
