@@ -125,9 +125,13 @@ struct AircraftResponse: Codable {
     let total: Int
 }
 
-struct Aircraft: Codable, Identifiable, Equatable {
+struct Aircraft: Codable, Identifiable, Equatable, Hashable {
     static func == (lhs: Aircraft, rhs: Aircraft) -> Bool {
         return lhs.hex == rhs.hex
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(hex)
     }
 
     let hex: String

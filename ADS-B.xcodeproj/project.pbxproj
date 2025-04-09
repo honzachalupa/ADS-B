@@ -44,8 +44,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Models/AircraftModel.swift,
+				Models/AirportModel.swift,
 				PreviewData/AircraftData.swift,
 				Services/AircraftService.swift,
+				Services/AirportService.swift,
 				Services/LocationManager.swift,
 				Utilities/FlightData.swift,
 				Views/ListView.swift,

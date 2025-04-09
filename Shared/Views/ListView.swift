@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ListView: View {
     var aircrafts: [Aircraft]
-    var onAircraftSelected: ((Aircraft) -> Void)? = nil
+    var onAircraftSelected: ((Aircraft?) -> Void)? = nil
     
     var body: some View {
         NavigationView {

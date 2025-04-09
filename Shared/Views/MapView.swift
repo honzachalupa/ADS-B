@@ -3,22 +3,25 @@ import MapKit
 
 struct MapView: View {
     var aircrafts: [Aircraft]
-    var onAircraftSelected: ((Aircraft) -> Void)? = nil
+    var airports: [Airport] = []
+    var onAircraftSelected: ((Aircraft?) -> Void)? = nil
     @EnvironmentObject private var locationManager: LocationManager
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
-    @State private var cameraPosition = MapCameraPosition.automatic
-    @State private var followingAircraft: Aircraft? = nil
-    @State private var isFollowingAircraft = false
-    @State private var lastKnownPosition: CLLocationCoordinate2D? = nil
+    @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
+    @State var selectedAircraft: Aircraft? = nil
     
     var body: some View {
-        Map(position: $cameraPosition) {
+        Map(position: $cameraPosition, selection: $selectedAircraft) {
             UserAnnotation()
             
             ForEach(aircrafts) { aircraft in
+                let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
+                let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
+                let isSimpleLabel = !isInfoBoxEnabled || hasNoData
+                
                 Annotation(
-                    "",
+                    isSimpleLabel ? code : "",
                     coordinate: CLLocationCoordinate2D(
                         latitude: aircraft.lat ?? 0,
                         longitude: aircraft.lon ?? 0
@@ -28,24 +31,23 @@ struct MapView: View {
                     VStack(spacing: 0) {
                         ZStack {
                             Circle()
-                                .fill(getMarkerColor(for: aircraft))
+                                .fill(.thinMaterial)
                                 .frame(width: 30, height: 30)
-                                .opacity(0.7)
                             
                             Image(systemName: getMarkerIcon(for: aircraft))
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 15, height: 15)
-                                .foregroundColor(.white)
+                                .foregroundStyle(getMarkerColor(for: aircraft))
                                 .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                         }
                         
-                        VStack {
-                            Text(aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight)
-                                .fontWeight(.semibold)
-                                .font(.caption)
-                            
-                            if isInfoBoxEnabled {
+                        if !isSimpleLabel {
+                            VStack {
+                                Text(code)
+                                    .fontWeight(.semibold)
+                                    .font(.caption)
+                                
                                 if let groundSpeed = aircraft.gs, groundSpeed > 0 {
                                     Text(formatSpeed(groundSpeed))
                                         .font(.caption2)
@@ -56,70 +58,53 @@ struct MapView: View {
                                         .font(.caption2)
                                 }
                             }
-                            
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 2)
+                            .background(.thickMaterial)
+                            .cornerRadius(4)
+                            .padding(.top, 3)
                         }
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(4)
-                        .padding(.top, 3)
                     }
-                    .onTapGesture {
+                    /* .onTapGesture {
                         if aircraft.feederType == .aircraft, let onAircraftSelected {
                             onAircraftSelected(aircraft)
-                            followingAircraft = aircraft
-                            isFollowingAircraft = true
-                            moveToAircraft(aircraft)
                         }
+                    } */
+                }
+                .tag(aircraft)
+            }
+            
+            ForEach(airports) { airport in
+                Annotation(
+                    airport.icao,
+                    coordinate: airport.coordinate,
+                ) {
+                    ZStack {
+                        Circle()
+                            .fill(.thinMaterial)
+                            .frame(width: 30, height: 30)
+                        
+                        Image(systemName: "airplane.departure")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 15, height: 15)
                     }
                 }
             }
         }
         .mapControls {
+            MapUserLocationButton()
+            MapCompass()
 #if os(iOS)
             MapScaleView()
+#elseif os(watchOS)
+            MapLocationCompass()
 #endif
-            MapUserLocationButton()
         }
-        .onChange(of: aircrafts) { _, newAircrafts in
-            if isFollowingAircraft, let selectedHex = followingAircraft?.hex {
-                if let updatedAircraft = newAircrafts.first(where: { $0.hex == selectedHex }) {
-                    moveToAircraft(updatedAircraft)
-                }
+        .onChange(of: selectedAircraft) {
+            if let onAircraftSelected {
+                onAircraftSelected(selectedAircraft)
             }
-        }
-        .onAppear {
-            if let userLocation = locationManager.location {
-                cameraPosition = .region(MKCoordinateRegion(
-                    center: userLocation.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
-                ))
-            }
-        }
-        .onChange(of: locationManager.location) { _, newLocation in
-            if !isFollowingAircraft, let location = newLocation, aircrafts.isEmpty {
-                cameraPosition = .region(MKCoordinateRegion(
-                    center: location.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
-                ))
-            }
-        }
-    }
-    
-    private func moveToAircraft(_ aircraft: Aircraft) {
-        guard let lat = aircraft.lat, let lon = aircraft.lon else {
-            return
-        }
-        
-        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-        
-        let region = MKCoordinateRegion(
-            center: coordinate,
-            span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
-        )
-        
-        withAnimation(.easeInOut(duration: 0.2)) {
-            cameraPosition = .region(region)
         }
     }
     
@@ -130,9 +115,9 @@ struct MapView: View {
         
         switch aircraft.feederType {
             case .aircraft:
-                return .blue
+                return Color.blue
             default:
-                return .gray
+                return Color.primary
         }
     }
     
