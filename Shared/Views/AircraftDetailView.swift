@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AircraftDetailView: View {
     let aircraft: Aircraft
-    @EnvironmentObject private var aircraftService: AircraftService
+    @ObservedObject private var aircraftService = AircraftService.shared
     @StateObject private var photoService = AircraftPhotoService()
     @AppStorage("detail_isShowDetails") private var isShowDetails: Bool = false
     

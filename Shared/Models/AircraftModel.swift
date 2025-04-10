@@ -194,7 +194,15 @@ struct Aircraft: Codable, Identifiable, Equatable, Hashable {
     var id: String { hex }
     var formattedFlight: String { flight?.trimmingCharacters(in: .whitespaces) ?? "" }
     var formattedAircraftType: String { t ?? "Unknown" }
-    var isValid: Bool { lat != nil && lon != nil && !formattedFlight.isEmpty }
+    var isValid: Bool { 
+        #if os(watchOS)
+        // For watchOS, only require valid coordinates
+        return lat != nil && lon != nil
+        #else
+        // For iOS, require valid coordinates and flight information
+        return lat != nil && lon != nil && !formattedFlight.isEmpty
+        #endif
+    }
     
     enum FeederType {
         case aircraft

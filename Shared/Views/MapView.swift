@@ -4,11 +4,11 @@ import MapKit
 struct MapView: View {
     var aircrafts: [Aircraft]
     var airports: [Airport] = []
-    var onAircraftSelected: ((Aircraft?) -> Void)? = nil
-    @EnvironmentObject private var locationManager: LocationManager
+    @ObservedObject private var locationManager = LocationManager.shared
+    @ObservedObject private var aircraftService = AircraftService.shared
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
-    @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
+    @State private var cameraPosition = MapCameraPosition.userLocation(followsHeading: true, fallback: .automatic)
     @State var selectedAircraft: Aircraft? = nil
     
     var body: some View {
@@ -65,11 +65,6 @@ struct MapView: View {
                             .padding(.top, 3)
                         }
                     }
-                    /* .onTapGesture {
-                        if aircraft.feederType == .aircraft, let onAircraftSelected {
-                            onAircraftSelected(aircraft)
-                        }
-                    } */
                 }
                 .tag(aircraft)
             }
@@ -101,10 +96,10 @@ struct MapView: View {
             MapLocationCompass()
 #endif
         }
-        .onChange(of: selectedAircraft) {
-            if let onAircraftSelected {
-                onAircraftSelected(selectedAircraft)
-            }
+        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
+            AircraftDetailView(aircraft: aircraft)
+                .presentationDetents([.height(200), .medium, .large])
+                .presentationBackgroundInteraction(.enabled)
         }
     }
     
@@ -133,5 +128,4 @@ struct MapView: View {
 
 #Preview {
     MapView(aircrafts: PreviewAircraftData.getAircrafts())
-        .environmentObject(LocationManager())
 }

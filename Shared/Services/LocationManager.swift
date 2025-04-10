@@ -2,12 +2,14 @@ import CoreLocation
 import Combine
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    static let shared = LocationManager()
     private let locationManager = CLLocationManager()
     
     @Published var location: CLLocation?
     @Published var authorizationStatus: CLAuthorizationStatus
     
-    override init() {
+    // Private initializer to enforce singleton pattern
+    private override init() {
         authorizationStatus = locationManager.authorizationStatus
         
         super.init()

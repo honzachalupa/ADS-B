@@ -3,30 +3,18 @@ import MapKit
 import CoreLocation
 
 struct RootView: View {
-    @StateObject private var aircraftService = AircraftService()
-    @StateObject private var airportService = AirportService()
-    @StateObject private var locationManager = LocationManager()
-    @State private var selectedAircraft: Aircraft? = nil
+    @ObservedObject var aircraftService = AircraftService.shared
+    @ObservedObject var airportService = AirportService.shared
+    @ObservedObject var locationManager = LocationManager.shared
     
     var body: some View {
         TabView {
             Tab("Map", systemImage: "map") {
-                MapView(aircrafts: aircraftService.aircrafts, airports: airportService.airports) { aircraft in
-                    selectedAircraft = aircraft
-                }
-                .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-                    AircraftDetailView(aircraft: aircraft)
-                        .environmentObject(aircraftService)
-                        .presentationDetents([.height(200), .medium, .large])
-                        .presentationBackgroundInteraction(.enabled)
-                }
-                .environmentObject(locationManager)
+                MapView(aircrafts: aircraftService.aircrafts, airports: airportService.airports)
             }
             
-            Tab("List", systemImage: "list.bullet.rectangle.fill") {
-                ListView(aircrafts: aircraftService.aircrafts) { aircraft in
-                    selectedAircraft = aircraft
-                }
+            Tab("List", systemImage: "list.bullet") {
+                ListView(aircrafts: aircraftService.aircrafts)
             }
             
             Tab("Settings", systemImage: "gearshape.fill") {
@@ -69,5 +57,4 @@ struct RootView: View {
 
 #Preview {
     RootView()
-        .environmentObject(LocationManager())
 }

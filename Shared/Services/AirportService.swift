@@ -1,11 +1,16 @@
 import Foundation
 
 class AirportService: ObservableObject {
+    // Singleton instance
+    static let shared = AirportService()
+    
+    // Private initializer to enforce singleton pattern
+    private init() {}
     @Published var airports: [Airport] = []
     @Published var isLoading: Bool = false
     @Published var error: Error? = nil
     
-    // Dictionary of hardcoded airport data
+    // Dictionary of airport data
     private let airportData: [String: (name: String, lat: Double, lon: Double, country: String, iata: String?)] = [
         // Czech airports
         "LKPR": ("Prague Václav Havel Airport", 50.1008, 14.26, "CZ", "PRG"),
@@ -88,14 +93,12 @@ class AirportService: ObservableObject {
         "DNMM": ("Murtala Muhammed International Airport", 6.5774, 3.3215, "NG", "LOS")
     ]
     
-    // Fetch all hardcoded airports
+    // Fetch all airports
     func fetchAirports() {
         isLoading = true
         airports.removeAll()
         
-        print("🔍 Loading hardcoded airports")
-        
-        // Create airport objects from hardcoded data
+        // Create airport objects from data
         for (code, data) in airportData {
             let airport = Airport(
                 id: code,
@@ -109,21 +112,12 @@ class AirportService: ObservableObject {
                 alt_feet: nil,
                 alt_meters: nil
             )
+            
             airports.append(airport)
-            print("✅ Added airport: \(data.name) (\(code))")
         }
         
         isLoading = false
-        print("✅ Loaded \(airports.count) airports")
-        
-        // Print the first few airports for debugging
-        if !airports.isEmpty {
-            print("🏩 First few airports:")
-            for i in 0..<min(5, airports.count) {
-                let airport = airports[i]
-                print("   - \(airport.name) (\(airport.icao)): \(airport.lat), \(airport.lon)")
-            }
-        }
+        print("[AirportService] ✅ Loaded \(airports.count) airports")
     }
     
     // For compatibility with existing code
