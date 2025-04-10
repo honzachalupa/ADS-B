@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-               BuildableName = "ADS-B-Test.app"
-               BlueprintName = "ADS-B-Test"
+               BuildableName = "ADS-B-TestX.app"
+               BlueprintName = "ADS-B-TestX"
                ReferencedContainer = "container:ADS-B.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-            BuildableName = "ADS-B-Test.app"
-            BlueprintName = "ADS-B-Test"
+            BuildableName = "ADS-B-TestX.app"
+            BlueprintName = "ADS-B-TestX"
             ReferencedContainer = "container:ADS-B.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-            BuildableName = "ADS-B-Test.app"
-            BlueprintName = "ADS-B-Test"
+            BuildableName = "ADS-B-TestX.app"
+            BlueprintName = "ADS-B-TestX"
             ReferencedContainer = "container:ADS-B.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
