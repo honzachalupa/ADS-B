@@ -7,7 +7,7 @@ struct MapView: View {
     @ObservedObject private var airportService = AirportService.shared
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
-    @State private var cameraPosition = MapCameraPosition.userLocation(followsHeading: true, fallback: .automatic)
+    @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
     @State var selectedAircraft: Aircraft? = nil
     
     var body: some View {
