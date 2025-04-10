@@ -44,8 +44,6 @@ class AircraftService: ObservableObject {
                     
                     // Detailed logging to diagnose issues
                     if let json = jsonObject as? [String: Any] {
-                        print("[AircraftService] 📊 JSON root keys: \(json.keys.joined(separator: ", "))")
-                        
                         if let aircraft = json["ac"] as? [[String: Any]], !aircraft.isEmpty {
                             print("[AircraftService] 🛩️ Found \(aircraft.count) aircraft in response")
                         } else {

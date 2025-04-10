@@ -2,10 +2,9 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
-    var aircrafts: [Aircraft]
-    var airports: [Airport] = []
     @ObservedObject private var locationManager = LocationManager.shared
     @ObservedObject private var aircraftService = AircraftService.shared
+    @ObservedObject private var airportService = AirportService.shared
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
     @State private var cameraPosition = MapCameraPosition.userLocation(followsHeading: true, fallback: .automatic)
@@ -15,7 +14,7 @@ struct MapView: View {
         Map(position: $cameraPosition, selection: $selectedAircraft) {
             UserAnnotation()
             
-            ForEach(aircrafts) { aircraft in
+            ForEach(aircraftService.aircrafts) { aircraft in
                 let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
                 let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
                 let isSimpleLabel = !isInfoBoxEnabled || hasNoData
@@ -69,7 +68,7 @@ struct MapView: View {
                 .tag(aircraft)
             }
             
-            ForEach(airports) { airport in
+            ForEach(airportService.airports) { airport in
                 Annotation(
                     airport.icao,
                     coordinate: airport.coordinate,
@@ -127,5 +126,5 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView(aircrafts: PreviewAircraftData.getAircrafts())
+    MapView()
 }

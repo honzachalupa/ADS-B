@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ListView: View {
-    var aircrafts: [Aircraft]
+    @ObservedObject private var aircraftService = AircraftService.shared
     
     var body: some View {
         NavigationView {
-            List(aircrafts) { aircraft in
+            List(aircraftService.aircrafts) { aircraft in
                 HStack {
                     VStack(alignment: .leading) {
                         Text(aircraft.flight?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "-")
@@ -38,5 +38,5 @@ struct ListView: View {
 }
 
 #Preview {
-    ListView(aircrafts: PreviewAircraftData.getAircrafts())
+    ListView()
 }
