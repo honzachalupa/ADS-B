@@ -47,6 +47,10 @@ struct AircraftDetailView: View {
                 }
                 
                 Section("Flight") {
+                    LabeledContent("Registration") {
+                        Text(aircraftUpdated.r ?? "-")
+                    }
+                    
                     if isShowDetails {
                         LabeledContent("Barometric Altitude") {
                             Text(formatAltitude(aircraftUpdated.alt_baro))
@@ -164,8 +168,7 @@ struct AircraftDetailView: View {
                 
                 Toggle("Show details", isOn: $isShowDetails)
             }
-            .navigationTitle(aircraftUpdated.formattedFlight + " - " + (aircraftUpdated.r ?? ""))
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(aircraftUpdated.formattedFlight)
         }
         .onAppear {
             photoService.fetchPhoto(for: aircraftUpdated)

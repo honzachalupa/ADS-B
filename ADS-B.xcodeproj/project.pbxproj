@@ -59,7 +59,7 @@
 			);
 			target = 21ECABC42DA53F840088F44B /* ADS-B-Watch Watch App */;
 		};
-		21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B-TestX" target */ = {
+		21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -82,7 +82,7 @@
 		21ECABD62DA540B80088F44B /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B-TestX" target */,
+				21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B" target */,
 				21ECABD92DA540D50088F44B /* Exceptions for "Shared" folder in "ADS-B-Watch Watch App" target */,
 			);
 			path = Shared;
@@ -132,7 +132,7 @@
 /* Begin PBXNativeTarget section */
 		21ECAB852DA5109C0088F44B /* ADS-B */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B-TestX" */;
+			buildConfigurationList = 21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B" */;
 			buildPhases = (
 				21ECAB822DA5109C0088F44B /* Sources */,
 				21ECAB832DA5109C0088F44B /* Frameworks */,
@@ -148,10 +148,10 @@
 				21ECAB882DA5109C0088F44B /* iOS */,
 				21ECABD62DA540B80088F44B /* Shared */,
 			);
-			name = "ADS-B-TestX";
+			name = "ADS-B";
 			packageProductDependencies = (
 			);
-			productName = "ADS-B-TestX";
+			productName = "ADS-B";
 			productReference = 21ECAB862DA5109C0088F44B /* ADS-B.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -195,7 +195,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 21ECAB812DA5109C0088F44B /* Build configuration list for PBXProject "ADS-B-TestX" */;
+			buildConfigurationList = 21ECAB812DA5109C0088F44B /* Build configuration list for PBXProject "ADS-B" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -408,7 +408,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B-TestX";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -444,7 +444,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B-TestX";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -476,7 +476,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B-TestX.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -511,7 +511,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B-TestX.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.janchalupa.ADS-B.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -526,7 +526,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		21ECAB812DA5109C0088F44B /* Build configuration list for PBXProject "ADS-B-TestX" */ = {
+		21ECAB812DA5109C0088F44B /* Build configuration list for PBXProject "ADS-B" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21ECAB8F2DA5109D0088F44B /* Debug */,
@@ -535,7 +535,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B-TestX" */ = {
+		21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21ECAB922DA5109D0088F44B /* Debug */,

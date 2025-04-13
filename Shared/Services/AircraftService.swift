@@ -1,37 +1,97 @@
 import SwiftUI
 import Combine
 
+enum AircraftEndpointType {
+    case regular(latitude: Double, longitude: Double, radius: Int)
+    case pia
+    case military
+    case ladd
+    
+    var urlPath: String {
+        switch self {
+        case .regular(let latitude, let longitude, let radius):
+            return "/lat/\(latitude)/lon/\(longitude)/dist/\(radius)"
+        case .pia:
+            return "/pia"
+        case .military:
+            return "/mil"
+        case .ladd:
+            return "/ladd"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .regular:
+            return "Regular Aircraft"
+        case .pia:
+            return "Privacy ICAO Address Aircraft"
+        case .military:
+            return "Military Aircraft"
+        case .ladd:
+            return "Limited Aircraft Data Display Aircraft"
+        }
+    }
+}
+
 class AircraftService: ObservableObject {
     // Singleton instance
     static let shared = AircraftService()
     
-    private init() {}
+    // UserDefaults observation
+    private var filterObserver: NSObjectProtocol?
+    
+    private init() {
+        // Set up UserDefaults observation for filter changes
+        setupUserDefaultsObservation()
+    }
+    
+    deinit {
+        if let observer = filterObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    private func setupUserDefaultsObservation() {
+        // Observe UserDefaults changes for filter settings
+        filterObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            // When UserDefaults change, refresh the aircraft data if we have a location
+            if let location = LocationManager.shared.location {
+                self?.fetchAllSelectedAircraftTypes(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
+            }
+        }
+    }
     
     @Published var aircrafts: [Aircraft] = []
     @Published var isLoading: Bool = false
     @Published var error: Error? = nil
     
     private var cancellables = Set<AnyCancellable>()
-    private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date)] = [:]
+    private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date, endpointType: AircraftEndpointType)] = [:]
     private let cacheRetentionTime: TimeInterval = 10.0
     private let baseURL = "https://api.adsb.lol/v2"
     
-    // Fetch aircraft around a specific location
-    func fetchAircraftAroundLocation(latitude: Double, longitude: Double) {
+    // Fetch aircraft from a specific endpoint type
+    func fetchAircraft(from endpointType: AircraftEndpointType) {
         isLoading = true
         error = nil
         
-        // Get the search range from settings, default to 100 if not set
-        let searchRange = UserDefaults.standard.double(forKey: SETTINGS_SEARCH_RANGE_KEY)
-        let range = searchRange > 0 ? Int(searchRange) : 100
-        
-        let urlString = "\(baseURL)/lat/\(latitude)/lon/\(longitude)/dist/\(range)"
+        let urlString = "\(baseURL)\(endpointType.urlPath)"
         
         guard let url = URL(string: urlString) else {
             self.error = NSError(domain: "AircraftService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
             self.isLoading = false
             return
         }
+        
+        print("[AircraftService] 🔍 Fetching aircraft from endpoint: \(endpointType.description)")
         
         URLSession.shared.dataTaskPublisher(for: url)
             .map { output -> Data in
@@ -175,7 +235,7 @@ class AircraftService: ObservableObject {
                 let validAircraft = response.ac.filter { $0.isValid }
                 
                 // Update the cache with new aircraft data
-                self.updateAircraftCache(with: validAircraft)
+                self.updateAircraftCache(with: validAircraft, endpointType: endpointType)
                 
                 // Get all valid aircraft (from current response and recent cache)
                 let combinedAircraft = self.getCombinedAircraftList()
@@ -188,10 +248,73 @@ class AircraftService: ObservableObject {
     
     }
     
+    // Fetch aircraft around a specific location (convenience method)
+    func fetchAircraftAroundLocation(latitude: Double, longitude: Double) {
+        // Get the search range from settings, default to 100 if not set
+        let searchRange = UserDefaults.standard.double(forKey: "settings_searchRange")
+        let range = searchRange > 0 ? Int(searchRange) : 100
+        
+        fetchAircraft(from: .regular(latitude: latitude, longitude: longitude, radius: range))
+    }
+    
+    // Fetch all selected aircraft types based on user settings
+    func fetchAllSelectedAircraftTypes(latitude: Double, longitude: Double) {
+        // Get user preferences for which aircraft types to show
+        let showRegular = UserDefaults.standard.bool(forKey: "settings_showRegularAircraft")
+        let showPIA = UserDefaults.standard.bool(forKey: "settings_showPIAAircraft")
+        let showMilitary = UserDefaults.standard.bool(forKey: "settings_showMilitaryAircraft")
+        let showLADD = UserDefaults.standard.bool(forKey: "settings_showLADDAircraft")
+        
+        // Get the search range from settings
+        let searchRange = UserDefaults.standard.double(forKey: "settings_searchRange")
+        let range = searchRange > 0 ? Int(searchRange) : 100
+        
+        // Cancel any existing requests
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+        
+        // Create a group of publishers for each selected endpoint
+        var publishers: [AnyPublisher<Void, Never>] = []
+        
+        if showRegular {
+            publishers.append(fetchAircraftPublisher(from: .regular(latitude: latitude, longitude: longitude, radius: range)))
+        }
+        
+        if showPIA {
+            publishers.append(fetchAircraftPublisher(from: .pia))
+        }
+        
+        if showMilitary {
+            publishers.append(fetchAircraftPublisher(from: .military))
+        }
+        
+        if showLADD {
+            publishers.append(fetchAircraftPublisher(from: .ladd))
+        }
+        
+        // If no aircraft types are selected, default to regular
+        if publishers.isEmpty && !showRegular {
+            publishers.append(fetchAircraftPublisher(from: .regular(latitude: latitude, longitude: longitude, radius: range)))
+        }
+        
+        // Merge all publishers and subscribe
+        Publishers.MergeMany(publishers)
+            .sink { _ in }
+            .store(in: &cancellables)
+    }
+    
+    // Create a publisher for fetching aircraft from a specific endpoint
+    private func fetchAircraftPublisher(from endpointType: AircraftEndpointType) -> AnyPublisher<Void, Never> {
+        Future<Void, Never> { promise in
+            self.fetchAircraft(from: endpointType)
+            promise(.success(()))
+        }.eraseToAnyPublisher()
+    }
+    
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
         // Get the fetch interval from settings
-        let fetchInterval = UserDefaults.standard.double(forKey: SETTINGS_FETCH_INTERVAL_KEY)
+        let fetchInterval = UserDefaults.standard.double(forKey: "settings_fetchInterval")
         
         // Use default of 5 seconds if not set
         let interval = fetchInterval > 0 ? fetchInterval : 5.0
@@ -202,16 +325,16 @@ class AircraftService: ObservableObject {
         
         // Starting aircraft polling with the configured interval
         
-        // Create a timer that fires at the configured interval
+        // Create a timer that fetches aircraft data at the specified interval
         Timer.publish(every: interval, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                self?.fetchAircraftAroundLocation(latitude: latitude, longitude: longitude)
+                self?.fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
             }
             .store(in: &cancellables)
         
         // Initial fetch
-        fetchAircraftAroundLocation(latitude: latitude, longitude: longitude)
+        fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
     }
     
     // Stop polling
@@ -222,26 +345,53 @@ class AircraftService: ObservableObject {
     
     // MARK: - Cache Management
     
-    // Update the cache with new aircraft data
-    private func updateAircraftCache(with newAircraft: [Aircraft]) {
-        let currentTime = Date()
+    // Update the aircraft cache with new data
+    private func updateAircraftCache(with aircraft: [Aircraft], endpointType: AircraftEndpointType) {
+        let now = Date()
         
-        // Add or update aircraft in the cache
-        for aircraft in newAircraft {
-            aircraftCache[aircraft.hex] = (aircraft: aircraft, timestamp: currentTime)
+        // Add new aircraft to the cache
+        for plane in aircraft {
+            aircraftCache[plane.hex] = (aircraft: plane, timestamp: now, endpointType: endpointType)
         }
         
-        // Remove expired aircraft from cache
-        cleanupCache()
+        // Remove stale entries
+        aircraftCache = aircraftCache.filter { _, value in
+            now.timeIntervalSince(value.timestamp) < cacheRetentionTime
+        }
     }
     
-    // Get combined list of current aircraft and cached aircraft
+    // Get a combined list of aircraft from the current response and recent cache
     private func getCombinedAircraftList() -> [Aircraft] {
-        // Get all aircraft from cache that haven't expired
-        return Array(aircraftCache.values.map { $0.aircraft })
+        // Get user preferences for which aircraft types to show
+        let showRegular = UserDefaults.standard.bool(forKey: "settings_showRegularAircraft")
+        let showPIA = UserDefaults.standard.bool(forKey: "settings_showPIAAircraft")
+        let showMilitary = UserDefaults.standard.bool(forKey: "settings_showMilitaryAircraft")
+        let showLADD = UserDefaults.standard.bool(forKey: "settings_showLADDAircraft")
+        
+        // Filter cached aircraft based on user preferences
+        let filteredAircraft = aircraftCache.values.filter { cachedAircraft in
+            switch cachedAircraft.endpointType {
+            case .regular:
+                return showRegular
+            case .pia:
+                return showPIA
+            case .military:
+                return showMilitary
+            case .ladd:
+                return showLADD
+            }
+        }.map { $0.aircraft }
+        
+        return filteredAircraft.sorted { a, b in
+            // Sort by distance or altitude if available
+            if let altA = a.alt_baro, let altB = b.alt_baro {
+                return altA > altB
+            }
+            return false
+        }
     }
     
-    // Remove expired aircraft from cache
+    // ...
     private func cleanupCache() {
         let currentTime = Date()
         let keysToRemove = aircraftCache.filter { entry in
