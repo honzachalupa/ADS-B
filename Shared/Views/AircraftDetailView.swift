@@ -43,9 +43,7 @@ struct AircraftDetailView: View {
                             .fontWeight(.bold)
                     }
                     
-                    LabeledContent("Registration") {
-                        Text(aircraftUpdated.r ?? "-")
-                    }
+                    LabeledContent("Registration") { Text(aircraftUpdated.r ?? "-")}
                     
                     if isShowDetails {
                         LabeledContent("Barometric Altitude") {
@@ -53,22 +51,12 @@ struct AircraftDetailView: View {
                         }
                     }
                     
-                    LabeledContent("Geometric Altitude") {
-                        Text(formatAltitude(aircraftUpdated.alt_geom))
-                    }
-                    
-                    LabeledContent("Ground Speed") {
-                        Text(formatSpeed(aircraftUpdated.gs))
-                    }
+                    LabeledContent("Geometric Altitude") { Text(formatAltitude(aircraftUpdated.alt_geom))}
+                    LabeledContent("Ground Speed") { Text(formatSpeed(aircraftUpdated.gs))}
                     
                     if isShowDetails {
-                        LabeledContent("Indicated Airspeed") {
-                            Text("\(formatNumber(aircraftUpdated.ias)) kts")
-                        }
-                        
-                        LabeledContent("True Airspeed") {
-                            Text("\(formatNumber(aircraftUpdated.tas)) kts")
-                        }
+                        LabeledContent("Indicated Airspeed") { Text("\(formatNumber(aircraftUpdated.ias)) kts") }
+                        LabeledContent("True Airspeed") { Text("\(formatNumber(aircraftUpdated.tas)) kts") }
                     
                         LabeledContent("Mach") {
                             Text(aircraftUpdated.mach != nil ? String(format: "%.2f", aircraftUpdated.mach!) : "-")
@@ -76,7 +64,16 @@ struct AircraftDetailView: View {
                     }
                     
                     LabeledContent("Heading") {
-                        Text(aircraftUpdated.track != nil ? "\(Int(aircraftUpdated.track!))°" : "-")
+                        if let track = aircraftUpdated.track {
+                            HStack(spacing: 6) {
+                                Text("\(Int(track))°")
+                                
+                                Image(systemName: "airplane")
+                                    .rotationEffect(.degrees(track - 90))
+                            }
+                        } else {
+                            Text("-")
+                        }
                     }
                     
                     LabeledContent("Vertical Rate") {
@@ -119,6 +116,33 @@ struct AircraftDetailView: View {
                     }
                 }
                 
+                Section("Operational Status") {
+                    if let emergency = aircraftUpdated.emergency, aircraftUpdated.isEmergency {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            
+                            Text("Emergency: \(emergency)")
+                                .fontWeight(.bold)
+                                .foregroundColor(.red)
+                        }
+                    }
+                        
+                    if isShowDetails {
+                        if let squawk = aircraftUpdated.squawk {
+                            LabeledContent("Transponder Code") {
+                                HStack {
+                                    Text(squawk)
+                                    if squawk == "7500" || squawk == "7600" || squawk == "7700" {
+                                        Image(systemName: "exclamationmark.triangle")
+                                            .foregroundColor(.orange)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 if isShowDetails {
                     Section("Position") {
                         LabeledContent("Coordinates") {
@@ -133,6 +157,19 @@ struct AircraftDetailView: View {
                                 }
                             } else {
                                 Text("-")
+                            }
+                        }
+                    }
+                }
+                
+                // Add Navigation Modes section
+                if let navModes = aircraftUpdated.nav_modes, !navModes.isEmpty {
+                    Section("Navigation") {
+                        ForEach(navModes, id: \.self) { mode in
+                            HStack {
+                                getNavModeIcon(for: mode)
+                                    .foregroundColor(.blue)
+                                Text(getNavModeDescription(for: mode))
                             }
                         }
                     }
@@ -175,6 +212,24 @@ struct AircraftDetailView: View {
                                 Text("-")
                             }
                         }
+                        
+                        // Add signal quality visualization
+                        if let rssi = aircraftUpdated.rssi {
+                            VStack(alignment: .leading) {
+                                Text("Signal Strength")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                
+                                HStack(spacing: 2) {
+                                    ForEach(0..<5) { i in
+                                        Rectangle()
+                                            .fill(getSignalColor(rssi: rssi, barIndex: i))
+                                            .frame(width: 15, height: 4 + CGFloat(i) * 3)
+                                    }
+                                }
+                                .padding(.top, 2)
+                            }
+                        }
                     }
                 }
                 
@@ -190,4 +245,79 @@ struct AircraftDetailView: View {
 
 #Preview {
     // AircraftDetailView()
+}
+
+// MARK: - Helper Functions
+extension AircraftDetailView {
+    // Helper function to get icon for navigation mode
+    func getNavModeIcon(for mode: String) -> Image {
+        switch mode.lowercased() {
+        case "autopilot":
+            return Image(systemName: "airplane.circle")
+        case "vnav", "vnav_path":
+            return Image(systemName: "arrow.up.and.down")
+        case "alt_hold":
+            return Image(systemName: "arrow.left.and.right")
+        case "approach":
+            return Image(systemName: "location.north.fill")
+        case "lnav":
+            return Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
+        case "tcas":
+            return Image(systemName: "dot.radiowaves.left.and.right")
+        default:
+            return Image(systemName: "gearshape")
+        }
+    }
+    
+    // Helper function to get description for navigation mode
+    func getNavModeDescription(for mode: String) -> String {
+        switch mode.lowercased() {
+        case "autopilot":
+            return "Autopilot"
+        case "vnav", "vnav_path":
+            return "Vertical Navigation"
+        case "alt_hold":
+            return "Altitude Hold"
+        case "approach":
+            return "Approach Mode"
+        case "lnav":
+            return "Lateral Navigation"
+        case "tcas":
+            return "Traffic Collision Avoidance System"
+        default:
+            return mode
+        }
+    }
+    
+    // Helper function to format numbers with commas
+    func formatNumber(_ value: Int?) -> String {
+        guard let value = value else { return "-" }
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: value)) ?? String(value)
+    }
+    
+    // Helper function to get color for signal strength bars
+    func getSignalColor(rssi: Double, barIndex: Int) -> Color {
+        // RSSI typically ranges from -90 (weak) to -10 (strong)
+        // Convert to a 0-5 scale
+        let normalizedStrength = min(5, max(0, (rssi + 90) / 16))
+        
+        // Determine if this bar should be filled based on signal strength
+        let shouldFill = Double(barIndex) < normalizedStrength
+        
+        if shouldFill {
+            // Color gradient from red (weak) to green (strong)
+            if normalizedStrength < 2 {
+                return .red
+            } else if normalizedStrength < 3.5 {
+                return .orange
+            } else {
+                return .green
+            }
+        } else {
+            return Color.gray.opacity(0.3)
+        }
+    }
 }
