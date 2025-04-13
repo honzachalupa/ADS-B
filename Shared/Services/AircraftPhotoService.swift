@@ -125,4 +125,10 @@ class AircraftPhotoService: ObservableObject {
         cancellables.removeAll()
         isLoading = false
     }
+    
+    func clearPhoto() {
+        // Clear the current photo to prevent showing the previous aircraft's photo
+        // while loading the new one
+        photo = nil
+    }
 }

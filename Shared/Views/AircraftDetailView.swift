@@ -11,14 +11,21 @@ struct AircraftDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let photo = photoService.photo {
-                    Section {
-                        photo
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
+                Section {
+                    HStack {
+                        if let photo = photoService.photo {
+                            photo
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity)
+                                .padding(-20)
+                        } else if photoService.isLoading {
+                            ProgressView()
+                            Text("Downloading photo...")
+                        } else {
+                            Text("No photo available")
+                        }
                     }
-                    .listRowInsets(EdgeInsets())
                 }
                 
                 if let emergency = aircraftUpdated.emergency, aircraftUpdated.isEmergency {
@@ -30,23 +37,12 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                if isShowDetails {
-                    Section {
-                        LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
-                        LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
-                    }
-                }
-                
-                Section("Category") {
-                    if isShowDetails {
-                        LabeledContent("Description") { Text(aircraftUpdated.formattedCategoryDescription) }
+                Section("Flight") {
+                    LabeledContent("Flight") {
+                        Text(aircraftUpdated.formattedFlight)
+                            .fontWeight(.bold)
                     }
                     
-                    LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
-                    LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
-                }
-                
-                Section("Flight") {
                     LabeledContent("Registration") {
                         Text(aircraftUpdated.r ?? "-")
                     }
@@ -93,6 +89,22 @@ struct AircraftDetailView: View {
                             Text("-")
                         }
                     }
+                }
+                
+                if isShowDetails {
+                    Section("Aircraft") {
+                        LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
+                        LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
+                    }
+                }
+                
+                Section("Category") {
+                    if isShowDetails {
+                        LabeledContent("Description") { Text(aircraftUpdated.formattedCategoryDescription) }
+                    }
+                    
+                    LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
+                    LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
                 }
                 
                 if isShowDetails {
@@ -168,11 +180,14 @@ struct AircraftDetailView: View {
                 
                 Toggle("Show details", isOn: $isShowDetails)
             }
-            .navigationTitle(aircraftUpdated.formattedFlight)
         }
         .onAppear {
+            photoService.clearPhoto()
             photoService.fetchPhoto(for: aircraftUpdated)
         }
     }
+}
 
+#Preview {
+    // AircraftDetailView()
 }

@@ -1,15 +1,15 @@
 import SwiftUI
 
-let SETTINGS_SHOW_REGULAR_AIRCRAFT_KEY = "settings_showRegularAircraft"
-let SETTINGS_SHOW_PIA_AIRCRAFT_KEY = "settings_showPIAAircraft"
-let SETTINGS_SHOW_MILITARY_AIRCRAFT_KEY = "settings_showMilitaryAircraft"
-let SETTINGS_SHOW_LADD_AIRCRAFT_KEY = "settings_showLADDAircraft"
+let FILTER_SHOW_REGULAR_AIRCRAFT_KEY = "filter_showRegularAircraft"
+let FILTER_SHOW_PIA_AIRCRAFT_KEY = "filter_showPIAAircraft"
+let FILTER_SHOW_MILITARY_AIRCRAFT_KEY = "filter_showMilitaryAircraft"
+let FILTER_SHOW_LADD_AIRCRAFT_KEY = "filter_showLADDAircraft"
 
 struct MapFilter: View {
-    @AppStorage(SETTINGS_SHOW_REGULAR_AIRCRAFT_KEY) private var showRegularAircraft: Bool = true
-    @AppStorage(SETTINGS_SHOW_PIA_AIRCRAFT_KEY) private var showPIAAircraft: Bool = false
-    @AppStorage(SETTINGS_SHOW_MILITARY_AIRCRAFT_KEY) private var showMilitaryAircraft: Bool = false
-    @AppStorage(SETTINGS_SHOW_LADD_AIRCRAFT_KEY) private var showLADDAircraft: Bool = false
+    @AppStorage(FILTER_SHOW_REGULAR_AIRCRAFT_KEY) private var showRegularAircraft: Bool = true
+    @AppStorage(FILTER_SHOW_PIA_AIRCRAFT_KEY) private var showPIAAircraft: Bool = true
+    @AppStorage(FILTER_SHOW_MILITARY_AIRCRAFT_KEY) private var showMilitaryAircraft: Bool = true
+    @AppStorage(FILTER_SHOW_LADD_AIRCRAFT_KEY) private var showLADDAircraft: Bool = true
     
     var body: some View {
         Menu {
