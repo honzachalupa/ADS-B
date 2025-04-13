@@ -38,36 +38,7 @@ class AircraftService: ObservableObject {
     // Singleton instance
     static let shared = AircraftService()
     
-    // UserDefaults observation
-    private var filterObserver: NSObjectProtocol?
-    
-    private init() {
-        // Set up UserDefaults observation for filter changes
-        setupUserDefaultsObservation()
-    }
-    
-    deinit {
-        if let observer = filterObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
-    
-    private func setupUserDefaultsObservation() {
-        // Observe UserDefaults changes for filter settings
-        filterObserver = NotificationCenter.default.addObserver(
-            forName: UserDefaults.didChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            // When UserDefaults change, refresh the aircraft data if we have a location
-            if let location = LocationManager.shared.location {
-                self?.fetchAllSelectedAircraftTypes(
-                    latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude
-                )
-            }
-        }
-    }
+    private init() {}
     
     @Published var aircrafts: [Aircraft] = []
     @Published var isLoading: Bool = false
@@ -311,6 +282,9 @@ class AircraftService: ObservableObject {
         }.eraseToAnyPublisher()
     }
     
+    // Timer for polling
+    private var refreshTimer: Timer?
+    
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
         // Get the fetch interval from settings
@@ -320,27 +294,38 @@ class AircraftService: ObservableObject {
         let interval = fetchInterval > 0 ? fetchInterval : 5.0
         
         // Cancel any existing timers
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
+        stopPolling()
         
-        // Starting aircraft polling with the configured interval
+        print("[AircraftService] ⏱️ Starting aircraft polling with interval: \(interval) seconds")
         
-        // Create a timer that fetches aircraft data at the specified interval
-        Timer.publish(every: interval, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                self?.fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
-            }
-            .store(in: &cancellables)
+        // Create a timer using the traditional method which is more reliable
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            print("[AircraftService] 🔄 Refreshing aircraft data...")
+            self.fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
+        }
+        
+        // Add the timer to the RunLoop to ensure it fires
+        if let timer = refreshTimer {
+            RunLoop.main.add(timer, forMode: .common)
+        }
         
         // Initial fetch
+        print("[AircraftService] 🚀 Initial aircraft data fetch")
         fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
     }
     
     // Stop polling
     func stopPolling() {
+        // Cancel any existing Combine publishers
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
+        
+        // Invalidate the timer
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+        
+        print("[AircraftService] ⏹️ Polling stopped")
     }
     
     // MARK: - Cache Management
@@ -368,6 +353,8 @@ class AircraftService: ObservableObject {
         let showMilitary = UserDefaults.standard.bool(forKey: "settings_showMilitaryAircraft")
         let showLADD = UserDefaults.standard.bool(forKey: "settings_showLADDAircraft")
         
+        print("[AircraftService] 🔍 Filter settings - Regular: \(showRegular), PIA: \(showPIA), Military: \(showMilitary), LADD: \(showLADD)")
+        
         // Filter cached aircraft based on user preferences
         let filteredAircraft = aircraftCache.values.filter { cachedAircraft in
             switch cachedAircraft.endpointType {
@@ -381,6 +368,8 @@ class AircraftService: ObservableObject {
                 return showLADD
             }
         }.map { $0.aircraft }
+        
+        print("[AircraftService] ✅ Filtered aircraft count: \(filteredAircraft.count)")
         
         return filteredAircraft.sorted { a, b in
             // Sort by distance or altitude if available

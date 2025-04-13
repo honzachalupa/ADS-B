@@ -248,35 +248,309 @@ extension Aircraft {
     func getManufacturer() -> String {
         guard let type = t else { return "-" }
         
-        let manufacturerPrefixes: [String: String] = [
-            "A3": "Airbus",
-            "A2": "Airbus",
-            "A1": "Airbus",
-            "B7": "Boeing",
-            "B6": "Boeing",
-            "B5": "Boeing",
-            "B4": "Boeing",
-            "B3": "Boeing",
-            "B2": "Boeing",
-            "B1": "Boeing",
-            "E": "Embraer",
-            "CRJ": "Bombardier",
-            "DH": "De Havilland",
-            "AT": "ATR",
-            "BE": "Beechcraft",
-            "C": "Cessna",
-            "PA": "Piper",
-            "G": "Gulfstream",
-            "MD": "McDonnell Douglas",
-            "F": "Fokker"
+        // First check for military aircraft designations
+        if type.contains("-") {
+            let components = type.components(separatedBy: "-")
+            if components.count > 1 {
+                let prefix = components[0].trimmingCharacters(in: .whitespaces)
+                
+                // Military aircraft designations
+                switch prefix {
+                case "C": return "Military Transport"
+                case "F": return "Military Fighter"
+                case "B": return "Military Bomber"
+                case "A": return "Military Attack"
+                case "E": return "Military Electronic"
+                case "KC", "K": return "Military Tanker"
+                case "P": return "Military Patrol"
+                case "R": return "Military Reconnaissance"
+                case "T": return "Military Trainer"
+                case "U": return "Military Utility"
+                default: break
+                }
+            }
+        }
+        
+        // More comprehensive manufacturer mapping
+        let manufacturerMap: [(pattern: String, manufacturer: String)] = [
+            // Airbus
+            ("A3", "Airbus"),
+            ("A2", "Airbus"),
+            ("A1", "Airbus"),
+            ("A30", "Airbus"),
+            ("A31", "Airbus"),
+            ("A32", "Airbus"),
+            ("A33", "Airbus"),
+            ("A34", "Airbus"),
+            ("A35", "Airbus"),
+            ("A38", "Airbus"),
+            
+            // Boeing
+            ("B7", "Boeing"),
+            ("B6", "Boeing"),
+            ("B5", "Boeing"),
+            ("B4", "Boeing"),
+            ("B3", "Boeing"),
+            ("B2", "Boeing"),
+            ("B1", "Boeing"),
+            ("B77", "Boeing"),
+            ("B76", "Boeing"),
+            ("B75", "Boeing"),
+            ("B74", "Boeing"),
+            ("B73", "Boeing"),
+            ("B72", "Boeing"),
+            ("B71", "Boeing"),
+            ("B70", "Boeing"),
+            ("B38", "Boeing"),
+            ("B39", "Boeing"),
+            ("B78", "Boeing"),
+            
+            // Bombardier
+            ("CRJ", "Bombardier"),
+            ("CL6", "Bombardier"),
+            ("BD", "Bombardier"),
+            ("DH8", "Bombardier"),
+            ("DHC", "Bombardier"),
+            
+            // Embraer
+            ("E1", "Embraer"),
+            ("E2", "Embraer"),
+            ("E3", "Embraer"),
+            ("E4", "Embraer"),
+            ("E5", "Embraer"),
+            ("E17", "Embraer"),
+            ("E19", "Embraer"),
+            ("E75", "Embraer"),
+            ("E90", "Embraer"),
+            ("E95", "Embraer"),
+            ("ERJ", "Embraer"),
+            
+            // ATR
+            ("AT", "ATR"),
+            ("AT4", "ATR"),
+            ("AT7", "ATR"),
+            
+            ("C17", "Boeing"),
+            ("C5", "Lockheed"),
+            
+            // Cessna
+            ("C", "Cessna"),
+            ("C1", "Cessna"),
+            ("C2", "Cessna"),
+            ("C25", "Cessna"),
+            ("C56", "Cessna"),
+            ("C72", "Cessna"),
+            ("C82", "Cessna"),
+            ("C20", "Cessna"),
+            ("C21", "Cessna"),
+            
+            // Beechcraft
+            ("BE", "Beechcraft"),
+            ("BE1", "Beechcraft"),
+            ("BE2", "Beechcraft"),
+            ("BE3", "Beechcraft"),
+            ("BE4", "Beechcraft"),
+            ("BE9", "Beechcraft"),
+            ("BE10", "Beechcraft"),
+            ("BE20", "Beechcraft"),
+            ("BE35", "Beechcraft"),
+            ("BE36", "Beechcraft"),
+            ("BE40", "Beechcraft"),
+            ("BE55", "Beechcraft"),
+            ("BE58", "Beechcraft"),
+            ("BE60", "Beechcraft"),
+            ("BE76", "Beechcraft"),
+            ("BE99", "Beechcraft"),
+            ("BE10", "Beechcraft"),
+            ("BE20", "Beechcraft"),
+            ("BE30", "Beechcraft"),
+            ("BE40", "Beechcraft"),
+            
+            // Piper
+            ("PA", "Piper"),
+            ("PA2", "Piper"),
+            ("PA3", "Piper"),
+            ("PA4", "Piper"),
+            ("PA6", "Piper"),
+            ("PA18", "Piper"),
+            ("PA23", "Piper"),
+            ("PA24", "Piper"),
+            ("PA28", "Piper"),
+            ("PA31", "Piper"),
+            ("PA32", "Piper"),
+            ("PA34", "Piper"),
+            ("PA44", "Piper"),
+            ("PA46", "Piper"),
+            
+            // Gulfstream
+            ("G", "Gulfstream"),
+            ("G1", "Gulfstream"),
+            ("G2", "Gulfstream"),
+            ("G3", "Gulfstream"),
+            ("G4", "Gulfstream"),
+            ("G5", "Gulfstream"),
+            ("G6", "Gulfstream"),
+            ("G7", "Gulfstream"),
+            ("GLF", "Gulfstream"),
+            
+            // McDonnell Douglas
+            ("MD", "McDonnell Douglas"),
+            ("MD8", "McDonnell Douglas"),
+            ("MD9", "McDonnell Douglas"),
+            ("MD1", "McDonnell Douglas"),
+            ("DC", "McDonnell Douglas"),
+            
+            // Fokker
+            ("F", "Fokker"),
+            ("F7", "Fokker"),
+            ("F10", "Fokker"),
+            ("F27", "Fokker"),
+            ("F28", "Fokker"),
+            ("F50", "Fokker"),
+            ("F70", "Fokker"),
+            ("F10", "Fokker"),
+            
+            // Dassault
+            ("FA", "Dassault"),
+            ("FA7", "Dassault"),
+            ("FA8", "Dassault"),
+            ("FA9", "Dassault"),
+            ("F90", "Dassault"),
+            ("F20", "Dassault"),
+            ("F50", "Dassault"),
+            ("F90", "Dassault"),
+            
+            // Learjet
+            ("LJ", "Learjet"),
+            ("LR", "Learjet"),
+            
+            // Cirrus
+            ("SR", "Cirrus"),
+            ("SR2", "Cirrus"),
+            ("SR22", "Cirrus"),
+            
+            // Pilatus
+            ("PC", "Pilatus"),
+            ("PC6", "Pilatus"),
+            ("PC12", "Pilatus"),
+            ("PC24", "Pilatus"),
+            
+            // Sikorsky (Helicopters)
+            ("S", "Sikorsky"),
+            ("S76", "Sikorsky"),
+            ("S92", "Sikorsky"),
+            
+            // Bell (Helicopters)
+            ("B06", "Bell"),
+            ("B47", "Bell"),
+            ("B20", "Bell"),
+            ("B42", "Bell"),
+            ("B42", "Bell"),
+            ("B429", "Bell"),
+            
+            // Eurocopter/Airbus Helicopters
+            ("EC", "Airbus Helicopters"),
+            ("EC3", "Airbus Helicopters"),
+            ("EC45", "Airbus Helicopters"),
+            ("AS", "Airbus Helicopters"),
+            ("H1", "Airbus Helicopters"),
+            ("H6", "Airbus Helicopters"),
+            
+            // Robinson (Helicopters)
+            ("R22", "Robinson"),
+            ("R44", "Robinson"),
+            ("R66", "Robinson"),
+            
+            // De Havilland
+            ("DH", "De Havilland"),
+            
+            // Antonov
+            ("AN", "Antonov"),
+            ("AN2", "Antonov"),
+            ("AN12", "Antonov"),
+            ("AN24", "Antonov"),
+            ("AN26", "Antonov"),
+            ("AN28", "Antonov"),
+            ("AN30", "Antonov"),
+            ("AN32", "Antonov"),
+            ("AN72", "Antonov"),
+            ("AN74", "Antonov"),
+            ("AN124", "Antonov"),
+            ("AN225", "Antonov"),
+            
+            // Tupolev
+            ("TU", "Tupolev"),
+            ("TU1", "Tupolev"),
+            ("TU2", "Tupolev"),
+            ("TU9", "Tupolev"),
+            ("TU16", "Tupolev"),
+            ("TU95", "Tupolev"),
+            ("TU134", "Tupolev"),
+            ("TU154", "Tupolev"),
+            ("TU204", "Tupolev"),
+            ("TU214", "Tupolev"),
+            
+            // Ilyushin
+            ("IL", "Ilyushin"),
+            ("IL1", "Ilyushin"),
+            ("IL2", "Ilyushin"),
+            ("IL6", "Ilyushin"),
+            ("IL7", "Ilyushin"),
+            ("IL8", "Ilyushin"),
+            ("IL9", "Ilyushin"),
+            ("IL14", "Ilyushin"),
+            ("IL18", "Ilyushin"),
+            ("IL62", "Ilyushin"),
+            ("IL76", "Ilyushin"),
+            ("IL86", "Ilyushin"),
+            ("IL96", "Ilyushin"),
+            
+            // Sukhoi
+            ("SU", "Sukhoi"),
+            ("SU9", "Sukhoi"),
+            ("SU24", "Sukhoi"),
+            ("SU25", "Sukhoi"),
+            ("SU27", "Sukhoi"),
+            ("SU30", "Sukhoi"),
+            ("SU33", "Sukhoi"),
+            ("SU34", "Sukhoi"),
+            ("SU35", "Sukhoi"),
+            ("SU57", "Sukhoi"),
+            ("SU95", "Sukhoi"),
+            ("SU100", "Sukhoi"),
+            
+            // Yakovlev
+            ("YK", "Yakovlev"),
+            ("YAK", "Yakovlev"),
+            
+            // Lockheed Martin
+            ("L", "Lockheed Martin"),
+            ("L1", "Lockheed Martin"),
+            ("L10", "Lockheed Martin"),
+            ("L18", "Lockheed Martin"),
+            ("L18", "Lockheed Martin"),
+            ("L10", "Lockheed Martin"),
+            ("L40", "Lockheed Martin"),
+            ("L10", "Lockheed Martin"),
+            ("L38", "Lockheed Martin")
         ]
         
-        for (prefix, manufacturer) in manufacturerPrefixes {
-            if type.hasPrefix(prefix) {
+        // Try to find a match from our detailed mapping
+        for (pattern, manufacturer) in manufacturerMap {
+            if type.hasPrefix(pattern) {
                 return manufacturer
             }
         }
         
+        // Special case for common military aircraft that don't follow standard patterns
+        if type.contains("HAWK") { return "BAE Systems" }
+        if type.contains("GRIPEN") { return "Saab" }
+        if type.contains("EUFI") || type.contains("TYPHOON") { return "Eurofighter" }
+        if type.contains("RAFALE") { return "Dassault" }
+        if type.contains("MIRAGE") { return "Dassault" }
+        if type.contains("MIG") { return "Mikoyan" }
+        
+        // If we couldn't identify the manufacturer
         return "-"
     }
 }
