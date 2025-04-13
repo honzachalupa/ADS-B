@@ -1,6 +1,11 @@
 import SwiftUI
 import Combine
 
+let FILTER_SHOW_REGULAR_AIRCRAFT_KEY = "filter_showRegularAircraft"
+let FILTER_SHOW_PIA_AIRCRAFT_KEY = "filter_showPIAAircraft"
+let FILTER_SHOW_MILITARY_AIRCRAFT_KEY = "filter_showMilitaryAircraft"
+let FILTER_SHOW_LADD_AIRCRAFT_KEY = "filter_showLADDAircraft"
+
 enum AircraftEndpointType {
     case regular(latitude: Double, longitude: Double, radius: Int)
     case pia
@@ -230,11 +235,10 @@ class AircraftService: ObservableObject {
     
     // Fetch all selected aircraft types based on user settings
     func fetchAllSelectedAircraftTypes(latitude: Double, longitude: Double) {
-        // Get user preferences for which aircraft types to show
-        let showRegular = UserDefaults.standard.bool(forKey: "settings_showRegularAircraft")
-        let showPIA = UserDefaults.standard.bool(forKey: "settings_showPIAAircraft")
-        let showMilitary = UserDefaults.standard.bool(forKey: "settings_showMilitaryAircraft")
-        let showLADD = UserDefaults.standard.bool(forKey: "settings_showLADDAircraft")
+        let showRegular = UserDefaults.standard.bool(forKey: FILTER_SHOW_REGULAR_AIRCRAFT_KEY)
+        let showPIA = UserDefaults.standard.bool(forKey: FILTER_SHOW_PIA_AIRCRAFT_KEY)
+        let showMilitary = UserDefaults.standard.bool(forKey: FILTER_SHOW_MILITARY_AIRCRAFT_KEY)
+        let showLADD = UserDefaults.standard.bool(forKey: FILTER_SHOW_LADD_AIRCRAFT_KEY)
         
         // Get the search range from settings
         let searchRange = UserDefaults.standard.double(forKey: "settings_searchRange")
@@ -348,10 +352,10 @@ class AircraftService: ObservableObject {
     // Get a combined list of aircraft from the current response and recent cache
     private func getCombinedAircraftList() -> [Aircraft] {
         // Get user preferences for which aircraft types to show
-        let showRegular = UserDefaults.standard.bool(forKey: "settings_showRegularAircraft")
-        let showPIA = UserDefaults.standard.bool(forKey: "settings_showPIAAircraft")
-        let showMilitary = UserDefaults.standard.bool(forKey: "settings_showMilitaryAircraft")
-        let showLADD = UserDefaults.standard.bool(forKey: "settings_showLADDAircraft")
+        let showRegular = UserDefaults.standard.bool(forKey: FILTER_SHOW_REGULAR_AIRCRAFT_KEY)
+        let showPIA = UserDefaults.standard.bool(forKey: FILTER_SHOW_PIA_AIRCRAFT_KEY)
+        let showMilitary = UserDefaults.standard.bool(forKey: FILTER_SHOW_MILITARY_AIRCRAFT_KEY)
+        let showLADD = UserDefaults.standard.bool(forKey: FILTER_SHOW_LADD_AIRCRAFT_KEY)
         
         print("[AircraftService] 🔍 Filter settings - Regular: \(showRegular), PIA: \(showPIA), Military: \(showMilitary), LADD: \(showLADD)")
         

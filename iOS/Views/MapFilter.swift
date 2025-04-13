@@ -1,10 +1,5 @@
 import SwiftUI
 
-let FILTER_SHOW_REGULAR_AIRCRAFT_KEY = "filter_showRegularAircraft"
-let FILTER_SHOW_PIA_AIRCRAFT_KEY = "filter_showPIAAircraft"
-let FILTER_SHOW_MILITARY_AIRCRAFT_KEY = "filter_showMilitaryAircraft"
-let FILTER_SHOW_LADD_AIRCRAFT_KEY = "filter_showLADDAircraft"
-
 struct MapFilter: View {
     @AppStorage(FILTER_SHOW_REGULAR_AIRCRAFT_KEY) private var showRegularAircraft: Bool = true
     @AppStorage(FILTER_SHOW_PIA_AIRCRAFT_KEY) private var showPIAAircraft: Bool = true
