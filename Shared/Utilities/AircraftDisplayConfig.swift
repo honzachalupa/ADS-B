@@ -1,9 +1,6 @@
 import SwiftUI
 
-// Shared configuration for aircraft display styles
 struct AircraftDisplayConfig {
-    
-    // Aircraft type definitions
     enum AircraftType {
         case emergency
         case military
@@ -13,7 +10,6 @@ struct AircraftDisplayConfig {
         case groundVehicle
         case tower
         
-        // Display name for the legend
         var displayName: String {
             switch self {
                 case .emergency: return "Emergency"
@@ -26,42 +22,36 @@ struct AircraftDisplayConfig {
             }
         }
         
-        // SF Symbol icon name
         var iconName: String {
             switch self {
-                case .emergency, .military, .helicopter, .lightAircraft, .commercial:
-                    return "airplane"
-                case .groundVehicle:
-                    return "car.fill"
-                case .tower:
-                    return "antenna.radiowaves.left.and.right"
+                case .emergency, .military, .lightAircraft, .commercial: return "airplane"
+                case .helicopter: return "fanblades"
+                case .groundVehicle: return "car.fill"
+                case .tower: return "antenna.radiowaves.left.and.right"
             }
         }
         
-        // Color for the aircraft type
         var color: Color {
             switch self {
                 case .emergency: return .red
                 case .military: return .green
-                case .helicopter: return .purple
-                case .lightAircraft: return .mint
-                case .commercial: return .blue
-                case .groundVehicle: return .gray
-                case .tower: return .gray
+                case .groundVehicle, .tower: return .gray
+                default: return .blue
+            }
+        }
+        
+        var scale: CGFloat {
+            switch self {
+                case .lightAircraft, .helicopter: return 0.7
+                default: return 1
             }
         }
     }
     
-    // Determine aircraft type based on aircraft data
     static func getAircraftType(for aircraft: Aircraft) -> AircraftType {
         // Emergency aircraft always take priority
         if aircraft.isEmergency {
             return .emergency
-        }
-        
-        // Force military type for aircraft from military endpoint
-        if aircraft.forcedMilitaryType {
-            return .military
         }
         
         // Non-aircraft types

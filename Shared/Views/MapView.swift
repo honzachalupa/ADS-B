@@ -20,6 +20,8 @@ struct MapView: View {
                     let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
                     let isSimpleLabel = !isInfoBoxEnabled || hasNoData
                     
+                    let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
+                    
                     Annotation(
                         isSimpleLabel ? code : "",
                         coordinate: CLLocationCoordinate2D(
@@ -28,19 +30,20 @@ struct MapView: View {
                         ),
                         anchor: .top
                     ) {
-                        VStack(spacing: 0) {
+                        VStack {
                             ZStack {
                                 Circle()
                                     .fill(.thinMaterial)
                                     .frame(width: 30, height: 30)
                                 
-                                Image(systemName: AircraftDisplayConfig.getIconName(for: aircraft))
+                                Image(systemName: aircraftType.iconName)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 15, height: 15)
-                                    .foregroundStyle(AircraftDisplayConfig.getColor(for: aircraft))
+                                    .foregroundStyle(aircraftType.color)
                                     .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                             }
+                            .scaleEffect(aircraftType.scale)
                             
                             if !isSimpleLabel {
                                 VStack {
@@ -62,7 +65,6 @@ struct MapView: View {
                                 .padding(.vertical, 2)
                                 .background(.thickMaterial)
                                 .cornerRadius(4)
-                                .padding(.top, 3)
                             }
                         }
                     }
