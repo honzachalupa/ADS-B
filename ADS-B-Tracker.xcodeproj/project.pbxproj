@@ -11,9 +11,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2108CD912DADA59C009469DD /* ADS-B-Tracker */ = {
+		2108CD912DADA59C009469DD /* iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "ADS-B-Tracker";
+			path = iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		2108CD862DADA59C009469DD = {
 			isa = PBXGroup;
 			children = (
-				2108CD912DADA59C009469DD /* ADS-B-Tracker */,
+				2108CD912DADA59C009469DD /* iOS */,
 				2108CD902DADA59C009469DD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2108CD912DADA59C009469DD /* ADS-B-Tracker */,
+				2108CD912DADA59C009469DD /* iOS */,
 			);
 			name = "ADS-B-Tracker";
 			packageProductDependencies = (
