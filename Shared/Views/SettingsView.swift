@@ -14,6 +14,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Filter") {
+                    MapFilterTogglesView()
+                }
+                
                 Section {
                     Toggle("Show info box below aircraft icon", isOn: $isInfoBoxEnabled)
                     Toggle("Use metric units", isOn: $isMetricUnits)

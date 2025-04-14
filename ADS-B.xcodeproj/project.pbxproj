@@ -54,6 +54,7 @@
 				Utilities/FlightData.swift,
 				Views/AircraftDetailView.swift,
 				Views/ListView.swift,
+				Views/MapFilterView.swift,
 				Views/MapView.swift,
 				Views/SettingsView.swift,
 			);

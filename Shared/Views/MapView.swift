@@ -103,7 +103,7 @@ struct MapView: View {
             }
             
 #if os(iOS)
-            MapFilter()
+            MapFilterView()
                 .padding(5)
 #endif
         }
