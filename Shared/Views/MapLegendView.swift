@@ -1,27 +1,31 @@
 import SwiftUI
 
-struct MapLegendView: View {
+struct MapLegendView<Content: View>: View {
+    @ViewBuilder let label: Content
     @State var isLegendPopupPresented: Bool = false
     
     var body: some View {
         Button {
             isLegendPopupPresented.toggle()
         } label: {
-            Image(systemName: "info.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 20)
-                .padding(12)
-                .background(.thickMaterial)
-                .cornerRadius(8)
-                .fontWeight(.medium)
+            label
         }
         .sheet(isPresented: $isLegendPopupPresented) {
             List {
                 Section("Legend") {
                     ForEach(AircraftDisplayConfig.legendItems) { item in
-                        ListItemIconView(color: item.color, label: item.label, iconName: item.iconName)
+                        ListItemIconView(label: item.label, iconName: item.iconName)
                     }
+                }
+                
+                HStack {
+                    Text("Regular aircrafts are") +
+                    Text(" blue ")
+                        .foregroundColor(.blue) +
+                    Text("and military aircrafts are") +
+                    Text(" green")
+                        .foregroundColor(.green) +
+                    Text(".")
                 }
             }
             .presentationDetents([.medium])
@@ -30,5 +34,7 @@ struct MapLegendView: View {
 }
 
 #Preview {
-    MapLegendView()
+    MapLegendView {
+        Text("Legend")
+    }
 }

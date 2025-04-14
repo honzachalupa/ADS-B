@@ -246,30 +246,7 @@ struct Aircraft: Codable, Identifiable, Equatable, Hashable {
 
 extension Aircraft {
     func getManufacturer() -> String {
-        guard let type = t else { return "-" }
-        
-        // First check for military aircraft designations
-        if type.contains("-") {
-            let components = type.components(separatedBy: "-")
-            if components.count > 1 {
-                let prefix = components[0].trimmingCharacters(in: .whitespaces)
-                
-                // Military aircraft designations
-                switch prefix {
-                case "C": return "Military Transport"
-                case "F": return "Military Fighter"
-                case "B": return "Military Bomber"
-                case "A": return "Military Attack"
-                case "E": return "Military Electronic"
-                case "KC", "K": return "Military Tanker"
-                case "P": return "Military Patrol"
-                case "R": return "Military Reconnaissance"
-                case "T": return "Military Trainer"
-                case "U": return "Military Utility"
-                default: break
-                }
-            }
-        }
+        guard let t = t else { return "-" }
         
         // More comprehensive manufacturer mapping
         let manufacturerMap: [(pattern: String, manufacturer: String)] = [
@@ -537,18 +514,18 @@ extension Aircraft {
         
         // Try to find a match from our detailed mapping
         for (pattern, manufacturer) in manufacturerMap {
-            if type.hasPrefix(pattern) {
+            if t.hasPrefix(pattern) {
                 return manufacturer
             }
         }
         
         // Special case for common military aircraft that don't follow standard patterns
-        if type.contains("HAWK") { return "BAE Systems" }
-        if type.contains("GRIPEN") { return "Saab" }
-        if type.contains("EUFI") || type.contains("TYPHOON") { return "Eurofighter" }
-        if type.contains("RAFALE") { return "Dassault" }
-        if type.contains("MIRAGE") { return "Dassault" }
-        if type.contains("MIG") { return "Mikoyan" }
+        if t.contains("HAWK") { return "BAE Systems" }
+        if t.contains("GRIPEN") { return "Saab" }
+        if t.contains("EUFI") || t.contains("TYPHOON") { return "Eurofighter" }
+        if t.contains("RAFALE") { return "Dassault" }
+        if t.contains("MIRAGE") { return "Dassault" }
+        if t.contains("MIG") { return "Mikoyan" }
         
         // If we couldn't identify the manufacturer
         return "-"

@@ -14,27 +14,27 @@ enum AircraftEndpointType {
     
     var urlPath: String {
         switch self {
-        case .regular(let latitude, let longitude, let radius):
-            return "/lat/\(latitude)/lon/\(longitude)/dist/\(radius)"
-        case .pia:
-            return "/pia"
-        case .military:
-            return "/mil"
-        case .ladd:
-            return "/ladd"
+            case .regular(let latitude, let longitude, let radius):
+                return "/lat/\(latitude)/lon/\(longitude)/dist/\(radius)"
+            case .pia:
+                return "/pia"
+            case .military:
+                return "/mil"
+            case .ladd:
+                return "/ladd"
         }
     }
     
     var description: String {
         switch self {
-        case .regular:
-            return "Regular Aircraft"
-        case .pia:
-            return "Privacy ICAO Address Aircraft"
-        case .military:
-            return "Military Aircraft"
-        case .ladd:
-            return "Limited Aircraft Data Display Aircraft"
+            case .regular:
+                return "Regular Aircraft"
+            case .pia:
+                return "Privacy ICAO Address Aircraft"
+            case .military:
+                return "Military Aircraft"
+            case .ladd:
+                return "Limited Aircraft Data Display Aircraft"
         }
     }
 }

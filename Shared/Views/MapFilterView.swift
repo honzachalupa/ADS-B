@@ -6,14 +6,7 @@ struct MapFilterView: View {
         Menu {
             MapFilterTogglesView()
         } label: {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 20)
-                .padding(12)
-                .background(.thickMaterial)
-                .cornerRadius(8)
-                .fontWeight(.medium)
+            MapControlView(iconName: "line.3.horizontal.decrease.circle")
         }
 #endif
     }

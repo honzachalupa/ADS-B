@@ -17,7 +17,9 @@ struct SettingsView: View {
 #if os(watchOS)
                 Section("Filter") {
                     MapFilterTogglesView()
-                    MapLegendView()
+                    MapLegendView {
+                        Text("Legend")
+                    }
                 }
 #endif
                 

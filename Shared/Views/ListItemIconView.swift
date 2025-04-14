@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct ListItemIconView: View {
-    let color: Color
     let label: String
     let iconName: String
+    let color: Color
     
-    init(color: Color, label: String, iconName: String = "airplane") {
-        self.color = color
+    init(label: String, iconName: String, color: Color = .blue) {
         self.label = label
         self.iconName = iconName
+        self.color = color
     }
     
     var body: some View {
@@ -22,7 +22,6 @@ struct ListItemIconView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 12, height: 12)
-                    .foregroundStyle(color)
             }
             
             Text(label)

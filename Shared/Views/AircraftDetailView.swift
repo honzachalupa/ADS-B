@@ -89,27 +89,14 @@ struct AircraftDetailView: View {
                 }
                 
                 Section("Aircraft") {
-                    let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraftUpdated)
-                    
-                    ListItemIconView(
-                        color: aircraftType.color,
-                        label: aircraftType.displayName,
-                        iconName: aircraftType.iconName
-                    )
+                    LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
+                    LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
                     
                     if isShowDetails {
+                        LabeledContent("Description") { Text(aircraftUpdated.formattedCategoryDescription) }
                         LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
                         LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
                     }
-                }
-                
-                Section("Category") {
-                    if isShowDetails {
-                        LabeledContent("Description") { Text(aircraftUpdated.formattedCategoryDescription) }
-                    }
-                    
-                    LabeledContent("Manufacturer") { Text(aircraftUpdated.getManufacturer()) }
-                    LabeledContent("Model") { Text(aircraftUpdated.t ?? "-") }
                 }
                 
                 if isShowDetails {

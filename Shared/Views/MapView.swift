@@ -40,7 +40,7 @@ struct MapView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 15, height: 15)
-                                    .foregroundStyle(aircraftType.color)
+                                    .foregroundStyle(aircraft.type == "mlat" ? .green : .blue)
                                     .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                             }
                             .scaleEffect(aircraftType.scale)
@@ -106,7 +106,10 @@ struct MapView: View {
             
 #if os(iOS)
             VStack {
-                MapLegendView()
+                MapLegendView {
+                    MapControlView(iconName: "info.circle")
+                }
+                
                 MapFilterView()
             }
             .padding(5)
