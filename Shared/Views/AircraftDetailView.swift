@@ -88,8 +88,16 @@ struct AircraftDetailView: View {
                     }
                 }
                 
-                if isShowDetails {
-                    Section("Aircraft") {
+                Section("Aircraft") {
+                    let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraftUpdated)
+                    
+                    ListItemIconView(
+                        color: aircraftType.color,
+                        label: aircraftType.displayName,
+                        iconName: aircraftType.iconName
+                    )
+                    
+                    if isShowDetails {
                         LabeledContent("ICAO") { Text(aircraftUpdated.hex) }
                         LabeledContent("Type") { Text(aircraftUpdated.type ?? "-") }
                     }

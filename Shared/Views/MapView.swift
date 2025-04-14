@@ -34,11 +34,11 @@ struct MapView: View {
                                     .fill(.thinMaterial)
                                     .frame(width: 30, height: 30)
                                 
-                                Image(systemName: getMarkerIcon(for: aircraft))
+                                Image(systemName: AircraftDisplayConfig.getIconName(for: aircraft))
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 15, height: 15)
-                                    .foregroundStyle(getMarkerColor(for: aircraft))
+                                    .foregroundStyle(AircraftDisplayConfig.getColor(for: aircraft))
                                     .rotationEffect(aircraft.feederType == .aircraft ? .degrees(Double(aircraft.track ?? 0) - 90) : .degrees(0))
                             }
                             
@@ -103,31 +103,12 @@ struct MapView: View {
             }
             
 #if os(iOS)
-            MapFilterView()
-                .padding(5)
+            VStack {
+                MapLegendView()
+                MapFilterView()
+            }
+            .padding(5)
 #endif
-        }
-    }
-    
-    private func getMarkerColor(for aircraft: Aircraft) -> Color {
-        if aircraft.isEmergency {
-            return .red
-        }
-        
-        switch aircraft.feederType {
-            case .aircraft:
-                return Color.blue
-            default:
-                return Color.primary
-        }
-    }
-    
-    private func getMarkerIcon(for aircraft: Aircraft) -> String {
-        switch aircraft.feederType {
-            case .aircraft:
-                return "airplane"
-            default:
-                return "antenna.radiowaves.left.and.right"
         }
     }
 }

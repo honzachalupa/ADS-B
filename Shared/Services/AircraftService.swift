@@ -227,8 +227,8 @@ class AircraftService: ObservableObject {
     // Fetch aircraft around a specific location (convenience method)
     func fetchAircraftAroundLocation(latitude: Double, longitude: Double) {
         // Get the search range from settings, default to 100 if not set
-        let searchRange = UserDefaults.standard.double(forKey: "settings_searchRange")
-        let range = searchRange > 0 ? Int(searchRange) : 100
+        let searchRange = UserDefaults.standard.integer(forKey: "settings_searchRange")
+        let range = searchRange > 0 ? searchRange : 100
         
         fetchAircraft(from: .regular(latitude: latitude, longitude: longitude, radius: range))
     }
@@ -241,8 +241,8 @@ class AircraftService: ObservableObject {
         let showLADD = UserDefaults.standard.bool(forKey: FILTER_SHOW_LADD_AIRCRAFTS_KEY)
         
         // Get the search range from settings
-        let searchRange = UserDefaults.standard.double(forKey: "settings_searchRange")
-        let range = searchRange > 0 ? Int(searchRange) : 100
+        let searchRange = UserDefaults.standard.integer(forKey: "settings_searchRange")
+        let range = searchRange > 0 ? searchRange : 100
         
         // Cancel any existing requests
         cancellables.forEach { $0.cancel() }
@@ -292,10 +292,10 @@ class AircraftService: ObservableObject {
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
         // Get the fetch interval from settings
-        let fetchInterval = UserDefaults.standard.double(forKey: "settings_fetchInterval")
+        let fetchInterval = UserDefaults.standard.integer(forKey: "settings_fetchInterval")
         
         // Use default of 5 seconds if not set
-        let interval = fetchInterval > 0 ? fetchInterval : 5.0
+        let interval = fetchInterval > 0 ? fetchInterval : 5
         
         // Cancel any existing timers
         stopPolling()
@@ -303,7 +303,7 @@ class AircraftService: ObservableObject {
         print("[AircraftService] ⏱️ Starting aircraft polling with interval: \(interval) seconds")
         
         // Create a timer using the traditional method which is more reliable
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(interval), repeats: true) { [weak self] _ in
             guard let self = self else { return }
             print("[AircraftService] 🔄 Refreshing aircraft data...")
             self.fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)

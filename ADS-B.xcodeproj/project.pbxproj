@@ -51,10 +51,13 @@
 				Services/AirportService.swift,
 				Services/AppLifecycleManager.swift,
 				Services/LocationManager.swift,
+				Utilities/AircraftDisplayConfig.swift,
 				Utilities/FlightData.swift,
 				Views/AircraftDetailView.swift,
+				Views/ListItemIconView.swift,
 				Views/ListView.swift,
 				Views/MapFilterView.swift,
+				Views/MapLegendView.swift,
 				Views/MapView.swift,
 				Views/SettingsView.swift,
 			);
