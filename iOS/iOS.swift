@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct iOS: App {
+struct ADS_B_TrackerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
