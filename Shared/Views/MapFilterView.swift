@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MapFilterView: View {
     var body: some View {
+#if os(iOS)
         Menu {
             MapFilterTogglesView()
         } label: {
@@ -14,6 +15,7 @@ struct MapFilterView: View {
                 .cornerRadius(8)
                 .fontWeight(.medium)
         }
+#endif
     }
 }
 
