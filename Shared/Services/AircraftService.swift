@@ -43,7 +43,26 @@ class AircraftService: ObservableObject {
     // Singleton instance
     static let shared = AircraftService()
     
-    private init() {}
+    private init() {
+        // Set default values for filter keys if not already set
+        let defaults = UserDefaults.standard
+        
+        if defaults.object(forKey: FILTER_SHOW_REGULAR_AIRCRAFTS_KEY) == nil {
+            defaults.set(true, forKey: FILTER_SHOW_REGULAR_AIRCRAFTS_KEY)
+        }
+        
+        if defaults.object(forKey: FILTER_SHOW_PIA_AIRCRAFTS_KEY) == nil {
+            defaults.set(true, forKey: FILTER_SHOW_PIA_AIRCRAFTS_KEY)
+        }
+        
+        if defaults.object(forKey: FILTER_SHOW_MILITARY_AIRCRAFTS_KEY) == nil {
+            defaults.set(true, forKey: FILTER_SHOW_MILITARY_AIRCRAFTS_KEY)
+        }
+        
+        if defaults.object(forKey: FILTER_SHOW_LADD_AIRCRAFTS_KEY) == nil {
+            defaults.set(true, forKey: FILTER_SHOW_LADD_AIRCRAFTS_KEY)
+        }
+    }
     
     @Published var aircrafts: [Aircraft] = []
     @Published var isLoading: Bool = false
