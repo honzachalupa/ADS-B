@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2108CD8E2DADA59C009469DD"
-               BuildableName = "ADS-B-Tracker.app"
-               BlueprintName = "ADS-B-Tracker"
-               ReferencedContainer = "container:ADS-B-Tracker.xcodeproj">
+               BuildableName = "ADS-B-Tracker123.app"
+               BlueprintName = "ADS-B-Tracker123"
+               ReferencedContainer = "container:ADS-B-Tracker123.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2108CD8E2DADA59C009469DD"
-            BuildableName = "ADS-B-Tracker.app"
-            BlueprintName = "ADS-B-Tracker"
-            ReferencedContainer = "container:ADS-B-Tracker.xcodeproj">
+            BuildableName = "ADS-B-Tracker123.app"
+            BlueprintName = "ADS-B-Tracker123"
+            ReferencedContainer = "container:ADS-B-Tracker123.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2108CD8E2DADA59C009469DD"
-            BuildableName = "ADS-B-Tracker.app"
-            BlueprintName = "ADS-B-Tracker"
-            ReferencedContainer = "container:ADS-B-Tracker.xcodeproj">
+            BuildableName = "ADS-B-Tracker123.app"
+            BlueprintName = "ADS-B-Tracker123"
+            ReferencedContainer = "container:ADS-B-Tracker123.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		2108CD8F2DADA59C009469DD /* ADS-B-Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ADS-B-Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2108CD8F2DADA59C009469DD /* ADS-B-Tracker123.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ADS-B-Tracker123.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		2108CD902DADA59C009469DD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2108CD8F2DADA59C009469DD /* ADS-B-Tracker.app */,
+				2108CD8F2DADA59C009469DD /* ADS-B-Tracker123.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2108CD8E2DADA59C009469DD /* ADS-B-Tracker */ = {
+		2108CD8E2DADA59C009469DD /* ADS-B-Tracker123 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2108CD9A2DADA59D009469DD /* Build configuration list for PBXNativeTarget "ADS-B-Tracker" */;
+			buildConfigurationList = 2108CD9A2DADA59D009469DD /* Build configuration list for PBXNativeTarget "ADS-B-Tracker123" */;
 			buildPhases = (
 				2108CD8B2DADA59C009469DD /* Sources */,
 				2108CD8C2DADA59C009469DD /* Frameworks */,
@@ -63,11 +63,11 @@
 			fileSystemSynchronizedGroups = (
 				2108CD912DADA59C009469DD /* iOS */,
 			);
-			name = "ADS-B-Tracker";
+			name = "ADS-B-Tracker123";
 			packageProductDependencies = (
 			);
-			productName = "ADS-B-Tracker";
-			productReference = 2108CD8F2DADA59C009469DD /* ADS-B-Tracker.app */;
+			productName = "ADS-B-Tracker123";
+			productReference = 2108CD8F2DADA59C009469DD /* ADS-B-Tracker123.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2108CD8A2DADA59C009469DD /* Build configuration list for PBXProject "ADS-B-Tracker" */;
+			buildConfigurationList = 2108CD8A2DADA59C009469DD /* Build configuration list for PBXProject "ADS-B-Tracker123" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2108CD8E2DADA59C009469DD /* ADS-B-Tracker */,
+				2108CD8E2DADA59C009469DD /* ADS-B-Tracker123 */,
 			);
 		};
 /* End PBXProject section */
@@ -309,7 +309,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2108CD8A2DADA59C009469DD /* Build configuration list for PBXProject "ADS-B-Tracker" */ = {
+		2108CD8A2DADA59C009469DD /* Build configuration list for PBXProject "ADS-B-Tracker123" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2108CD982DADA59D009469DD /* Debug */,
@@ -318,7 +318,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2108CD9A2DADA59D009469DD /* Build configuration list for PBXNativeTarget "ADS-B-Tracker" */ = {
+		2108CD9A2DADA59D009469DD /* Build configuration list for PBXNativeTarget "ADS-B-Tracker123" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2108CD9B2DADA59D009469DD /* Debug */,

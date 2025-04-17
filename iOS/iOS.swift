@@ -1,6 +1,6 @@
 //
 //  ADS_B_TrackerApp.swift
-//  ADS-B-Tracker
+//  ADS-B-Tracker123
 //
 //  Created by Jan Chalupa on 14.04.2025.
 //
