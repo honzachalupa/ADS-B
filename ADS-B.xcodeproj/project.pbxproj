@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		21E9A76F2DB1B4500012E63C /* SwiftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 21E9A76E2DB1B44F0012E63C /* SwiftCore */; };
+		21E9A7722DB1B5670012E63C /* SwiftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 21E9A7712DB1B5670012E63C /* SwiftCore */; };
 		21ECABCF2DA53F860088F44B /* ADS-B Tracker-Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -102,6 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21E9A76F2DB1B4500012E63C /* SwiftCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,12 +112,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21E9A7722DB1B5670012E63C /* SwiftCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		21E9A7702DB1B5670012E63C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		21ECAB7D2DA5109C0088F44B = {
 			isa = PBXGroup;
 			children = (
@@ -123,6 +134,7 @@
 				21ECABD62DA540B80088F44B /* Shared */,
 				21ECAB882DA5109C0088F44B /* iOS */,
 				21ECABC62DA53F840088F44B /* watchOS */,
+				21E9A7702DB1B5670012E63C /* Frameworks */,
 				21ECAB872DA5109C0088F44B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -159,6 +171,7 @@
 			);
 			name = "ADS-B Tracker";
 			packageProductDependencies = (
+				21E9A76E2DB1B44F0012E63C /* SwiftCore */,
 			);
 			productName = "ADS-B";
 			productReference = 21ECAB862DA5109C0088F44B /* ADS-B Tracker.app */;
@@ -181,6 +194,7 @@
 			);
 			name = "ADS-B Tracker-Watch Watch App";
 			packageProductDependencies = (
+				21E9A7712DB1B5670012E63C /* SwiftCore */,
 			);
 			productName = "ADS-B-Watch Watch App";
 			productReference = 21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */;
@@ -214,6 +228,7 @@
 			mainGroup = 21ECAB7D2DA5109C0088F44B;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				21E9A76D2DB1B44F0012E63C /* XCRemoteSwiftPackageReference "SwiftCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 21ECAB872DA5109C0088F44B /* Products */;
@@ -567,6 +582,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		21E9A76D2DB1B44F0012E63C /* XCRemoteSwiftPackageReference "SwiftCore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/honzachalupa/SwiftCore";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		21E9A76E2DB1B44F0012E63C /* SwiftCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 21E9A76D2DB1B44F0012E63C /* XCRemoteSwiftPackageReference "SwiftCore" */;
+			productName = SwiftCore;
+		};
+		21E9A7712DB1B5670012E63C /* SwiftCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 21E9A76D2DB1B44F0012E63C /* XCRemoteSwiftPackageReference "SwiftCore" */;
+			productName = SwiftCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 21ECAB7E2DA5109C0088F44B /* Project object */;
 }

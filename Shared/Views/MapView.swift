@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import SwiftCore
 
 struct MapView: View {
     @ObservedObject private var locationManager = LocationManager.shared
@@ -11,7 +12,7 @@ struct MapView: View {
     @State var selectedAircraft: Aircraft? = nil
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        MapControlsWrapper {
             Map(position: $cameraPosition, selection: $selectedAircraft) {
                 UserAnnotation()
                 
@@ -89,31 +90,19 @@ struct MapView: View {
                     }
                 }
             }
-            .mapControls {
-                MapUserLocationButton()
-                MapCompass()
+        } actions: {
 #if os(iOS)
-                MapScaleView()
-#elseif os(watchOS)
-                MapLocationCompass()
-#endif
-            }
-            .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-                AircraftDetailView(aircraft: aircraft)
-                    .presentationDetents([.height(200), .medium, .large])
-                    .presentationBackgroundInteraction(.enabled)
+            MapLegendView {
+                MapControlView(iconName: "info.circle")
             }
             
-#if os(iOS)
-            VStack {
-                MapLegendView {
-                    MapControlView(iconName: "info.circle")
-                }
-                
-                MapFilterView()
-            }
-            .padding(5)
+            MapFilterView()
 #endif
+        }
+        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
+            AircraftDetailView(aircraft: aircraft)
+                .presentationDetents([.height(200), .medium, .large])
+                .presentationBackgroundInteraction(.enabled)
         }
     }
 }
