@@ -1,0 +1,611 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    " blue " : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "modrá"
+          }
+        }
+      }
+    },
+    " green" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zelená"
+          }
+        }
+      }
+    },
+    "-" : {
+      "shouldTranslate" : false
+    },
+    "." : {
+      "shouldTranslate" : false
+    },
+    "%@ ft/min" : {
+      "shouldTranslate" : false
+    },
+    "%@ kts" : {
+      "shouldTranslate" : false
+    },
+    "%lld°" : {
+      "shouldTranslate" : false
+    },
+    "1 second" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 sekunda"
+          }
+        }
+      }
+    },
+    "2 seconds" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 sekundy"
+          }
+        }
+      }
+    },
+    "5 seconds" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 sekund"
+          }
+        }
+      }
+    },
+    "10 seconds" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 sekund"
+          }
+        }
+      }
+    },
+    "20 NM" : {
+      "shouldTranslate" : false
+    },
+    "50 NM" : {
+      "shouldTranslate" : false
+    },
+    "100 NM" : {
+      "shouldTranslate" : false
+    },
+    "150 NM" : {
+      "shouldTranslate" : false
+    },
+    "200 NM" : {
+      "shouldTranslate" : false
+    },
+    "250 NM" : {
+      "shouldTranslate" : false
+    },
+    "Aircraft" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letadlo"
+          }
+        }
+      }
+    },
+    "and military aircrafts are" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a vojenská letadla jsou"
+          }
+        }
+      }
+    },
+    "App needs to be restarted for changes to take effect." : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projevily se změny, je třeba restartovat aplikaci."
+          }
+        }
+      }
+    },
+    "Barometric Altitude" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barometrická výška"
+          }
+        }
+      }
+    },
+    "Coordinates" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Souřadnice"
+          }
+        }
+      }
+    },
+    "Description" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popis"
+          }
+        }
+      }
+    },
+    "Downloading photo..." : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stahování fotky..."
+          }
+        }
+      }
+    },
+    "Emergency" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouzový stav"
+          }
+        }
+      }
+    },
+    "Emergency: %@" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouzový stav: %@"
+          }
+        }
+      }
+    },
+    "Filter" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtr"
+          }
+        }
+      }
+    },
+    "Flight" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let"
+          }
+        }
+      }
+    },
+    "Geometric Altitude" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geometrická výška"
+          }
+        }
+      }
+    },
+    "Geometric Rate" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geometrická rychlost stoupání/klesání"
+          }
+        }
+      }
+    },
+    "Ground Speed" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rychlost vůči zemi"
+          }
+        }
+      }
+    },
+    "Heading" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs"
+          }
+        }
+      }
+    },
+    "ICAO" : {
+      "shouldTranslate" : false
+    },
+    "Indicated Airspeed" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indikovaná rychlost letu"
+          }
+        }
+      }
+    },
+    "Last Seen" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naposledy viděno"
+          }
+        }
+      }
+    },
+    "Legend" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legenda"
+          }
+        }
+      }
+    },
+    "Limited Aircraft Data Display (LADD) aircrafts" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letadla s omezeným zobrazením dat (LADD)"
+          }
+        }
+      }
+    },
+    "List" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seznam"
+          }
+        }
+      }
+    },
+    "Mach" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machovo číslo"
+          }
+        }
+      }
+    },
+    "Manufacturer" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Výrobce"
+          }
+        }
+      }
+    },
+    "Map" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa"
+          }
+        }
+      }
+    },
+    "Messages Received" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Přijaté zprávy"
+          }
+        }
+      }
+    },
+    "Military aircrafts" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vojenská letadla"
+          }
+        }
+      }
+    },
+    "MLAT" : {
+      "shouldTranslate" : false
+    },
+    "Model" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
+    },
+    "Navigation" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigace"
+          }
+        }
+      }
+    },
+    "Navigation Modes" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigační módy"
+          }
+        }
+      }
+    },
+    "No photo available" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotka není k dispozici"
+          }
+        }
+      }
+    },
+    "Operational Status" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operační status"
+          }
+        }
+      }
+    },
+    "Performance" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Výkon"
+          }
+        }
+      }
+    },
+    "Position" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poloha"
+          }
+        }
+      }
+    },
+    "Privacy ICAO Address (PIA) aircrafts" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letadla s privátní ICAO adresou (PIA)"
+          }
+        }
+      }
+    },
+    "Refresh interval" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interval obnovení"
+          }
+        }
+      }
+    },
+    "Registration" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrace"
+          }
+        }
+      }
+    },
+    "Regular aircrafts (within %lld NM from your location)" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Běžná letadla (do %lld NM od vaší polohy)"
+          }
+        }
+      }
+    },
+    "Regular aircrafts are" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Běžná letadla jsou"
+          }
+        }
+      }
+    },
+    "Search range" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozsah vyhledávání"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavení"
+          }
+        }
+      }
+    },
+    "Show details" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobrazit detaily"
+          }
+        }
+      }
+    },
+    "Show info box below aircraft icon" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobrazit informační box pod ikonou letadla"
+          }
+        }
+      }
+    },
+    "Signal" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signál"
+          }
+        }
+      }
+    },
+    "Signal Strength" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Síla signálu"
+          }
+        }
+      }
+    },
+    "Squawk" : {
+      "shouldTranslate" : false
+    },
+    "Status" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
+    "TIS-B" : {
+      "shouldTranslate" : false
+    },
+    "Transponder" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transpondér"
+          }
+        }
+      }
+    },
+    "Transponder Code" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kód transpondéru"
+          }
+        }
+      }
+    },
+    "True Airspeed" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skutečná rychlost letu"
+          }
+        }
+      }
+    },
+    "Type" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typ"
+          }
+        }
+      }
+    },
+    "Use metric units" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Používat metrické jednotky"
+          }
+        }
+      }
+    },
+    "Vertical Rate" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vertikální rychlost"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
