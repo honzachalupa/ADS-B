@@ -16,6 +16,7 @@ struct RootView: View {
                 SettingsView()
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
     }
 }
 

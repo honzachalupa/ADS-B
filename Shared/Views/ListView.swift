@@ -4,7 +4,7 @@ struct ListView: View {
     @ObservedObject private var aircraftService = AircraftService.shared
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List(aircraftService.aircrafts) { aircraft in
                 HStack {
                     VStack(alignment: .leading) {
