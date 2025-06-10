@@ -1,18 +1,6 @@
 import SwiftUI
 
 struct MapFilterView: View {
-    var body: some View {
-#if os(iOS)
-        Menu {
-            MapFilterTogglesView()
-        } label: {
-            MapControlView(iconName: "line.3.horizontal.decrease.circle")
-        }
-#endif
-    }
-}
-
-struct MapFilterTogglesView: View {
     @AppStorage(SETTINGS_SEARCH_RANGE_KEY) private var searchRange: Int = 50
     @AppStorage(FILTER_SHOW_PIA_AIRCRAFTS_KEY) private var showPIAAircrafts: Bool = true
     @AppStorage(FILTER_SHOW_REGULAR_AIRCRAFTS_KEY) private var showRegularAircrafts: Bool = true

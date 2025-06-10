@@ -20,10 +20,10 @@ struct MapLegendView<Content: View>: View {
                 
                 HStack {
                     Text("Regular aircrafts are") +
-                    Text(" blue ")
+                    Text("&nbsp;blue&nbsp;")
                         .foregroundColor(.blue) +
                     Text("and military aircrafts are") +
-                    Text(" green")
+                    Text("&nbsp;green")
                         .foregroundColor(.green) +
                     Text(".")
                 }

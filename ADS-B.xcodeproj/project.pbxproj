@@ -59,9 +59,11 @@
 				Views/AircraftDetailView.swift,
 				Views/ListItemIconView.swift,
 				Views/ListView.swift,
-				Views/MapControlView.swift,
+				Views/MapControls/MapFilterControlView.swift,
+				Views/MapControls/MapLegendView.swift,
+				Views/MapControls/MapStyleControlView.swift,
+				Views/MapControls/MapUserLocationControlView.swift,
 				Views/MapFilterView.swift,
-				Views/MapLegendView.swift,
 				Views/MapView.swift,
 				Views/SettingsView.swift,
 			);

@@ -1,31 +1,31 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " blue " : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "modrá"
-          }
-        }
-      }
-    },
-    " green" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "zelená"
-          }
-        }
-      }
-    },
     "-" : {
       "shouldTranslate" : false
     },
     "." : {
       "shouldTranslate" : false
+    },
+    "&nbsp;blue&nbsp;" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "&nbsp;modrá&nbsp;"
+          }
+        }
+      }
+    },
+    "&nbsp;green" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "&nbsp;zelená"
+          }
+        }
+      }
     },
     "%@ ft/min" : {
       "shouldTranslate" : false
@@ -104,6 +104,16 @@
         }
       }
     },
+    "Airplane" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letadlo"
+          }
+        }
+      }
+    },
     "and military aircrafts are" : {
       "localizations" : {
         "cs" : {
@@ -140,6 +150,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Souřadnice"
+          }
+        }
+      }
+    },
+    "Current location" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuální poloha"
           }
         }
       }
@@ -234,6 +254,16 @@
         }
       }
     },
+    "Ground Vehicle" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pozemní vozidlo"
+          }
+        }
+      }
+    },
     "Heading" : {
       "localizations" : {
         "cs" : {
@@ -244,8 +274,38 @@
         }
       }
     },
+    "Helicopter" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrtulník"
+          }
+        }
+      }
+    },
+    "Hybrid" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hybridní"
+          }
+        }
+      }
+    },
     "ICAO" : {
       "shouldTranslate" : false
+    },
+    "Imagery" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satelitní"
+          }
+        }
+      }
     },
     "Indicated Airspeed" : {
       "localizations" : {
@@ -273,6 +333,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Legenda"
+          }
+        }
+      }
+    },
+    "Light Airplane" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malé letadlo"
           }
         }
       }
@@ -318,6 +388,16 @@
       }
     },
     "Map" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa"
+          }
+        }
+      }
+    },
+    "Map style" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -533,6 +613,16 @@
     "Squawk" : {
       "shouldTranslate" : false
     },
+    "Standard" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardní"
+          }
+        }
+      }
+    },
     "Status" : {
       "localizations" : {
         "cs" : {
@@ -545,6 +635,16 @@
     },
     "TIS-B" : {
       "shouldTranslate" : false
+    },
+    "Tower/Ground Station" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vež/Pozemní stanice"
+          }
+        }
+      }
     },
     "Transponder" : {
       "localizations" : {

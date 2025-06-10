@@ -10,11 +10,11 @@ struct AircraftDisplayConfig {
         
         var displayName: String {
             switch self {
-                case .helicopter: return "Helicopter"
-                case .airplane: return "Airplane"
-                case .lightAirplane: return "Light Airplane"
-                case .groundVehicle: return "Ground Vehicle"
-                case .tower: return "Tower/Ground Station"
+                case .helicopter: return String(localized: "Helicopter")
+                case .airplane: return String(localized: "Airplane")
+                case .lightAirplane: return String(localized: "Light Airplane")
+                case .groundVehicle: return String(localized: "Ground Vehicle")
+                case .tower: return String(localized: "Tower/Ground Station")
             }
         }
         

@@ -1,6 +1,6 @@
 import SwiftUI
-import MapKit
 import SwiftCore
+import MapKit
 
 struct MapView: View {
     @ObservedObject private var locationManager = LocationManager.shared
@@ -9,19 +9,24 @@ struct MapView: View {
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     
     @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
+    @State private var selectedMapStyle: MapStyle = .standard
     @State var selectedAircraft: Aircraft? = nil
     
     var body: some View {
-        MapControlsWrapper {
+        NavigationStack {
             Map(position: $cameraPosition, selection: $selectedAircraft) {
                 UserAnnotation()
                 
                 ForEach(aircraftService.aircrafts) { aircraft in
                     let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
                     let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
+                    let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
                     let isSimpleLabel = !isInfoBoxEnabled || hasNoData
                     
-                    let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
+                    /* Marker(code, systemImage: aircraftType.iconName, coordinate: CLLocationCoordinate2D(
+                        latitude: aircraft.lat ?? 0,
+                        longitude: aircraft.lon ?? 0
+                    )) */
                     
                     Annotation(
                         isSimpleLabel ? code : "",
@@ -90,19 +95,31 @@ struct MapView: View {
                     }
                 }
             }
-        } actions: {
-#if os(iOS)
-            MapLegendView {
-                MapControlView(iconName: "info.circle")
+            .mapStyle(selectedMapStyle)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    MapFilterControlView()
+                }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    MapLegendView {
+                        Label("Legend", systemImage: "info.circle.fill")
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    MapStyleControlView(mapStyle: $selectedMapStyle)
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    MapUserLocationControlView(cameraPosition: $cameraPosition)
+                }
             }
-            
-            MapFilterView()
-#endif
-        }
-        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-            AircraftDetailView(aircraft: aircraft)
-                .presentationDetents([.height(200), .medium, .large])
-                .presentationBackgroundInteraction(.enabled)
+            .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
+                AircraftDetailView(aircraft: aircraft)
+                    .presentationDetents([.medium, .large])
+                    .presentationBackgroundInteraction(.enabled)
+            }
         }
     }
 }
