@@ -105,11 +105,11 @@ struct MapView: View {
                     }
                 }
                 
-                #if os(iOS)
+                /* #if os(iOS)
                 if #available(iOS 26, *) {
                     ToolbarSpacer(.fixed, placement: .topBarLeading)
                 }
-                #endif
+                #endif */
                 
                 ToolbarItem(placement: .topBarLeading) {
                     MapFilterControlView()
