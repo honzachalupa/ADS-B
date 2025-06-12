@@ -15,8 +15,7 @@ struct RootView: View {
                             Label("List", systemImage: "list.bullet")
                         }
                     }
-                }
-                .toolbar {
+                    
                     ToolbarItem(placement: .topBarLeading) {
                         NavigationLink {
                             SettingsView()

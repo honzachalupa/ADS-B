@@ -98,6 +98,20 @@ struct MapView: View {
             .mapStyle(selectedMapStyle)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Label("Settings", systemImage: "gearshape.fill")
+                    }
+                }
+                
+                #if os(iOS)
+                if #available(iOS 26, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarLeading)
+                }
+                #endif
+                
+                ToolbarItem(placement: .topBarLeading) {
                     MapFilterControlView()
                 }
                 

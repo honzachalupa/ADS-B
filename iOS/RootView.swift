@@ -11,10 +11,6 @@ struct RootView: View {
             Tab("List", systemImage: "list.bullet") {
                 ListView()
             }
-            
-            Tab("Settings", systemImage: "gearshape.fill") {
-                SettingsView()
-            }
         }
         .tabViewStyle(.sidebarAdaptable)
     }

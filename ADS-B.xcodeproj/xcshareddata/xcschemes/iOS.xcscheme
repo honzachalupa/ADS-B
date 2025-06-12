@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1630"
+   LastUpgradeVersion = "2600"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-               BuildableName = "ADS-B Tracker.app"
-               BlueprintName = "ADS-B Tracker"
+               BuildableName = "iOS.app"
+               BlueprintName = "iOS"
                ReferencedContainer = "container:ADS-B.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-            BuildableName = "ADS-B Tracker.app"
-            BlueprintName = "ADS-B Tracker"
+            BuildableName = "iOS.app"
+            BlueprintName = "iOS"
             ReferencedContainer = "container:ADS-B.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "21ECAB852DA5109C0088F44B"
-            BuildableName = "ADS-B Tracker.app"
-            BlueprintName = "ADS-B Tracker"
+            BuildableName = "iOS.app"
+            BlueprintName = "iOS"
             ReferencedContainer = "container:ADS-B.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

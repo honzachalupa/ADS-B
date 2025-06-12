@@ -64,6 +64,9 @@ struct SettingsView: View {
 
             }
             .navigationTitle("Settings")
+#if os(iOS)
+            .toolbarVisibility(.hidden, for: .tabBar)
+#endif
         }
     }
 }

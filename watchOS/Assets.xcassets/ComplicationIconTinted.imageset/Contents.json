@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "ADS-B_iOS_Tinted.png",
+      "idiom" : "watch"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		21E9A76F2DB1B4500012E63C /* SwiftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 21E9A76E2DB1B44F0012E63C /* SwiftCore */; };
 		21E9A7722DB1B5670012E63C /* SwiftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 21E9A7712DB1B5670012E63C /* SwiftCore */; };
-		21ECABCF2DA53F860088F44B /* ADS-B Tracker-Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		21ECABCF2DA53F860088F44B /* watchOS.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 21ECABC52DA53F840088F44B /* watchOS.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,7 +29,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				21ECABCF2DA53F860088F44B /* ADS-B Tracker-Watch Watch App.app in Embed Watch Content */,
+				21ECABCF2DA53F860088F44B /* watchOS.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,12 +37,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		21ECAB862DA5109C0088F44B /* ADS-B Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ADS-B Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ADS-B Tracker-Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		21ECAB862DA5109C0088F44B /* iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		21ECABC52DA53F840088F44B /* watchOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watchOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		21ECABD92DA540D50088F44B /* Exceptions for "Shared" folder in "ADS-B Tracker-Watch Watch App" target */ = {
+		21ECABD92DA540D50088F44B /* Exceptions for "Shared" folder in "watchOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
@@ -67,14 +67,14 @@
 				Views/MapView.swift,
 				Views/SettingsView.swift,
 			);
-			target = 21ECABC42DA53F840088F44B /* ADS-B Tracker-Watch Watch App */;
+			target = 21ECABC42DA53F840088F44B /* watchOS */;
 		};
-		21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B Tracker" target */ = {
+		21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "iOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 21ECAB852DA5109C0088F44B /* ADS-B Tracker */;
+			target = 21ECAB852DA5109C0088F44B /* iOS */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -92,8 +92,8 @@
 		21ECABD62DA540B80088F44B /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "ADS-B Tracker" target */,
-				21ECABD92DA540D50088F44B /* Exceptions for "Shared" folder in "ADS-B Tracker-Watch Watch App" target */,
+				21FCE94E2DA545150014B7A7 /* Exceptions for "Shared" folder in "iOS" target */,
+				21ECABD92DA540D50088F44B /* Exceptions for "Shared" folder in "watchOS" target */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -141,8 +141,8 @@
 		21ECAB872DA5109C0088F44B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				21ECAB862DA5109C0088F44B /* ADS-B Tracker.app */,
-				21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */,
+				21ECAB862DA5109C0088F44B /* iOS.app */,
+				21ECABC52DA53F840088F44B /* watchOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,9 +150,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		21ECAB852DA5109C0088F44B /* ADS-B Tracker */ = {
+		21ECAB852DA5109C0088F44B /* iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B Tracker" */;
+			buildConfigurationList = 21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "iOS" */;
 			buildPhases = (
 				21ECAB822DA5109C0088F44B /* Sources */,
 				21ECAB832DA5109C0088F44B /* Frameworks */,
@@ -168,17 +168,17 @@
 				21ECAB882DA5109C0088F44B /* iOS */,
 				21ECABD62DA540B80088F44B /* Shared */,
 			);
-			name = "ADS-B Tracker";
+			name = iOS;
 			packageProductDependencies = (
 				21E9A76E2DB1B44F0012E63C /* SwiftCore */,
 			);
 			productName = "ADS-B";
-			productReference = 21ECAB862DA5109C0088F44B /* ADS-B Tracker.app */;
+			productReference = 21ECAB862DA5109C0088F44B /* iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		21ECABC42DA53F840088F44B /* ADS-B Tracker-Watch Watch App */ = {
+		21ECABC42DA53F840088F44B /* watchOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21ECABD02DA53F860088F44B /* Build configuration list for PBXNativeTarget "ADS-B Tracker-Watch Watch App" */;
+			buildConfigurationList = 21ECABD02DA53F860088F44B /* Build configuration list for PBXNativeTarget "watchOS" */;
 			buildPhases = (
 				21ECABC12DA53F840088F44B /* Sources */,
 				21ECABC22DA53F840088F44B /* Frameworks */,
@@ -191,12 +191,12 @@
 			fileSystemSynchronizedGroups = (
 				21ECABC62DA53F840088F44B /* watchOS */,
 			);
-			name = "ADS-B Tracker-Watch Watch App";
+			name = watchOS;
 			packageProductDependencies = (
 				21E9A7712DB1B5670012E63C /* SwiftCore */,
 			);
 			productName = "ADS-B-Watch Watch App";
-			productReference = 21ECABC52DA53F840088F44B /* ADS-B Tracker-Watch Watch App.app */;
+			productReference = 21ECABC52DA53F840088F44B /* watchOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -207,7 +207,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					21ECAB852DA5109C0088F44B = {
 						CreatedOnToolsVersion = 16.3;
@@ -235,8 +235,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				21ECAB852DA5109C0088F44B /* ADS-B Tracker */,
-				21ECABC42DA53F840088F44B /* ADS-B Tracker-Watch Watch App */,
+				21ECAB852DA5109C0088F44B /* iOS */,
+				21ECABC42DA53F840088F44B /* watchOS */,
 			);
 		};
 /* End PBXProject section */
@@ -278,7 +278,7 @@
 /* Begin PBXTargetDependency section */
 		21ECABCE2DA53F860088F44B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21ECABC42DA53F840088F44B /* ADS-B Tracker-Watch Watch App */;
+			target = 21ECABC42DA53F840088F44B /* watchOS */;
 			targetProxy = 21ECABCD2DA53F860088F44B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -289,6 +289,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -343,6 +344,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -354,6 +356,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -401,6 +404,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
@@ -495,6 +499,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Shared/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ADS-B";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Your location is used to show nearby aircraft on the map, including when the app is in the background.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is used to show nearby aircraft on the map.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -531,6 +537,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Shared/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ADS-B";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Your location is used to show nearby aircraft on the map, including when the app is in the background.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is used to show nearby aircraft on the map.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -565,7 +573,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "ADS-B Tracker" */ = {
+		21ECAB912DA5109D0088F44B /* Build configuration list for PBXNativeTarget "iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21ECAB922DA5109D0088F44B /* Debug */,
@@ -574,7 +582,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21ECABD02DA53F860088F44B /* Build configuration list for PBXNativeTarget "ADS-B Tracker-Watch Watch App" */ = {
+		21ECABD02DA53F860088F44B /* Build configuration list for PBXNativeTarget "watchOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21ECABD12DA53F860088F44B /* Debug */,
