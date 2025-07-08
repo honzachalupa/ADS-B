@@ -27,11 +27,18 @@ class AppLifecycleManager: ObservableObject {
             .compactMap { $0 }
             .sink { [weak self] location in
                 guard let self = self else { return }
-                // Update both aircraft and airport data when location changes
+                // Update aircraft service with initial location
+                // The actual polling will use map center coordinates
+                self.aircraftService.updateMapCenter(latitude: location.coordinate.latitude, 
+                                                   longitude: location.coordinate.longitude)
+                
+                // Start polling with the initial coordinates
                 self.aircraftService.startPolling(latitude: location.coordinate.latitude, 
-                                                 longitude: location.coordinate.longitude)
+                                                longitude: location.coordinate.longitude)
+                
+                // Update airports around the current location
                 self.airportService.fetchAirportsAroundLocation(latitude: location.coordinate.latitude, 
-                                                               longitude: location.coordinate.longitude)
+                                                              longitude: location.coordinate.longitude)
             }
     }
     

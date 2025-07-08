@@ -72,8 +72,15 @@ class AircraftService: ObservableObject {
     private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date, endpointType: AircraftEndpointType)] = [:]
     private let cacheRetentionTime: TimeInterval = 10.0
     private let baseURL = "https://api.adsb.lol/v2"
+    // Current map center coordinates for fetching aircraft data
     internal private(set) var currentLatitude: Double = 0
     internal private(set) var currentLongitude: Double = 0
+    
+    // Update map center coordinates
+    func updateMapCenter(latitude: Double, longitude: Double) {
+        currentLatitude = latitude
+        currentLongitude = longitude
+    }
     
     // Fetch aircraft from a specific endpoint type
     func fetchAircraft(from endpointType: AircraftEndpointType) {
@@ -313,16 +320,15 @@ class AircraftService: ObservableObject {
     
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
-        // Store current coordinates
-        currentLatitude = latitude
-        currentLongitude = longitude
+        // Update map center coordinates
+        updateMapCenter(latitude: latitude, longitude: longitude)
         
         // Get the fetch interval from settings
         let fetchInterval = UserDefaults.standard.integer(forKey: "settings_fetchInterval")
         let newInterval = max(1, fetchInterval) // Ensure at least 1 second between updates
         
         // If interval hasn't changed and timer exists, do nothing
-        if let timer = refreshTimer, currentInterval == newInterval {
+        if refreshTimer != nil, currentInterval == newInterval {
             print("[AircraftService] ⏱️ Polling already active with interval: \(currentInterval) seconds")
             return
         }

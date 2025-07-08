@@ -7,10 +7,20 @@ struct MapView: View {
     @ObservedObject private var aircraftService = AircraftService.shared
     @ObservedObject private var airportService = AirportService.shared
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
+    @AppStorage(SETTINGS_SEARCH_RANGE_KEY) private var searchRange: Double = 50.0
     
     @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
+    
+    private func updateMapCenter() {
+        // Update map center in AircraftService when camera position changes
+        if let region = cameraPosition.region {
+            let center = region.center
+            aircraftService.updateMapCenter(latitude: center.latitude, longitude: center.longitude)
+        }
+    }
     @State private var selectedMapStyle: MapStyle = .standard
-    @State var selectedAircraft: Aircraft? = nil
+    @State private var selectedAircraft: Aircraft? = nil
+    @State private var mapUpdateTask: Task<Void, Never>?
     
     var body: some View {
         NavigationStack {
@@ -94,6 +104,21 @@ struct MapView: View {
                         }
                     }
                 }
+            }
+            .onMapCameraChange { context in
+                // Debounce map updates to avoid excessive API calls
+                mapUpdateTask?.cancel()
+                mapUpdateTask = Task {
+                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                    if !Task.isCancelled {
+                        await MainActor.run {
+                            self.cameraPosition = .region(context.region)
+                        }
+                    }
+                }
+            }
+            .onChange(of: cameraPosition) {
+                updateMapCenter()
             }
             .mapStyle(selectedMapStyle)
             .toolbar {
