@@ -12,7 +12,6 @@ struct RootView: View {
                 ListView()
             }
         }
-        .tabViewStyle(.sidebarAdaptable)
     }
 }
 

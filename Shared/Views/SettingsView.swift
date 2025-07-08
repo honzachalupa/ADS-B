@@ -5,10 +5,27 @@ let SETTINGS_IS_INFO_BOX_ENABLED_KEY = "settings_isQuickInfoEnabled"
 let SETTINGS_FETCH_INTERVAL_KEY = "settings_fetchInterval"
 let SETTINGS_SEARCH_RANGE_KEY = "settings_searchRange"
 
+class Settings: ObservableObject {
+    static let shared = Settings()
+    
+    @Published var fetchInterval: Int = UserDefaults.standard.integer(forKey: SETTINGS_FETCH_INTERVAL_KEY) {
+        didSet {
+            UserDefaults.standard.set(fetchInterval, forKey: SETTINGS_FETCH_INTERVAL_KEY)
+            // Restart polling with new interval
+            AircraftService.shared.startPolling(
+                latitude: AircraftService.shared.currentLatitude,
+                longitude: AircraftService.shared.currentLongitude
+            )
+        }
+    }
+    
+    private init() {}
+}
+
 struct SettingsView: View {
     @AppStorage(SETTINGS_IS_METRIC_UNITS_KEY) private var isMetricUnits: Bool = false
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
-    @AppStorage(SETTINGS_FETCH_INTERVAL_KEY) private var fetchInterval: Int = 5
+    @StateObject private var settings = Settings.shared
     @AppStorage(SETTINGS_SEARCH_RANGE_KEY) private var searchRange: Int = 50
     
     var body: some View {
@@ -29,7 +46,7 @@ struct SettingsView: View {
                 }
                 
                 Section {
-                    Picker("Refresh interval", selection: $fetchInterval) {
+                    Picker("Refresh interval", selection: $settings.fetchInterval) {
 #if os(iOS)
                         Text("1 second").tag(1)
 #endif
@@ -58,8 +75,6 @@ struct SettingsView: View {
 #endif
                 } header: {
                     Text("Performance")
-                } footer: {
-                    Text("App needs to be restarted for changes to take effect.")
                 }
 
             }

@@ -72,6 +72,8 @@ class AircraftService: ObservableObject {
     private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date, endpointType: AircraftEndpointType)] = [:]
     private let cacheRetentionTime: TimeInterval = 10.0
     private let baseURL = "https://api.adsb.lol/v2"
+    internal private(set) var currentLatitude: Double = 0
+    internal private(set) var currentLongitude: Double = 0
     
     // Fetch aircraft from a specific endpoint type
     func fetchAircraft(from endpointType: AircraftEndpointType) {
@@ -307,35 +309,47 @@ class AircraftService: ObservableObject {
     
     // Timer for polling
     private var refreshTimer: Timer?
+    private var currentInterval: Int = 5
     
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
+        // Store current coordinates
+        currentLatitude = latitude
+        currentLongitude = longitude
+        
         // Get the fetch interval from settings
         let fetchInterval = UserDefaults.standard.integer(forKey: "settings_fetchInterval")
+        let newInterval = max(1, fetchInterval) // Ensure at least 1 second between updates
         
-        // Use default of 5 seconds if not set
-        let interval = fetchInterval > 0 ? fetchInterval : 5
-        
-        // Cancel any existing timers
-        stopPolling()
-        
-        print("[AircraftService] ⏱️ Starting aircraft polling with interval: \(interval) seconds")
-        
-        // Create a timer using the traditional method which is more reliable
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(interval), repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            print("[AircraftService] 🔄 Refreshing aircraft data...")
-            self.fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
+        // If interval hasn't changed and timer exists, do nothing
+        if let timer = refreshTimer, currentInterval == newInterval {
+            print("[AircraftService] ⏱️ Polling already active with interval: \(currentInterval) seconds")
+            return
         }
         
-        // Add the timer to the RunLoop to ensure it fires
+        // Stop any existing timer
+        stopPolling()
+        
+        // Store the new interval
+        currentInterval = newInterval
+        
+        print("[AircraftService] ⏱️ Starting aircraft polling with interval: \(currentInterval) seconds")
+        
+        // Initial fetch immediately
+        print("[AircraftService] 🚀 Initial aircraft data fetch")
+        fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
+        
+        // Create a new timer with the updated interval
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(currentInterval), repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            print("[AircraftService] 🔄 Refreshing aircraft data... (interval: \(self.currentInterval)s)")
+            self.fetchAllSelectedAircraftTypes(latitude: self.currentLatitude, longitude: self.currentLongitude)
+        }
+        
+        // Add the timer to the RunLoop
         if let timer = refreshTimer {
             RunLoop.main.add(timer, forMode: .common)
         }
-        
-        // Initial fetch
-        print("[AircraftService] 🚀 Initial aircraft data fetch")
-        fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
     }
     
     // Stop polling

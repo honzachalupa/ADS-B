@@ -124,16 +124,6 @@
         }
       }
     },
-    "App needs to be restarted for changes to take effect." : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Projevily se změny, je třeba restartovat aplikaci."
-          }
-        }
-      }
-    },
     "Barometric Altitude" : {
       "localizations" : {
         "cs" : {
