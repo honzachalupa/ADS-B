@@ -1,6 +1,9 @@
 import SwiftUI
 import SwiftCore
 import MapKit
+#if os(watchOS)
+import WatchKit
+#endif
 
 struct MapView: View {
     @ObservedObject private var locationManager = LocationManager.shared
@@ -9,13 +12,42 @@ struct MapView: View {
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     @AppStorage(SETTINGS_SEARCH_RANGE_KEY) private var searchRange: Double = 50.0
     
-    @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic)
+    @State private var cameraPosition = MapCameraPosition.userLocation(fallback: .automatic) {
+        didSet {
+            // Debounce map updates to avoid excessive API calls
+            mapUpdateTask?.cancel()
+            mapUpdateTask = Task {
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        updateMapCenter()
+                    }
+                }
+            }
+        }
+    }
     
     private func updateMapCenter() {
         // Update map center in AircraftService when camera position changes
         if let region = cameraPosition.region {
             let center = region.center
-            aircraftService.updateMapCenter(latitude: center.latitude, longitude: center.longitude)
+            let span = region.span
+            
+            // Calculate zoom level based on the longitude delta of the visible map
+            // This is a common way to estimate zoom level in MapKit
+            #if os(iOS)
+            let screenWidth = UIScreen.main.bounds.width
+            #else
+            let screenWidth = WKInterfaceDevice.current().screenBounds.width
+            #endif
+            
+            let zoomLevel = log2(360 * (Double(screenWidth) / 256.0) / span.longitudeDelta) + 1.0
+            
+            aircraftService.updateMapCenter(
+                latitude: center.latitude,
+                longitude: center.longitude,
+                zoomLevel: zoomLevel
+            )
         }
     }
     @State private var selectedMapStyle: MapStyle = .standard
@@ -29,16 +61,18 @@ struct MapView: View {
                 
                 ForEach(aircraftService.aircrafts) { aircraft in
                     let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
-                    let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
+                    // let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
                     let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
-                    let isSimpleLabel = !isInfoBoxEnabled || hasNoData
+                    // let isSimpleLabel = !isInfoBoxEnabled || hasNoData
+                    let label = [code, "GS: \(formatSpeed(aircraft.gs))", "ALT: \(formatAltitude(aircraft.alt_geom))"].joined(separator: "\n")
                     
-                    /* Marker(code, systemImage: aircraftType.iconName, coordinate: CLLocationCoordinate2D(
+                    Marker(label, systemImage: aircraftType.iconName, coordinate: CLLocationCoordinate2D(
                         latitude: aircraft.lat ?? 0,
                         longitude: aircraft.lon ?? 0
-                    )) */
+                    ))
+                    .tag(aircraft)
                     
-                    Annotation(
+                    /* Annotation(
                         isSimpleLabel ? code : "",
                         coordinate: CLLocationCoordinate2D(
                             latitude: aircraft.lat ?? 0,
@@ -84,11 +118,18 @@ struct MapView: View {
                             }
                         }
                     }
-                    .tag(aircraft)
+                    .tag(aircraft) */
                 }
                 
                 ForEach(airportService.airports) { airport in
-                    Annotation(
+                    Marker(
+                        airport.icao,
+                        systemImage: "airplane.departure",
+                        coordinate: airport.coordinate
+                    )
+                    .tag(airport.icao)
+                    
+                    /* Annotation(
                         airport.icao,
                         coordinate: airport.coordinate,
                     ) {
@@ -103,23 +144,14 @@ struct MapView: View {
                                 .frame(width: 15, height: 15)
                         }
                     }
+                    .tag(airport.icao) */
                 }
             }
             .onMapCameraChange { context in
-                // Debounce map updates to avoid excessive API calls
-                mapUpdateTask?.cancel()
-                mapUpdateTask = Task {
-                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-                    if !Task.isCancelled {
-                        await MainActor.run {
-                            self.cameraPosition = .region(context.region)
-                        }
-                    }
-                }
+                // Update the camera position which will trigger the debounced updateMapCenter
+                self.cameraPosition = .region(context.region)
             }
-            .onChange(of: cameraPosition) {
-                updateMapCenter()
-            }
+
             .mapStyle(selectedMapStyle)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

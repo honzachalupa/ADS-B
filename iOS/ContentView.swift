@@ -12,6 +12,11 @@ struct RootView: View {
                 ListView()
             }
         }
+        .tabViewBottomAccessory {
+            DebugInfoView()
+        }
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .mapFeatureSelectionAccessory()
     }
 }
 

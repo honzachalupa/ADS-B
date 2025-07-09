@@ -42,7 +42,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         else { return nil }
         
         let tintColorImageProvider = CLKImageProvider(onePieceImage: tintColorImage)
-        let fullColorImageProvider = CLKFullColorImageProvider(fullColorImage: fullColorImage, tintedImageProvider: nil)
+        let fullColorImageProvider = CLKFullColorImageProvider(fullColorImage: fullColorImage, tintedImageProvider: tintColorImageProvider)
         
         switch complication.family {
             case .graphicCircular:

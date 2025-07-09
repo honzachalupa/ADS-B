@@ -36,46 +36,6 @@
     "%lld°" : {
       "shouldTranslate" : false
     },
-    "1 second" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 sekunda"
-          }
-        }
-      }
-    },
-    "2 seconds" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2 sekundy"
-          }
-        }
-      }
-    },
-    "5 seconds" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "5 sekund"
-          }
-        }
-      }
-    },
-    "10 seconds" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "10 sekund"
-          }
-        }
-      }
-    },
     "20 NM" : {
       "shouldTranslate" : false
     },
@@ -287,16 +247,6 @@
     "ICAO" : {
       "shouldTranslate" : false
     },
-    "Imagery" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Satelitní"
-          }
-        }
-      }
-    },
     "Indicated Airspeed" : {
       "localizations" : {
         "cs" : {
@@ -500,16 +450,6 @@
         }
       }
     },
-    "Refresh interval" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Interval obnovení"
-          }
-        }
-      }
-    },
     "Registration" : {
       "localizations" : {
         "cs" : {
@@ -625,6 +565,9 @@
     },
     "TIS-B" : {
       "shouldTranslate" : false
+    },
+    "TODO" : {
+
     },
     "Tower/Ground Station" : {
       "localizations" : {

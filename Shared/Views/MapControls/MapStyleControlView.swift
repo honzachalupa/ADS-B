@@ -14,10 +14,6 @@ struct MapStyleControlView: View {
             Button { mapStyle = .hybrid(elevation: .realistic) } label: {
                 Text("Hybrid")
             }
-            
-            Button { mapStyle = .imagery(elevation: .realistic) } label: {
-                Text("Imagery")
-            }
         } label: {
             Label("Map style", systemImage: "map.fill")
         }

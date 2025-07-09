@@ -72,14 +72,63 @@ class AircraftService: ObservableObject {
     private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date, endpointType: AircraftEndpointType)] = [:]
     private let cacheRetentionTime: TimeInterval = 10.0
     private let baseURL = "https://api.adsb.lol/v2"
-    // Current map center coordinates for fetching aircraft data
+    // Current map center coordinates and zoom level for fetching aircraft data
     internal private(set) var currentLatitude: Double = 0
     internal private(set) var currentLongitude: Double = 0
+    // Timer for polling
+    private var refreshTimer: Timer?
+    @Published private(set) var currentInterval: Int = 5
+    @Published private(set) var currentZoomLevel: Double = 15.0 // Default zoom level
+    @Published private(set) var lastUpdateTime: Date = .now
     
-    // Update map center coordinates
-    func updateMapCenter(latitude: Double, longitude: Double) {
+    // Calculate dynamic refresh interval based on zoom level
+    private func calculateRefreshInterval(for zoomLevel: Double) -> Int {
+        // Zoom level reference points:
+        // - 20: Street level (most zoomed in) -> 2s refresh
+        // - 15: City level -> ~5s refresh
+        // - 10: Regional level -> ~12s refresh
+        // - 5: Country level (most zoomed out) -> ~30s refresh
+        
+        let zoomScale = min(max(zoomLevel, 5), 20) // Clamp zoom level between 5 and 20
+        
+        // Normalize zoom scale to 0-1 range (20->0, 5->1)
+        let normalizedZoom = (20.0 - zoomScale) / 15.0
+        
+        // Use exponential scaling for more natural progression
+        // Base: 2 seconds
+        // Multiplier range: 1.0 to 15.0 (2s to 30s)
+        let multiplier = pow(15.0, normalizedZoom)
+        
+        // Calculate the actual interval
+        let interval = 2.0 * multiplier // Base interval of 2 seconds
+        
+        // Round to nearest second and ensure bounds
+        return Int(min(max(interval.rounded(), 2), 30))
+    }
+    
+    // Update map center coordinates and zoom level
+    func updateMapCenter(latitude: Double, longitude: Double, zoomLevel: Double? = nil) {
+        let shouldRestartPolling = (currentLatitude != latitude || currentLongitude != longitude)
+        
         currentLatitude = latitude
         currentLongitude = longitude
+        
+        if let zoomLevel = zoomLevel, zoomLevel != currentZoomLevel {
+            currentZoomLevel = zoomLevel
+            // Restart polling with new interval if coordinates changed or zoom level changed significantly
+            let newInterval = calculateRefreshInterval(for: zoomLevel)
+            if currentInterval != newInterval {
+                startPolling(latitude: latitude, longitude: longitude)
+            }
+        }
+        
+        // If coordinates changed, fetch data immediately
+        if shouldRestartPolling {
+            // Fetch data immediately for the new location
+            fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
+            // Then restart the polling timer with current interval
+            startPolling(latitude: latitude, longitude: longitude)
+        }
     }
     
     // Fetch aircraft from a specific endpoint type
@@ -227,14 +276,17 @@ class AircraftService: ObservableObject {
                     )
                 }
             .receive(on: DispatchQueue.main)
-            .sink { completion in
+            .sink { [weak self] completion in
+                guard let self = self else { return }
                 self.isLoading = false
                 
                 if case .failure(let error) = completion {
                     self.error = error
-                    // Error fetching aircraft data
+                    print("[AircraftService] ❌ Error fetching aircraft data: \(error.localizedDescription)")
                 }
-            } receiveValue: { response in
+            } receiveValue: { [weak self] response in
+                guard let self = self else { return }
+                
                 // Only filter out aircraft without valid coordinates
                 let validAircraft = response.ac.filter { $0.isValid }
                 
@@ -244,9 +296,12 @@ class AircraftService: ObservableObject {
                 // Get all valid aircraft (from current response and recent cache)
                 let combinedAircraft = self.getCombinedAircraftList()
                 
-                // Update the published aircraft list
-                self.aircrafts = combinedAircraft
-                // Successfully fetched and processed aircraft data
+                // Update the published aircraft list and last update time
+                DispatchQueue.main.async {
+                    self.aircrafts = combinedAircraft
+                    self.lastUpdateTime = .now
+                    print("[AircraftService] ✅ Updated \(combinedAircraft.count) aircraft")
+                }
             }
             .store(in: &cancellables)
     
@@ -314,18 +369,11 @@ class AircraftService: ObservableObject {
         }.eraseToAnyPublisher()
     }
     
-    // Timer for polling
-    private var refreshTimer: Timer?
-    private var currentInterval: Int = 5
-    
     // Start polling for aircraft data with the interval from settings
     func startPolling(latitude: Double, longitude: Double) {
-        // Update map center coordinates
-        updateMapCenter(latitude: latitude, longitude: longitude)
-        
-        // Get the fetch interval from settings
-        let fetchInterval = UserDefaults.standard.integer(forKey: "settings_fetchInterval")
-        let newInterval = max(1, fetchInterval) // Ensure at least 1 second between updates
+        // Get the dynamic refresh interval based on zoom level
+        let newInterval = calculateRefreshInterval(for: currentZoomLevel)
+        print("[AircraftService] 🗺️ New refresh interval: \(newInterval)s (zoom: \(String(format: "%.1f", currentZoomLevel)))")
         
         // If interval hasn't changed and timer exists, do nothing
         if refreshTimer != nil, currentInterval == newInterval {
@@ -340,10 +388,6 @@ class AircraftService: ObservableObject {
         currentInterval = newInterval
         
         print("[AircraftService] ⏱️ Starting aircraft polling with interval: \(currentInterval) seconds")
-        
-        // Initial fetch immediately
-        print("[AircraftService] 🚀 Initial aircraft data fetch")
-        fetchAllSelectedAircraftTypes(latitude: latitude, longitude: longitude)
         
         // Create a new timer with the updated interval
         refreshTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(currentInterval), repeats: true) { [weak self] _ in
