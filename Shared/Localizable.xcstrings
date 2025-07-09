@@ -33,6 +33,9 @@
     "%@ kts" : {
       "shouldTranslate" : false
     },
+    "%lld" : {
+
+    },
     "%lld°" : {
       "shouldTranslate" : false
     },
@@ -60,6 +63,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Letadlo"
+          }
+        }
+      }
+    },
+    "Aircraft: %@" : {
+
+    },
+    "Aircraft: %lld" : {
+
+    },
+    "Aircraft: %lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Aircraft: %1$lld/%2$lld"
           }
         }
       }
@@ -93,6 +112,9 @@
           }
         }
       }
+    },
+    "Close" : {
+
     },
     "Coordinates" : {
       "localizations" : {
@@ -154,6 +176,9 @@
         }
       }
     },
+    "Emergency: %lld" : {
+
+    },
     "Filter" : {
       "localizations" : {
         "cs" : {
@@ -173,6 +198,12 @@
           }
         }
       }
+    },
+    "Flight: %@" : {
+
+    },
+    "FPS: %.1f" : {
+
     },
     "Geometric Altitude" : {
       "localizations" : {
@@ -266,6 +297,9 @@
           }
         }
       }
+    },
+    "Last: %@" : {
+
     },
     "Legend" : {
       "localizations" : {
@@ -366,6 +400,9 @@
           }
         }
       }
+    },
+    "Military: %lld" : {
+
     },
     "MLAT" : {
       "shouldTranslate" : false
@@ -520,6 +557,9 @@
         }
       }
     },
+    "Showing: %lld" : {
+
+    },
     "Signal" : {
       "localizations" : {
         "cs" : {
@@ -619,6 +659,9 @@
         }
       }
     },
+    "Updates: %lld" : {
+
+    },
     "Use metric units" : {
       "localizations" : {
         "cs" : {
@@ -638,6 +681,12 @@
           }
         }
       }
+    },
+    "Visible: %lld" : {
+
+    },
+    "White: %lld" : {
+
     }
   },
   "version" : "1.0"

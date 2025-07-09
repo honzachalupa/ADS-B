@@ -46,6 +46,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
+				Models/AircraftCluster.swift,
 				Models/AircraftModel.swift,
 				Models/AirportModel.swift,
 				PreviewData/AircraftData.swift,
@@ -57,6 +58,8 @@
 				Utilities/AircraftDisplayConfig.swift,
 				Utilities/FlightData.swift,
 				Views/AircraftDetailView.swift,
+				Views/AircraftMarkerView.swift,
+				Views/ClusterMarkerView.swift,
 				Views/ListItemIconView.swift,
 				Views/ListView.swift,
 				Views/MapControls/MapFilterControlView.swift,
@@ -64,6 +67,8 @@
 				Views/MapControls/MapStyleControlView.swift,
 				Views/MapControls/MapUserLocationControlView.swift,
 				Views/MapFilterView.swift,
+				Views/MapMarkersView.swift,
+				Views/MapView_Old.swift,
 				Views/MapView.swift,
 				Views/SettingsView.swift,
 			);

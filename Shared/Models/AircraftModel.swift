@@ -244,7 +244,45 @@ struct Aircraft: Codable, Identifiable, Equatable, Hashable {
     }
 }
 
+// MARK: - Preview Initializer
 extension Aircraft {
+    // Preview initializer for SwiftUI previews and testing
+    static func preview(hex: String, flight: String, lat: Double, lon: Double, track: Double, altitude: Int, speed: Int, squawk: String?, emergency: String?, category: String, navModes: [String]) -> Aircraft {
+        // Create a JSON dictionary that matches the Aircraft structure
+        let json: [String: Any] = [
+            "hex": hex,
+            "flight": flight,
+            "type": "A320",
+            "r": "N12345",
+            "t": "A320",
+            "category": category,
+            "lat": lat,
+            "lon": lon,
+            "alt_baro": altitude,
+            "alt_geom": altitude + 50,
+            "gs": Double(speed),
+            "track": track,
+            "ias": speed - 20,
+            "tas": speed + 10,
+            "squawk": squawk as Any,
+            "emergency": emergency as Any,
+            "nav_modes": navModes,
+            "mlat": [],
+            "tisb": [],
+            "messages": 0,
+            "seen": 0,
+            "rssi": 0,
+            "baro_rate": 0,
+            "geom_rate": 0
+        ]
+        
+        // Convert to Data
+        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        
+        // Decode into Aircraft
+        let decoder = JSONDecoder()
+        return try! decoder.decode(Aircraft.self, from: jsonData)
+    }
     func getManufacturer() -> String {
         guard let t = t else { return "-" }
         
