@@ -275,20 +275,20 @@ struct MapView: View {
         updateTimer?.invalidate()
         
         // Start fast polling (0.3 seconds) for quick data after map move
+        let pollLimit = 3
         var pollCount = 0
+        
         updateTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
-            Task {
+            Task { @MainActor in
                 await fetchAircraftDataAsync()
                 await fetchAirportDataAsync()
                 
                 pollCount += 1
                 
                 // After 3 fast polls (0.9 seconds), switch back to slow polling
-                if pollCount >= 3 {
+                if pollCount >= pollLimit {
                     timer.invalidate()
-                    await MainActor.run {
-                        self.startSlowPolling()
-                    }
+                    self.startSlowPolling()
                 }
             }
         }

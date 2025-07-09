@@ -40,13 +40,11 @@ struct AircraftMarkerView: View {
         aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
     }
     
-    @ViewBuilder
     var body: some View {
-        // Only show flight code when zoomed in enough
-        if let track = aircraft.track, !displayCode.isEmpty {
-            // With flight code (when zoomed in)
-            VStack(spacing: 0) {
-                // Flight code badge
+        // Consistent view structure to prevent flickering
+        VStack(spacing: 0) {
+            // Flight code badge (conditionally visible)
+            if aircraft.track != nil && !displayCode.isEmpty {
                 Text(displayCode)
                     .font(.system(size: 10, weight: .semibold))
                     .fixedSize()
@@ -56,21 +54,14 @@ struct AircraftMarkerView: View {
                     .foregroundColor(.white)
                     .cornerRadius(4)
                     .allowsHitTesting(false)
-                
-                // Aircraft icon
-                Image(systemName: aircraftType.iconName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(aircraftColor)
-                    .rotationEffect(.degrees(track + 90))
             }
-        } else {
-            // Just the aircraft icon (when zoomed out)
+            
+            // Aircraft icon (always visible)
             Image(systemName: aircraftType.iconName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 16, height: 16)
+                .frame(width: aircraft.track != nil && !displayCode.isEmpty ? 20 : 16, 
+                       height: aircraft.track != nil && !displayCode.isEmpty ? 20 : 16)
                 .foregroundColor(aircraftColor)
                 .rotationEffect(.degrees((aircraft.track ?? 0) - 90))
         }

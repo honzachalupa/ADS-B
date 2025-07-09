@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftCore
 import MapKit
 
 struct RootView: View {
@@ -17,6 +18,7 @@ struct RootView: View {
         }
         .tabBarMinimizeBehavior(.onScrollDown)
         .mapFeatureSelectionAccessory()
+        .messageManagerOverlay()
     }
 }
 

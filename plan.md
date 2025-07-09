@@ -14,11 +14,11 @@
 - UI includes filter controls (MapFilterView, MapFilterControlView), legend (MapLegendView), aircraft detail views, list view (ListView), and user location controls (MapUserLocationControlView). MapStyleControlView allows switching between map types.
 - SettingsView provides user configuration for unit preferences, info box display, and search range. User preferences are persisted using AppStorage.
 - Utilities include AircraftDisplayConfig for icon/type mapping, formatters for numbers/units, and helpers for map interaction. AircraftDisplayConfig is a utility, not a module—no import needed, just file inclusion. Recent fix: removed unnecessary SwiftCore import from AircraftMarkerView to resolve AircraftType reference.
-- ✅ PERFORMANCE ISSUES RESOLVED: Map rendering performance has been completely overhauled and optimized. The app now runs smoothly with 500+ aircraft and can handle the full dataset (1194 aircraft) without significant lag.
-- ✅ DATA MANAGEMENT REFACTOR COMPLETE: Replaced complex reactive data binding system with simple, non-reactive approach to eliminate AttributeGraph cycles and state modification warnings.
-- ✅ COMPILATION ERRORS RESOLVED: All Swift compilation errors in MapView.swift and AircraftMarkerView.swift have been fixed.
-- ✅ AIRCRAFT COLOR SCHEME IMPLEMENTED: 3-color system - white (default civilian), red (emergency), green (military with conservative callsign detection).
-- ✅ CLUSTERING SYSTEM REMOVED: Eliminated complex clustering logic that was causing performance bottlenecks and SwiftUI cycles.
+- Map rendering performance has been completely overhauled and optimized. The app now runs smoothly with 500+ aircraft and can handle the full dataset (1194 aircraft) without significant lag.
+- Replaced complex reactive data binding system with simple, non-reactive approach to eliminate AttributeGraph cycles and state modification warnings.
+- All Swift compilation errors in MapView.swift and AircraftMarkerView.swift have been fixed.
+- 3-color system - white (default civilian), red (emergency), green (military with conservative callsign detection).
+- Eliminated complex clustering logic that was causing performance bottlenecks and SwiftUI cycles.
 
 ## Task List
 
@@ -70,7 +70,7 @@
 4. **Aircraft Color System**
    - White: Default civilian aircraft
    - Red: Emergency aircraft (aircraft.isEmergency)
-   - Green: Military aircraft (conservative callsign detection: RCH, REACH, CONVOY, ARMY, NAVY, USAF, MARINES, USMC)
+   - Green: Military aircraft
 
 ### 📊 Performance Results:
 
@@ -85,15 +85,47 @@
 - **AircraftMarkerView.swift**: Optimized color logic and removed unnecessary complexity
 - **Data flow**: AircraftService.shared → Timer-based fetch → Simple state arrays → Direct rendering
 
+## ✅ Recent Improvements
+
+### Map Center Tracking - COMPLETED
+
+- **Issue**: Aircraft data was fetched for user's initial location, not current map view center
+- **Solution**: Implemented debounced map center tracking with 100km threshold
+- **Implementation**: Added `updateAircraftServiceLocation` with smart distance filtering and fast polling after map changes
+- **Performance**: Only triggers API calls when map center moves >100km (optimized for 250nm/463km radius)
+
+### Aircraft Icon Rotation - COMPLETED
+
+- **Issue**: Aircraft icons didn't point in their actual heading direction
+- **Solution**: Added 90-degree rotation offset to aircraft track values
+- **Implementation**: Modified `AircraftMarkerView` to use `rotationEffect(.degrees((aircraft.track ?? 0) - 90))`
+
+### Aircraft Flickering Fix - COMPLETED
+
+- **Issue**: Aircraft randomly disappeared and reappeared during zoom/pan operations
+- **Solution**: Redesigned `AircraftMarkerView` with consistent view structure
+- **Implementation**: Eliminated conditional view structure changes that caused SwiftUI to recreate view hierarchy
+
+### Refresh Interval Optimization - COMPLETED
+
+- **Issue**: City-level zoom had 11+ second refresh intervals instead of expected 5s
+- **Solution**: Redesigned zoom-based refresh interval calculation
+- **New intervals**:
+  - Zoom 15+ (city/street): 5 seconds
+  - Zoom 5-15 (regional): 5-30 seconds (exponential scaling)
+  - Performance optimized with 5s minimum, 30s maximum
+
+### Swift 6 Concurrency Compliance - COMPLETED
+
+- **Issue**: Swift 6 compiler errors for concurrent variable mutation
+- **Solution**: Added `@MainActor` annotations and proper concurrency handling
+- **Implementation**: Fixed `startFastPollingForMapChange` method with MainActor context
+
 ## 🔄 Future Improvements
 
 ### Initial Data Load Optimization
+
 - **Issue**: Aircraft data takes ~5 seconds to load when app starts
 - **Root cause**: App waits for AppLifecycleManager → LocationManager → AircraftService initialization sequence
 - **Current workaround**: Fast polling (0.2s intervals) until data appears, then slow polling (5s)
 - **TODO**: Optimize the service initialization flow to reduce the ~5-second delay
-
-### Map Center Tracking
-- **Issue**: Aircraft data is fetched for user's initial location, not current map view center
-- **Expected**: Aircraft should update when user pans/zooms the map to show aircraft in the visible area
-- **TODO**: Implement map center tracking to update AircraftService coordinates when map moves

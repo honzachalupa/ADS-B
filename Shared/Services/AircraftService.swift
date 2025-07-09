@@ -84,26 +84,32 @@ class AircraftService: ObservableObject {
     // Calculate dynamic refresh interval based on zoom level
     private func calculateRefreshInterval(for zoomLevel: Double) -> Int {
         // Zoom level reference points:
-        // - 20: Street level (most zoomed in) -> 2s refresh
-        // - 15: City level -> ~5s refresh
+        // - 20: Street level (most zoomed in) -> 5s refresh
+        // - 15: City level -> 5s refresh
         // - 10: Regional level -> ~12s refresh
-        // - 5: Country level (most zoomed out) -> ~30s refresh
+        // - 5: Country level (most zoomed out) -> 30s refresh
         
         let zoomScale = min(max(zoomLevel, 5), 20) // Clamp zoom level between 5 and 20
         
-        // Normalize zoom scale to 0-1 range (20->0, 5->1)
-        let normalizedZoom = (20.0 - zoomScale) / 15.0
+        // For city/street level (15+), use 5s minimum
+        if zoomScale >= 15 {
+            return 5
+        }
+        
+        // For zoomed out levels (5-15), scale from 5s to 30s
+        // Normalize zoom scale to 0-1 range (15->0, 5->1)
+        let normalizedZoom = (15.0 - zoomScale) / 10.0
         
         // Use exponential scaling for more natural progression
-        // Base: 2 seconds
-        // Multiplier range: 1.0 to 15.0 (2s to 30s)
-        let multiplier = pow(15.0, normalizedZoom)
+        // Base: 5 seconds
+        // Multiplier range: 1.0 to 6.0 (5s to 30s)
+        let multiplier = pow(6.0, normalizedZoom)
         
         // Calculate the actual interval
-        let interval = 2.0 * multiplier // Base interval of 2 seconds
+        let interval = 5.0 * multiplier // Base interval of 5 seconds
         
         // Round to nearest second and ensure bounds
-        return Int(min(max(interval.rounded(), 2), 30))
+        return Int(min(max(interval.rounded(), 5), 30))
     }
     
     // Update map center coordinates and zoom level
