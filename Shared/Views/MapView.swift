@@ -1,9 +1,10 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import SwiftCore
 
-// MINIMAL TEST - NO SERVICES, NO REACTIVE BINDINGS, NO COMPLEX COMPONENTS
 struct MapView: View {
+    @StateObject var messageService = MessageManager.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var selectedAircraft: Aircraft?
     @State private var selectedMapStyle: MapStyle = .standard
@@ -15,6 +16,7 @@ struct MapView: View {
     @State private var hasInitialData = false
     @State private var mapCenterDebounceTimer: Timer?
     @State private var lastMapCenter: CLLocationCoordinate2D?
+    @State private var lastErrorCheck = Date()
     
     // Debug info
     private var uniqueCategories: Int {
@@ -39,7 +41,7 @@ struct MapView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 // MINIMAL MAP - Just hardcoded test data
                 Map(position: $cameraPosition, selection: $selectedAircraft) {
                     UserAnnotation()
@@ -76,7 +78,10 @@ struct MapView: View {
                     }
                 }
                 .onMapCameraChange(frequency: .onEnd) { context in
-                    // Only update aircraft service when map center changes significantly (panning)
+                    // Always update zoom level for debug info
+                    updateZoomLevel(with: context.region)
+                    
+                    // Only update aircraft service location when map center changes significantly (panning)
                     // Ignore zoom-only changes to avoid unnecessary API calls
                     updateAircraftServiceLocation(with: context.region)
                 }
@@ -110,19 +115,25 @@ struct MapView: View {
                 }
                 
                 // SIMPLE DEBUG INFO
-                VStack(alignment: .trailing) {
-                    Text("Aircraft: \(aircraftList.count)")
-                    Text("Showing: \(min(500, aircraftList.count))")
-                    Text("Emergency: \(emergencyCount)")
-                    Text("Military: \(militaryCount)")
-                    Text("White: \(whiteCount)")
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        VStack(alignment: .trailing) {
+                            Text("Aircraft: \(aircraftList.count)")
+                            Text("Showing: \(min(500, aircraftList.count))")
+                            Text("Emergency: \(emergencyCount)")
+                            Text("Military: \(militaryCount)")
+                            Text("White: \(whiteCount)")
+                        }
+                        .font(.system(size: 10, design: .monospaced))
+                        .padding(8)
+                        .background(Color.black.opacity(0.7))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .padding()
+                    }
                 }
-                .font(.system(size: 10, design: .monospaced))
-                .padding(8)
-                .background(Color.black.opacity(0.7))
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                .padding()
             }
         }
         .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
@@ -202,6 +213,30 @@ struct MapView: View {
         let service = AircraftService.shared
         let newAircraft = service.aircrafts
         
+        // Check for service errors (only check every 30 seconds to avoid spam)
+        let now = Date()
+        let shouldCheckError = now.timeIntervalSince(lastErrorCheck) > 30
+        
+        if shouldCheckError {
+            let timeSinceLastUpdate = now.timeIntervalSince(service.lastUpdateTime)
+            let hasRecentError = timeSinceLastUpdate > 60
+            
+            if hasRecentError {
+                let formatter = DateFormatter()
+                formatter.timeStyle = .short
+                let lastUpdateString = formatter.string(from: service.lastUpdateTime)
+                
+                messageService.show(
+                    "ADS-B service may be experiencing issues. Data last updated: \(lastUpdateString)",
+                    type: .error
+                )
+            }
+            
+            await MainActor.run {
+                lastErrorCheck = now
+            }
+        }
+        
         // Update on main thread
         await MainActor.run {
             aircraftList = newAircraft
@@ -228,6 +263,30 @@ struct MapView: View {
     private func updateAircraftServiceLocation(with region: MKCoordinateRegion) {
         let newCenter = region.center
         
+        // Calculate zoom level from region span
+        #if os(iOS)
+        let screenWidth = UIScreen.main.bounds.width
+        #else
+        let screenWidth = WKInterfaceDevice.current().screenBounds.width
+        #endif
+        
+        let zoomLevel = log2(360 * (Double(screenWidth) / 256.0) / region.span.longitudeDelta) + 1.0
+        
+        // Check if we should flush data when zooming out above level 6
+        let aircraftService = AircraftService.shared
+        let wasZoomedIn = aircraftService.currentZoomLevel > 6
+        let isZoomedIn = zoomLevel > 6
+        
+        // Only flush data when transitioning from zoomed in to zoomed out
+        if wasZoomedIn && !isZoomedIn {
+            flushAreaAircraftData()
+        }
+        
+        // Only fetch area-specific aircraft data when zoomed in more than level 6
+        if zoomLevel <= 6 {
+            return
+        }
+        
         // Check if map center has changed significantly to avoid unnecessary updates
         if let lastCenter = lastMapCenter {
             let distance = CLLocation(latitude: lastCenter.latitude, longitude: lastCenter.longitude)
@@ -244,17 +303,10 @@ struct MapView: View {
         
         // Start debounce timer (0.5 seconds)
         mapCenterDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            // Calculate zoom level from region span
-            #if os(iOS)
-            let screenWidth = UIScreen.main.bounds.width
-            #else
-            let screenWidth = WKInterfaceDevice.current().screenBounds.width
-            #endif
-            
-            let zoomLevel = log2(360 * (Double(screenWidth) / 256.0) / region.span.longitudeDelta) + 1.0
+            // Flush area-specific aircraft data when moving to a different area
+            self.flushAreaAircraftData()
             
             // Update aircraft service with new map center
-            let aircraftService = AircraftService.shared
             aircraftService.updateMapCenter(
                 latitude: newCenter.latitude,
                 longitude: newCenter.longitude,
@@ -292,6 +344,32 @@ struct MapView: View {
                 }
             }
         }
+    }
+    
+    private func updateZoomLevel(with region: MKCoordinateRegion) {
+        // Calculate zoom level from region span
+        #if os(iOS)
+        let screenWidth = UIScreen.main.bounds.width
+        #else
+        let screenWidth = WKInterfaceDevice.current().screenBounds.width
+        #endif
+        
+        let zoomLevel = log2(360 * (Double(screenWidth) / 256.0) / region.span.longitudeDelta) + 1.0
+        
+        // Always update AircraftService zoom level for debug info display
+        // This ensures the refresh interval in debug info updates immediately
+        let aircraftService = AircraftService.shared
+        aircraftService.updateMapCenter(
+            latitude: aircraftService.currentLatitude,
+            longitude: aircraftService.currentLongitude,
+            zoomLevel: zoomLevel
+        )
+    }
+    
+    private func flushAreaAircraftData() {
+        // Clear all aircraft data when switching areas or zooming out
+        // This ensures stale area-specific data doesn't persist
+        aircraftList.removeAll()
     }
     
 }
