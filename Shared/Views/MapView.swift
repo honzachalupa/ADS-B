@@ -4,7 +4,9 @@ import CoreLocation
 import SwiftCore
 
 struct MapView: View {
+    @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     @StateObject var messageService = MessageManager.shared
+    @ObservedObject private var aircraftService = AircraftService.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var selectedAircraft: Aircraft?
     @State private var selectedMapStyle: MapStyle = .standard
@@ -282,12 +284,10 @@ struct MapView: View {
                 Map(position: $cameraPosition, selection: $selectedAircraft) {
                     UserAnnotation()
                     
-                    // AIRCRAFT MARKERS - Display all available aircraft
                     ForEach(aircraftList, id: \.hex) { aircraft in
                         let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
                         let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
-                        let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
-                        let isSimpleLabel = /* !isInfoBoxEnabled || */ hasNoData
+                        let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
 
                         Annotation(
                             isSimpleLabel ? code : "",
