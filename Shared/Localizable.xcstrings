@@ -1,7 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " and military aircrafts are " : {
+    " and military aircraft are " : {
 
     },
     "-" : {
@@ -82,7 +82,7 @@
         }
       }
     },
-    "and military aircrafts are" : {
+    "and military aircraft are" : {
       "extractionState" : "stale",
       "localizations" : {
         "cs" : {
@@ -305,7 +305,7 @@
         }
       }
     },
-    "Limited Aircraft Data Display (LADD) aircrafts" : {
+    "Limited Aircraft Data Display (LADD) aircraft" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -375,7 +375,7 @@
         }
       }
     },
-    "Military aircrafts" : {
+    "Military aircraft" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -461,7 +461,7 @@
         }
       }
     },
-    "Privacy ICAO Address (PIA) aircrafts" : {
+    "Privacy ICAO Address (PIA) aircraft" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -481,7 +481,7 @@
         }
       }
     },
-    "Regular aircrafts (within %lld NM from your location)" : {
+    "Regular aircraft (within %lld NM from your location)" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -491,7 +491,7 @@
         }
       }
     },
-    "Regular aircrafts are" : {
+    "Regular aircraft are" : {
       "extractionState" : "stale",
       "localizations" : {
         "cs" : {
@@ -502,7 +502,7 @@
         }
       }
     },
-    "Regular aircrafts are " : {
+    "Regular aircraft are " : {
 
     },
     "Search range" : {

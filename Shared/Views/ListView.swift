@@ -5,7 +5,7 @@ struct ListView: View {
     
     var body: some View {
         NavigationStack {
-            List(aircraftService.aircrafts) { aircraft in
+            List(aircraftService.aircraft) { aircraft in
                 HStack {
                     VStack(alignment: .leading) {
                         Text(aircraft.flight?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "-")

@@ -6,7 +6,7 @@ struct AircraftDetailView: View {
     @StateObject private var photoService = AircraftPhotoService()
     @AppStorage("detail_isShowDetails") private var isShowDetails: Bool = false
     
-    var aircraftUpdated: Aircraft { aircraftService.aircrafts.first { $0.hex == aircraft.hex } ?? aircraft }
+    var aircraftUpdated: Aircraft { aircraftService.aircraft.first { $0.hex == aircraft.hex } ?? aircraft }
     
     var body: some View {
         NavigationStack {

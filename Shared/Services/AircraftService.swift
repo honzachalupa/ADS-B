@@ -1,10 +1,10 @@
 import SwiftUI
 import Combine
 
-let FILTER_SHOW_REGULAR_AIRCRAFTS_KEY = "filter_showRegularAircrafts"
-let FILTER_SHOW_PIA_AIRCRAFTS_KEY = "filter_showPIAAircrafts"
-let FILTER_SHOW_MILITARY_AIRCRAFTS_KEY = "filter_showMilitaryAircrafts"
-let FILTER_SHOW_LADD_AIRCRAFTS_KEY = "filter_showLADDAircrafts"
+let FILTER_SHOW_REGULAR_AIRCRAFTS_KEY = "filter_showRegularAircraft"
+let FILTER_SHOW_PIA_AIRCRAFTS_KEY = "filter_showPIAAircraft"
+let FILTER_SHOW_MILITARY_AIRCRAFTS_KEY = "filter_showMilitaryAircraft"
+let FILTER_SHOW_LADD_AIRCRAFTS_KEY = "filter_showLADDAircraft"
 
 enum AircraftEndpointType {
     case regular(latitude: Double, longitude: Double, radius: Int)
@@ -64,7 +64,7 @@ class AircraftService: ObservableObject {
         }
     }
     
-    @Published var aircrafts: [Aircraft] = []
+    @Published var aircraft: [Aircraft] = []
     @Published var isLoading: Bool = false
     @Published var error: Error? = nil
     
@@ -304,7 +304,7 @@ class AircraftService: ObservableObject {
                 
                 // Update the published aircraft list and last update time
                 DispatchQueue.main.async {
-                    self.aircrafts = combinedAircraft
+                    self.aircraft = combinedAircraft
                     self.lastUpdateTime = .now
                     print("[AircraftService] ✅ Updated \(combinedAircraft.count) aircraft")
                 }

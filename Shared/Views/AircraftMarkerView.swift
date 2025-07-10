@@ -71,7 +71,7 @@ struct AircraftMarkerView: View {
 // MARK: - Preview
 #Preview {
     VStack {
-        if let aircraft = PreviewAircraftData.getAircrafts().first {
+        if let aircraft = PreviewAircraftData.getAircraft().first {
             AircraftMarkerView(aircraft: aircraft)
                 .frame(width: 100, height: 100)
         } else {

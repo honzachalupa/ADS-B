@@ -1,7 +1,7 @@
 import Foundation
 
 struct PreviewAircraftData {
-    static func getAircrafts() -> [Aircraft] {
+    static func getAircraft() -> [Aircraft] {
         let jsonString = """
         {
             "ac": [
@@ -82,10 +82,10 @@ struct PreviewAircraftData {
     }
     
     static func getSingleAircraft() -> Aircraft? {
-        return getAircrafts().first
+        return getAircraft().first
     }
     
     static func getEmergencyAircraft() -> Aircraft? {
-        return getAircrafts().first(where: { $0.isEmergency })
+        return getAircraft().first(where: { $0.isEmergency })
     }
 }

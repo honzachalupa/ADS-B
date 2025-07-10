@@ -17,7 +17,7 @@ struct DebugInfoView: View {
         [
             ("arrow.trianglehead.2.counterclockwise", "\(timeSinceLastUpdate)/\(aircraftService.currentInterval)s"),
             ("plus.magnifyingglass", String(format: "%.1f", aircraftService.currentZoomLevel)),
-            ("airplane.up.right", "\(aircraftService.aircrafts.count) \(tabViewBottomAccessoryPlacement == .expanded ? "aircrafts" : "")")
+            ("airplane.up.right", "\(aircraftService.aircraft.count) \(tabViewBottomAccessoryPlacement == .expanded ? "aircraft" : "")")
         ]
     }
     
@@ -46,7 +46,7 @@ struct DebugInfoView: View {
             currentTime = time
         }
         // Force view to update when aircraft count changes
-        .id(aircraftService.aircrafts.count)
+        .id(aircraftService.aircraft.count)
     }
 }
 

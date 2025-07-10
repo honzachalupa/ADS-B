@@ -108,13 +108,13 @@ struct MapView: View {
     private func fetchAircraftData() {
         // Direct access to service data - no reactive bindings
         let service = AircraftService.shared
-        aircraftList = service.aircrafts
+        aircraftList = service.aircraft
     }
     
     private func fetchAircraftDataAsync() async {
         // Async version to prevent UI lag during updates
         let service = AircraftService.shared
-        let newAircraft = service.aircrafts
+        let newAircraft = service.aircraft
         
         // Check for service errors (only check every 30 seconds to avoid spam)
         let now = Date()
@@ -380,26 +380,6 @@ struct MapView: View {
                     
                     ToolbarItem(placement: .topBarTrailing) {
                         MapUserLocationControlView(cameraPosition: $cameraPosition)
-                    }
-                }
-                
-                // SIMPLE DEBUG INFO
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(alignment: .trailing) {
-                            Text("Aircraft: \(aircraftList.count)")
-                            Text("Emergency: \(emergencyCount)")
-                            Text("Military: \(militaryCount)")
-                            Text("White: \(whiteCount)")
-                        }
-                        .font(.system(size: 10, design: .monospaced))
-                        .padding(8)
-                        .background(Color.black.opacity(0.7))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .padding()
                     }
                 }
             }
