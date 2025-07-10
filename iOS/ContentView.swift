@@ -3,16 +3,29 @@ import SwiftCore
 import MapKit
 
 struct RootView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @ObservedObject private var aircraftService = AircraftService.shared
     @AppStorage(SETTINGS_IS_DEBUG_INFO_BOX_ENABLED_KEY) private var isDebugInfoBoxEnabled: Bool = false
     
     var body: some View {
-        TabView {
-            Tab("Map", systemImage: "map") {
-                MapView()
-            }
-            
-            Tab("List", systemImage: "list.bullet") {
-                ListView()
+        Group {
+            if horizontalSizeClass == .regular {
+                NavigationSplitView {
+                    ListView()
+                } detail: {
+                    MapView()
+                }
+                
+            } else {
+                TabView {
+                    Tab("Map", systemImage: "map") {
+                        MapView()
+                    }
+                    
+                    Tab("List", systemImage: "list.bullet") {
+                        ListView()
+                    }
+                }
             }
         }
         .tabViewBottomAccessory {

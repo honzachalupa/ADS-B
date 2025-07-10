@@ -7,6 +7,7 @@ struct MapView: View {
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     @StateObject var messageService = MessageManager.shared
     @ObservedObject private var aircraftService = AircraftService.shared
+    @ObservedObject private var locationManager = LocationManager.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var selectedAircraft: Aircraft?
     @State private var selectedMapStyle: MapStyle = .standard
@@ -275,17 +276,37 @@ struct MapView: View {
         aircraftList.removeAll()
     }
     
+    private func panToUserLocation() {
+        // Check if we have user location and pan to it
+        if let userLocation = locationManager.location {
+            let region = MKCoordinateRegion(
+                center: userLocation.coordinate,
+                latitudinalMeters: 20000, // 20km radius - much tighter zoom
+                longitudinalMeters: 20000
+            )
+            
+            withAnimation(.easeInOut(duration: 1.5)) {
+                cameraPosition = .region(region)
+            }
+        } else {
+            // Location not available yet, try again after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.panToUserLocation()
+            }
+        }
+    }
+    
     @ViewBuilder
-    func MarkerView(iconSystemName: String, fillColor: Color, foregroundColor: Color) -> some View {
+    func MarkerView(size: Double, iconSystemName: String, fillColor: Color, foregroundColor: Color) -> some View {
         ZStack {
             Circle()
                 .fill(fillColor)
-                .frame(width: 30, height: 30)
+                .frame(width: size, height: size)
             
             Image(systemName: iconSystemName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 15, height: 15)
+                .frame(width: size / 2, height: size / 2)
                 .foregroundStyle(foregroundColor)
         }
     }
@@ -296,6 +317,23 @@ struct MapView: View {
                 Map(position: $cameraPosition, selection: $selectedAircraft) {
                     UserAnnotation()
                     
+                    // Airport markers - rendered first (bottom layer)
+                    ForEach(airportList, id: \.id) { airport in
+                        Annotation(
+                            airport.icao,
+                            coordinate: airport.coordinate
+                        ) {
+                            MarkerView(
+                                size: 20,
+                                iconSystemName: "airplane.departure",
+                                fillColor: .blue.opacity(0.7),
+                                foregroundColor: .white
+                            )
+                            .zIndex(0)
+                        }
+                    }
+                    
+                    // Aircraft markers - rendered second (top layer)
                     ForEach(aircraftList, id: \.hex) { aircraft in
                         let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
                         let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
@@ -311,6 +349,7 @@ struct MapView: View {
                         ) {
                             VStack {
                                 MarkerView(
+                                    size: 30,
                                     iconSystemName: aircraftType.iconName,
                                     fillColor: .black.opacity(0.5),
                                     foregroundColor: aircraftColor(for: aircraft)
@@ -343,19 +382,7 @@ struct MapView: View {
                             .onTapGesture {
                                 selectedAircraft = aircraft
                             }
-                        }
-                    }
-                    
-                    ForEach(airportList, id: \.id) { airport in
-                        Annotation(
-                            airport.icao,
-                            coordinate: airport.coordinate
-                        ) {
-                            MarkerView(
-                                iconSystemName: "airplane.departure",
-                                fillColor: .blue.opacity(0.7),
-                                foregroundColor: .white
-                            )
+                            .zIndex(1)
                         }
                     }
                 }
@@ -372,6 +399,10 @@ struct MapView: View {
                             Label("Settings", systemImage: "gearshape.fill")
                         }
                     }
+                    
+                    #if os(iOS)
+                    ToolbarSpacer(.flexible, placement: .topBarLeading)
+                    #endif
                     
                     ToolbarItem(placement: .topBarLeading) {
                         MapFilterControlView()
@@ -400,9 +431,16 @@ struct MapView: View {
         }
         .onAppear {
             startDataUpdates()
+            panToUserLocation()
         }
         .onDisappear {
             stopDataUpdates()
+        }
+        .onChange(of: locationManager.location) { _, newLocation in
+            // Pan to user location when it becomes available
+            if newLocation != nil && cameraPosition == .automatic {
+                panToUserLocation()
+            }
         }
     }
 }
