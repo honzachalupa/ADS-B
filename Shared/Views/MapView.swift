@@ -11,7 +11,7 @@ struct MapView: View {
     @State private var selectedAircraft: Aircraft?
     @State private var selectedMapStyle: MapStyle = .standard
     
-    // REAL AIRCRAFT DATA - But still simple approach
+    // Aircraft and airport data
     @State private var aircraftList: [Aircraft] = []
     @State private var airportList: [Airport] = []
     @State private var updateTimer: Timer?
@@ -20,10 +20,7 @@ struct MapView: View {
     @State private var lastMapCenter: CLLocationCoordinate2D?
     @State private var lastErrorCheck = Date()
     
-    // Debug info
-    private var uniqueCategories: Int {
-        Set(aircraftList.compactMap(\.category)).count
-    }
+    // Aircraft counts for debug info
     
     private var emergencyCount: Int {
         aircraftList.filter(\.isEmergency).count

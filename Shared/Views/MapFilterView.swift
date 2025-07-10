@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct MapFilterView: View {
-    @AppStorage(SETTINGS_SEARCH_RANGE_KEY) private var searchRange: Int = 50
     @AppStorage(FILTER_SHOW_PIA_AIRCRAFTS_KEY) private var showPIAAircrafts: Bool = true
     @AppStorage(FILTER_SHOW_REGULAR_AIRCRAFTS_KEY) private var showRegularAircrafts: Bool = true
     @AppStorage(FILTER_SHOW_MILITARY_AIRCRAFTS_KEY) private var showMilitaryAircrafts: Bool = true

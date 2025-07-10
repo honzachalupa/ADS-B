@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " and military aircrafts are " : {
+
+    },
     "-" : {
       "shouldTranslate" : false
     },
@@ -8,6 +11,7 @@
       "shouldTranslate" : false
     },
     "&nbsp;blue&nbsp;" : {
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -18,6 +22,7 @@
       }
     },
     "&nbsp;green" : {
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -32,9 +37,6 @@
     },
     "%@ kts" : {
       "shouldTranslate" : false
-    },
-    "%lld" : {
-
     },
     "%lld°" : {
       "shouldTranslate" : false
@@ -70,16 +72,6 @@
     "Aircraft: %lld" : {
 
     },
-    "Aircraft: %lld/%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Aircraft: %1$lld/%2$lld"
-          }
-        }
-      }
-    },
     "Airplane" : {
       "localizations" : {
         "cs" : {
@@ -91,6 +83,7 @@
       }
     },
     "and military aircrafts are" : {
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -109,6 +102,9 @@
           }
         }
       }
+    },
+    "blue" : {
+
     },
     "Coordinates" : {
       "localizations" : {
@@ -193,9 +189,6 @@
         }
       }
     },
-    "FPS: %.1f" : {
-
-    },
     "Geometric Altitude" : {
       "localizations" : {
         "cs" : {
@@ -215,6 +208,9 @@
           }
         }
       }
+    },
+    "green" : {
+
     },
     "Ground Speed" : {
       "localizations" : {
@@ -288,9 +284,6 @@
           }
         }
       }
-    },
-    "Last: %@" : {
-
     },
     "Legend" : {
       "localizations" : {
@@ -499,6 +492,7 @@
       }
     },
     "Regular aircrafts are" : {
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -507,6 +501,9 @@
           }
         }
       }
+    },
+    "Regular aircrafts are " : {
+
     },
     "Search range" : {
       "localizations" : {
@@ -647,9 +644,6 @@
         }
       }
     },
-    "Updates: %lld" : {
-
-    },
     "Use metric units" : {
       "localizations" : {
         "cs" : {
@@ -669,9 +663,6 @@
           }
         }
       }
-    },
-    "Visible: %lld" : {
-
     },
     "White: %lld" : {
 
