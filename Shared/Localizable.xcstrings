@@ -67,9 +67,6 @@
         }
       }
     },
-    "Aircraft: %@" : {
-
-    },
     "Aircraft: %lld" : {
 
     },
@@ -112,9 +109,6 @@
           }
         }
       }
-    },
-    "Close" : {
-
     },
     "Coordinates" : {
       "localizations" : {
@@ -198,9 +192,6 @@
           }
         }
       }
-    },
-    "Flight: %@" : {
-
     },
     "FPS: %.1f" : {
 
@@ -556,9 +547,6 @@
           }
         }
       }
-    },
-    "Showing: %lld" : {
-
     },
     "Signal" : {
       "localizations" : {

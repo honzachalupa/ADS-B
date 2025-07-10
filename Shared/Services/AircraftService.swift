@@ -71,7 +71,7 @@ class AircraftService: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var aircraftCache: [String: (aircraft: Aircraft, timestamp: Date, endpointType: AircraftEndpointType)] = [:]
     private let cacheRetentionTime: TimeInterval = 10.0
-    private let baseURL = "https://api.adsb.lol/v2_"
+    private let baseURL = "https://api.adsb.lol/v2"
     // Current map center coordinates and zoom level for fetching aircraft data
     internal private(set) var currentLatitude: Double = 0
     internal private(set) var currentLongitude: Double = 0

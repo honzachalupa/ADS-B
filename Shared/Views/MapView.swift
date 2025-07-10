@@ -39,123 +39,27 @@ struct MapView: View {
         aircraftList.count - emergencyCount - militaryCount
     }
     
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                // MINIMAL MAP - Just hardcoded test data
-                Map(position: $cameraPosition, selection: $selectedAircraft) {
-                    UserAnnotation()
-                    
-                    // AIRCRAFT MARKERS - Increase limit to test performance at scale
-                    ForEach(Array(aircraftList.prefix(500)), id: \.hex) { aircraft in
-                        if let lat = aircraft.lat, let lon = aircraft.lon {
-                            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                            Annotation(
-                                aircraft.hex,
-                                coordinate: coordinate
-                            ) {
-                                // TEST: Add back AircraftMarkerView to see if it's the bottleneck
-                                AircraftMarkerView(aircraft: aircraft)
-                                    .onTapGesture {
-                                        selectedAircraft = aircraft
-                                    }
-                            }
-                        }
-                    }
-                    
-                    // Airport Markers - Direct from state array
-                    ForEach(airportList, id: \.id) { airport in
-                        Annotation(
-                            airport.icao,
-                            coordinate: airport.coordinate
-                        ) {
-                            Image(systemName: "airplane.departure")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 16, height: 16)
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-                .onMapCameraChange(frequency: .onEnd) { context in
-                    // Always update zoom level for debug info
-                    updateZoomLevel(with: context.region)
-                    
-                    // Only update aircraft service location when map center changes significantly (panning)
-                    // Ignore zoom-only changes to avoid unnecessary API calls
-                    updateAircraftServiceLocation(with: context.region)
-                }
-                .mapStyle(MapStyle.standard)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        NavigationLink {
-                            SettingsView()
-                        } label: {
-                            Label("Settings", systemImage: "gearshape.fill")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarLeading) {
-                        MapFilterControlView()
-                    }
-                    
-                    ToolbarItem(placement: .topBarLeading) {
-                        MapLegendView {
-                            Label("Legend", systemImage: "info.circle.fill")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        MapStyleControlView(mapStyle: $selectedMapStyle)
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        MapUserLocationControlView(cameraPosition: $cameraPosition)
-                    }
-                }
-                
-                // SIMPLE DEBUG INFO
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(alignment: .trailing) {
-                            Text("Aircraft: \(aircraftList.count)")
-                            Text("Showing: \(min(500, aircraftList.count))")
-                            Text("Emergency: \(emergencyCount)")
-                            Text("Military: \(militaryCount)")
-                            Text("White: \(whiteCount)")
-                        }
-                        .font(.system(size: 10, design: .monospaced))
-                        .padding(8)
-                        .background(Color.black.opacity(0.7))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .padding()
-                    }
-                }
-            }
-        }
-        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-            // SIMPLE SHEET - No complex AircraftDetailView
-            VStack {
-                Text("Aircraft: \(aircraft.hex)")
-                Text("Flight: \(aircraft.formattedFlight)")
-                Button("Close") {
-                    selectedAircraft = nil
-                }
-            }
-            .padding()
-        }
-        .onAppear {
-            startDataUpdates()
-        }
-        .onDisappear {
-            stopDataUpdates()
+    // Helper functions for aircraft display
+    private func aircraftColor(for aircraft: Aircraft) -> Color {
+        if aircraft.isEmergency {
+            return .red // Emergency aircraft - big and red
+        } else if isMilitaryAircraft(aircraft) {
+            return .green // Military aircraft - green
+        } else {
+            return .white // Default - white
         }
     }
     
-    // MARK: - Simple Data Management
+    private func isMilitaryAircraft(_ aircraft: Aircraft) -> Bool {
+        let flight = aircraft.formattedFlight.uppercased()
+        let militaryCallsigns = ["RCH", "REACH", "CONVOY", "ARMY", "NAVY", "USAF", "MARINES", "USMC"]
+        return militaryCallsigns.contains { flight.hasPrefix($0) }
+    }
+    
+    private func formatSpeed(_ speed: Double?) -> String {
+        guard let speed = speed else { return "N/A" }
+        return "\(Int(speed)) kt"
+    }
     
     private func startDataUpdates() {
         // Initial load - immediate fetch from service
@@ -372,6 +276,149 @@ struct MapView: View {
         aircraftList.removeAll()
     }
     
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Map(position: $cameraPosition, selection: $selectedAircraft) {
+                    UserAnnotation()
+                    
+                    // AIRCRAFT MARKERS - Display all available aircraft
+                    ForEach(aircraftList, id: \.hex) { aircraft in
+                        let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
+                        let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
+                        let hasNoData = (aircraft.gs == nil || (aircraft.gs ?? 0) <= 0) && aircraft.alt_baro == nil
+                        let isSimpleLabel = /* !isInfoBoxEnabled || */ hasNoData
+
+                        Annotation(
+                            isSimpleLabel ? code : "",
+                            coordinate: CLLocationCoordinate2D(
+                                latitude: aircraft.lat ?? 0,
+                                longitude: aircraft.lon ?? 0
+                            ),
+                            anchor: .top
+                        ) {
+                            VStack {
+                                ZStack {
+                                    Circle()
+                                        .fill(.black.opacity(0.5))
+                                        .frame(width: 30, height: 30)
+                                    
+                                    Image(systemName: aircraftType.iconName)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 15, height: 15)
+                                        .foregroundStyle(aircraftColor(for: aircraft))
+                                        .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
+                                }
+                                .scaleEffect(aircraftType.scale)
+                                
+                                if !isSimpleLabel {
+                                    VStack {
+                                        Text(code)
+                                            .fontWeight(.semibold)
+                                            .font(.caption)
+                                        
+                                        if let groundSpeed = aircraft.gs, groundSpeed > 0 {
+                                            Text(formatSpeed(groundSpeed))
+                                                .font(.caption2)
+                                        }
+
+                                        if let altitude = aircraft.alt_baro {
+                                            Text(formatAltitude(altitude))
+                                                .font(.caption2)
+                                        }
+                                    }
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .background(.black.opacity(0.5))
+                                    .cornerRadius(4)
+                                }
+                            }
+                            .onTapGesture {
+                                selectedAircraft = aircraft
+                            }
+                        }
+                    }
+                    
+                    ForEach(airportList, id: \.id) { airport in
+                        Annotation(
+                            airport.icao,
+                            coordinate: airport.coordinate
+                        ) {
+                            Image(systemName: "airplane.departure")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+                .onMapCameraChange(frequency: .onEnd) { context in
+                    updateZoomLevel(with: context.region)
+                    updateAircraftServiceLocation(with: context.region)
+                }
+                .mapStyle(MapStyle.standard)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        NavigationLink {
+                            SettingsView()
+                        } label: {
+                            Label("Settings", systemImage: "gearshape.fill")
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarLeading) {
+                        MapFilterControlView()
+                    }
+                    
+                    ToolbarItem(placement: .topBarLeading) {
+                        MapLegendView {
+                            Label("Legend", systemImage: "info.circle.fill")
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        MapStyleControlView(mapStyle: $selectedMapStyle)
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        MapUserLocationControlView(cameraPosition: $cameraPosition)
+                    }
+                }
+                
+                // SIMPLE DEBUG INFO
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        VStack(alignment: .trailing) {
+                            Text("Aircraft: \(aircraftList.count)")
+                            Text("Emergency: \(emergencyCount)")
+                            Text("Military: \(militaryCount)")
+                            Text("White: \(whiteCount)")
+                        }
+                        .font(.system(size: 10, design: .monospaced))
+                        .padding(8)
+                        .background(Color.black.opacity(0.7))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .padding()
+                    }
+                }
+            }
+        }
+        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
+            AircraftDetailView(aircraft: aircraft)
+                .presentationDetents([.medium, .large])
+                .presentationBackgroundInteraction(.enabled)
+        }
+        .onAppear {
+            startDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
+        }
+    }
 }
 
 // MARK: - Preview
