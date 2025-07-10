@@ -401,7 +401,7 @@ struct MapView: View {
                     }
                     
                     #if os(iOS)
-                    ToolbarSpacer(.flexible, placement: .topBarLeading)
+                    // ToolbarSpacer(.flexible, placement: .topBarLeading)
                     #endif
                     
                     ToolbarItem(placement: .topBarLeading) {

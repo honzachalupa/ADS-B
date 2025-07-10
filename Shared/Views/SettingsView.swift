@@ -26,7 +26,7 @@ struct SettingsView: View {
                     Toggle("Use metric units", isOn: $isMetricUnits)
                     
                     #if os(iOS)
-                    Toggle("Show debug info box", isOn: $isDebugInfoBoxEnabled)
+                    // Toggle("Show debug info box", isOn: $isDebugInfoBoxEnabled)
                     #endif
                 }
             }

@@ -28,13 +28,12 @@ struct RootView: View {
                 }
             }
         }
-        .tabViewBottomAccessory {
+        /* .tabViewBottomAccessory {
             if isDebugInfoBoxEnabled {
                 DebugInfoView()
             }
         }
-        .tabBarMinimizeBehavior(.onScrollDown)
-        .mapFeatureSelectionAccessory()
+        .tabBarMinimizeBehavior(.onScrollDown) */
         .messageManagerOverlay()
     }
 }
