@@ -3,6 +3,8 @@ import SwiftCore
 import MapKit
 
 struct RootView: View {
+    @AppStorage(SETTINGS_IS_DEBUG_INFO_BOX_ENABLED_KEY) private var isDebugInfoBoxEnabled: Bool = false
+    
     var body: some View {
         TabView {
             Tab("Map", systemImage: "map") {
@@ -14,7 +16,9 @@ struct RootView: View {
             }
         }
         .tabViewBottomAccessory {
-            DebugInfoView()
+            if isDebugInfoBoxEnabled {
+                DebugInfoView()
+            }
         }
         .tabBarMinimizeBehavior(.onScrollDown)
         .mapFeatureSelectionAccessory()

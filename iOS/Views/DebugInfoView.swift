@@ -1,10 +1,9 @@
 import SwiftUI
 
 struct DebugInfoView: View {
-    @Environment(\.tabViewBottomAccessoryPlacement) var tabViewBottomAccessoryPlacement
     @ObservedObject private var aircraftService = AircraftService.shared
+    @ObservedObject private var airportService = AirportService.shared
     @State private var currentTime = Date()
-    @State private var isInfoPopoverPresented: Bool = false
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -13,34 +12,54 @@ struct DebugInfoView: View {
         return "\(Int(round(interval)))s ago"
     }
     
+    private var militaryAircraft: [Aircraft] {
+        aircraftService.aircraft.filter { aircraft in
+            let flight = aircraft.formattedFlight.uppercased()
+            let militaryCallsigns = ["RCH", "REACH", "CONVOY", "ARMY", "NAVY", "USAF", "MARINES", "USMC"]
+            return militaryCallsigns.contains { flight.hasPrefix($0) }
+        }
+    }
+    
+    private var emergencyAircraft: [Aircraft] {
+        aircraftService.aircraft.filter(\.isEmergency)
+    }
+    
     var infoItems: [(String, String)] {
         [
             ("arrow.trianglehead.2.counterclockwise", "\(timeSinceLastUpdate)/\(aircraftService.currentInterval)s"),
             ("plus.magnifyingglass", String(format: "%.1f", aircraftService.currentZoomLevel)),
-            ("airplane.up.right", "\(aircraftService.aircraft.count) \(tabViewBottomAccessoryPlacement == .expanded ? "aircraft" : "")")
+            ("airplane.departure", "\(airportService.airports.count)"),
+            ("airplane.up.right", "\(aircraftService.aircraft.count)")
         ]
     }
     
     var body: some View {
         HStack(spacing: 5) {
             ForEach(infoItems, id: \.0) { (iconSystemName, value) in
-                Spacer()
+                Spacer(minLength: 0)
                 
                 Image(systemName: iconSystemName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
-                Text(value)
+                if iconSystemName == "airplane.up.right" {
+                    HStack(spacing: 2) {
+                        Text(value)
+                        if militaryAircraft.count > 0 {
+                            Text("\(militaryAircraft.count)")
+                                .foregroundStyle(.green)
+                        }
+                        if emergencyAircraft.count > 0 {
+                            Text("\(emergencyAircraft.count)")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                } else {
+                    Text(value)
+                }
                 
-                Spacer()
+                Spacer(minLength: 0)
             }
-        }
-        .onTapGesture {
-            isInfoPopoverPresented.toggle()
-        }
-        .popover(isPresented: $isInfoPopoverPresented) {
-            Text("TODO")
-                .presentationCompactAdaptation(.popover)
         }
         .onReceive(timer) { time in
             currentTime = time

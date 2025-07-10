@@ -275,6 +275,21 @@ struct MapView: View {
         aircraftList.removeAll()
     }
     
+    @ViewBuilder
+    func MarkerView(iconSystemName: String, fillColor: Color, foregroundColor: Color) -> some View {
+        ZStack {
+            Circle()
+                .fill(fillColor)
+                .frame(width: 30, height: 30)
+            
+            Image(systemName: iconSystemName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 15, height: 15)
+                .foregroundStyle(foregroundColor)
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -295,18 +310,12 @@ struct MapView: View {
                             anchor: .top
                         ) {
                             VStack {
-                                ZStack {
-                                    Circle()
-                                        .fill(.black.opacity(0.5))
-                                        .frame(width: 30, height: 30)
-                                    
-                                    Image(systemName: aircraftType.iconName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 15, height: 15)
-                                        .foregroundStyle(aircraftColor(for: aircraft))
-                                        .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
-                                }
+                                MarkerView(
+                                    iconSystemName: aircraftType.iconName,
+                                    fillColor: .black.opacity(0.5),
+                                    foregroundColor: aircraftColor(for: aircraft)
+                                )
+                                .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
                                 .scaleEffect(aircraftType.scale)
                                 
                                 if !isSimpleLabel {
@@ -342,11 +351,11 @@ struct MapView: View {
                             airport.icao,
                             coordinate: airport.coordinate
                         ) {
-                            Image(systemName: "airplane.departure")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 16, height: 16)
-                                .foregroundColor(.blue)
+                            MarkerView(
+                                iconSystemName: "airplane.departure",
+                                fillColor: .blue.opacity(0.7),
+                                foregroundColor: .white
+                            )
                         }
                     }
                 }

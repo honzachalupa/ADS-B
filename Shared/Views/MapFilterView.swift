@@ -7,7 +7,7 @@ struct MapFilterView: View {
     @AppStorage(FILTER_SHOW_LADD_AIRCRAFTS_KEY) private var showLADDAircraft: Bool = true
     
     var body: some View {
-        Toggle("Regular aircraft (within \(searchRange) NM from your location)", isOn: $showRegularAircraft)
+        Toggle("Regular aircraft", isOn: $showRegularAircraft)
         Toggle("Military aircraft", isOn: $showMilitaryAircraft)
         Toggle("Privacy ICAO Address (PIA) aircraft", isOn: $showPIAAircraft)
         Toggle("Limited Aircraft Data Display (LADD) aircraft", isOn: $showLADDAircraft)

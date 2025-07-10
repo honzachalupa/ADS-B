@@ -1,36 +1,8 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " and military aircraft are " : {
-
-    },
     "-" : {
       "shouldTranslate" : false
-    },
-    "." : {
-      "shouldTranslate" : false
-    },
-    "&nbsp;blue&nbsp;" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "&nbsp;modrá&nbsp;"
-          }
-        }
-      }
-    },
-    "&nbsp;green" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "&nbsp;zelená"
-          }
-        }
-      }
     },
     "%@ ft/min" : {
       "shouldTranslate" : false
@@ -38,25 +10,10 @@
     "%@ kts" : {
       "shouldTranslate" : false
     },
+    "%lld" : {
+      "shouldTranslate" : false
+    },
     "%lld°" : {
-      "shouldTranslate" : false
-    },
-    "20 NM" : {
-      "shouldTranslate" : false
-    },
-    "50 NM" : {
-      "shouldTranslate" : false
-    },
-    "100 NM" : {
-      "shouldTranslate" : false
-    },
-    "150 NM" : {
-      "shouldTranslate" : false
-    },
-    "200 NM" : {
-      "shouldTranslate" : false
-    },
-    "250 NM" : {
       "shouldTranslate" : false
     },
     "Aircraft" : {
@@ -69,9 +26,6 @@
         }
       }
     },
-    "Aircraft: %lld" : {
-
-    },
     "Airplane" : {
       "localizations" : {
         "cs" : {
@@ -83,7 +37,6 @@
       }
     },
     "and military aircraft are" : {
-      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -104,7 +57,14 @@
       }
     },
     "blue" : {
-
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "modrá"
+          }
+        }
+      }
     },
     "Coordinates" : {
       "localizations" : {
@@ -166,9 +126,6 @@
         }
       }
     },
-    "Emergency: %lld" : {
-
-    },
     "Filter" : {
       "localizations" : {
         "cs" : {
@@ -210,7 +167,14 @@
       }
     },
     "green" : {
-
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zelená"
+          }
+        }
+      }
     },
     "Ground Speed" : {
       "localizations" : {
@@ -385,9 +349,6 @@
         }
       }
     },
-    "Military: %lld" : {
-
-    },
     "MLAT" : {
       "shouldTranslate" : false
     },
@@ -441,16 +402,6 @@
         }
       }
     },
-    "Performance" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Výkon"
-          }
-        }
-      }
-    },
     "Position" : {
       "localizations" : {
         "cs" : {
@@ -481,36 +432,22 @@
         }
       }
     },
-    "Regular aircraft (within %lld NM from your location)" : {
+    "Regular aircraft" : {
       "localizations" : {
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Běžná letadla (do %lld NM od vaší polohy)"
+            "value" : "Běžná letadla"
           }
         }
       }
     },
     "Regular aircraft are" : {
-      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Běžná letadla jsou"
-          }
-        }
-      }
-    },
-    "Regular aircraft are " : {
-
-    },
-    "Search range" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozsah vyhledávání"
           }
         }
       }
@@ -521,6 +458,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nastavení"
+          }
+        }
+      }
+    },
+    "Show debug info box" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobrazit debug info"
           }
         }
       }
@@ -591,9 +538,6 @@
     "TIS-B" : {
       "shouldTranslate" : false
     },
-    "TODO" : {
-
-    },
     "Tower/Ground Station" : {
       "localizations" : {
         "cs" : {
@@ -663,9 +607,6 @@
           }
         }
       }
-    },
-    "White: %lld" : {
-
     }
   },
   "version" : "1.0"
