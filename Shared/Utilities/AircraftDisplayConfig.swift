@@ -33,6 +33,13 @@ struct AircraftDisplayConfig {
                 default: return 1
             }
         }
+        
+        var shouldRotateWithHeading: Bool {
+            switch self {
+                case .airplane, .lightAirplane, .helicopter: return true
+                case .groundVehicle, .tower: return false
+            }
+        }
     }
     
     static func getAircraftType(for aircraft: Aircraft) -> AircraftType {

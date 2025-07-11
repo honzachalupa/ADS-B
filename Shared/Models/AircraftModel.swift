@@ -178,6 +178,11 @@ struct Aircraft: Codable, Identifiable, Equatable, Hashable {
         return emergency != nil && emergency != "none"
     }
     
+    var isMilitary: Bool {
+        // TODO: Set this to true when aircraft comes from /mil endpoint
+        return false
+    }
+    
     let mlat: [String]?
     let tisb: [String]?
     private let _messages: FlexibleValue?

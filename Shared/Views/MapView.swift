@@ -28,11 +28,7 @@ struct MapView: View {
     }
     
     private var militaryCount: Int {
-        aircraftList.filter { aircraft in
-            let flight = aircraft.formattedFlight.uppercased()
-            let militaryCallsigns = ["RCH", "REACH", "CONVOY", "ARMY", "NAVY", "USAF", "MARINES", "USMC"]
-            return militaryCallsigns.contains { flight.hasPrefix($0) }
-        }.count
+        aircraftList.filter(\.isMilitary).count
     }
     
     private var whiteCount: Int {
@@ -43,22 +39,11 @@ struct MapView: View {
     private func aircraftColor(for aircraft: Aircraft) -> Color {
         if aircraft.isEmergency {
             return .red // Emergency aircraft - big and red
-        } else if isMilitaryAircraft(aircraft) {
+        } else if aircraft.isMilitary {
             return .green // Military aircraft - green
         } else {
             return .white // Default - white
         }
-    }
-    
-    private func isMilitaryAircraft(_ aircraft: Aircraft) -> Bool {
-        let flight = aircraft.formattedFlight.uppercased()
-        let militaryCallsigns = ["RCH", "REACH", "CONVOY", "ARMY", "NAVY", "USAF", "MARINES", "USMC"]
-        return militaryCallsigns.contains { flight.hasPrefix($0) }
-    }
-    
-    private func formatSpeed(_ speed: Double?) -> String {
-        guard let speed = speed else { return "N/A" }
-        return "\(Int(speed)) kt"
     }
     
     private func startDataUpdates() {
@@ -296,21 +281,6 @@ struct MapView: View {
         }
     }
     
-    @ViewBuilder
-    func MarkerView(size: Double, iconSystemName: String, fillColor: Color, foregroundColor: Color) -> some View {
-        ZStack {
-            Circle()
-                .fill(fillColor)
-                .frame(width: size, height: size)
-            
-            Image(systemName: iconSystemName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: size / 2, height: size / 2)
-                .foregroundStyle(foregroundColor)
-        }
-    }
-    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -335,55 +305,12 @@ struct MapView: View {
                     
                     // Aircraft markers - rendered second (top layer)
                     ForEach(aircraftList, id: \.hex) { aircraft in
-                        let code = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
-                        let aircraftType = AircraftDisplayConfig.getAircraftType(for: aircraft)
-                        let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
-
-                        Annotation(
-                            isSimpleLabel ? code : "",
-                            coordinate: CLLocationCoordinate2D(
-                                latitude: aircraft.lat ?? 0,
-                                longitude: aircraft.lon ?? 0
-                            ),
-                            anchor: .top
-                        ) {
-                            VStack {
-                                MarkerView(
-                                    size: 30,
-                                    iconSystemName: aircraftType.iconName,
-                                    fillColor: .black.opacity(0.5),
-                                    foregroundColor: aircraftColor(for: aircraft)
-                                )
-                                .rotationEffect(.degrees(Double(aircraft.track ?? 0) - 90))
-                                .scaleEffect(aircraftType.scale)
-                                
-                                if !isSimpleLabel {
-                                    VStack {
-                                        Text(code)
-                                            .fontWeight(.semibold)
-                                            .font(.caption)
-                                        
-                                        if let groundSpeed = aircraft.gs, groundSpeed > 0 {
-                                            Text(formatSpeed(groundSpeed))
-                                                .font(.caption2)
-                                        }
-
-                                        if let altitude = aircraft.alt_baro {
-                                            Text(formatAltitude(altitude))
-                                                .font(.caption2)
-                                        }
-                                    }
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 2)
-                                    .background(.black.opacity(0.5))
-                                    .cornerRadius(4)
-                                }
-                            }
-                            .onTapGesture {
-                                selectedAircraft = aircraft
-                            }
-                            .zIndex(1)
-                        }
+                        AircraftMarkerView(
+                            aircraft: aircraft,
+                            isInfoBoxEnabled: isInfoBoxEnabled,
+                            currentZoomLevel: aircraftService.currentZoomLevel,
+                            selectedAircraft: $selectedAircraft
+                        )
                     }
                 }
                 .onMapCameraChange(frequency: .onEnd) { context in
