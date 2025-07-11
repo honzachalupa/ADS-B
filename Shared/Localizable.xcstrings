@@ -66,6 +66,16 @@
         }
       }
     },
+    "Close" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zavřít"
+          }
+        }
+      }
+    },
     "Coordinates" : {
       "localizations" : {
         "cs" : {

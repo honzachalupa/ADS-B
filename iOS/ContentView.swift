@@ -23,7 +23,18 @@ struct RootView: View {
                             }
                         }
                         .sheet(isPresented: $isSettingsSheetPresented) {
-                            SettingsView()
+                            NavigationStack {
+                                SettingsView()
+                                    .toolbar {
+                                        ToolbarItem(placement: .cancellationAction) {
+                                            Button {
+                                                isSettingsSheetPresented.toggle()
+                                            } label: {
+                                                Label("Close", systemImage: "xmark")
+                                            }
+                                        }
+                                    }
+                            }
                         }
                 } detail: {
                     MapView()
