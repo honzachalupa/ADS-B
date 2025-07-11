@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftCore
 import MapKit
 
-struct RootView: View {
+struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject private var aircraftService = AircraftService.shared
     @AppStorage(SETTINGS_IS_DEBUG_INFO_BOX_ENABLED_KEY) private var isDebugInfoBoxEnabled: Bool = false
@@ -66,6 +66,20 @@ struct RootView: View {
                 }
             }
         }
+        .overlay {
+            if isDebugInfoBoxEnabled {
+                VStack {
+                    Spacer()
+                    
+                    DebugInfoView()
+                        .padding()
+                        .background(.thinMaterial)
+                        .clipShape(Capsule())
+                        .frame(maxWidth: 500)
+                        .padding(.bottom)
+                }
+            }
+        }
         /* .tabViewBottomAccessory {
             if isDebugInfoBoxEnabled {
                 DebugInfoView()
@@ -77,5 +91,5 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView()
+    ContentView()
 }

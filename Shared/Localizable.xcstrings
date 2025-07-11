@@ -473,7 +473,6 @@
       }
     },
     "Show debug info box" : {
-      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {

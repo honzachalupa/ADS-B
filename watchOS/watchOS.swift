@@ -4,7 +4,7 @@ import SwiftUI
 struct ADS_B_Watch_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView()
+            ContentView()
                 .withAppLifecycleManagement()
         }
     }

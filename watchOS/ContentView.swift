@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftCore
 import MapKit
 
-struct RootView: View {
+struct ContentView: View {
     @State private var selectedAircraft: Aircraft? = nil
 
     var body: some View {
@@ -31,5 +31,5 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView()
+    ContentView()
 }
