@@ -144,11 +144,6 @@ class AirportService: ObservableObject {
         print("[AirportService] ✅ Loaded \(airports.count) airports")
     }
     
-    // For compatibility with existing code
-    func fetchAirportsAroundLocation(latitude: Double, longitude: Double, radius: Double = 200.0) {
-        fetchAirports()
-    }
-    
     // Clear all airports
     func clearAirports() {
         airports.removeAll()

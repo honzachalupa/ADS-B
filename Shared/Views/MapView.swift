@@ -46,6 +46,39 @@ struct MapView: View {
         }
     }
     
+    private func iconName(for aircraft: Aircraft) -> String {
+        switch aircraft.feederType {
+        case .aircraft:
+            if let type = aircraft.t {
+                if type.hasPrefix("R") || type.contains("HELI") {
+                    return "fanblades"
+                }
+            }
+            return "airplane"
+        case .groundVehicle:
+            return "car.fill"
+        case .tower, .groundStation:
+            return "antenna.radiowaves.left.and.right"
+        }
+    }
+    
+    private func rotationAngle(for aircraft: Aircraft) -> Double {
+        let shouldRotate = aircraft.feederType == .aircraft
+        return shouldRotate ? Double(aircraft.track ?? 0) - 90 : 0
+    }
+    
+    private func scale(for aircraft: Aircraft) -> CGFloat {
+        if aircraft.feederType == .aircraft {
+            if let type = aircraft.t, type.hasPrefix("R") || type.contains("HELI") {
+                return 0.7 // Helicopter
+            }
+            if let category = aircraft.category, category == "A1" || category == "A2" {
+                return 0.7 // Light aircraft
+            }
+        }
+        return 1.0
+    }
+    
     private func startDataUpdates() {
         // Initial load - immediate fetch from service
         fetchAircraftData()
@@ -190,11 +223,8 @@ struct MapView: View {
         // Cancel previous debounce timer
         mapCenterDebounceTimer?.invalidate()
         
-        // Start debounce timer (0.5 seconds)
-        mapCenterDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            // Flush area-specific aircraft data when moving to a different area
-            self.flushAreaAircraftData()
-            
+        // Start debounce timer (1.0 seconds) - longer delay for smoother UX
+        mapCenterDebounceTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
             // Update aircraft service with new map center
             aircraftService.updateMapCenter(
                 latitude: newCenter.latitude,
@@ -202,8 +232,7 @@ struct MapView: View {
                 zoomLevel: zoomLevel
             )
             
-            // Only trigger fast polling for map position changes, not zoom changes
-            // This reduces API calls since zoom changes don't need fresh area data
+            // Gradual polling for map position changes - let new data replace old gradually
             self.startFastPollingForMapChange()
         }
         
@@ -215,18 +244,18 @@ struct MapView: View {
         // Cancel current timer
         updateTimer?.invalidate()
         
-        // Start fast polling (0.3 seconds) for quick data after map move
-        let pollLimit = 3
+        // Slower polling (1.5 seconds) for less aggressive updates after map move
+        let pollLimit = 2
         var pollCount = 0
         
-        updateTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { timer in
             Task { @MainActor in
                 await fetchAircraftDataAsync()
                 await fetchAirportDataAsync()
                 
                 pollCount += 1
                 
-                // After 3 fast polls (0.9 seconds), switch back to slow polling
+                // After 2 polls (3 seconds), switch back to slow polling
                 if pollCount >= pollLimit {
                     timer.invalidate()
                     self.startSlowPolling()
@@ -305,12 +334,44 @@ struct MapView: View {
                     
                     // Aircraft markers - rendered second (top layer)
                     ForEach(aircraftList, id: \.hex) { aircraft in
-                        AircraftMarkerView(
-                            aircraft: aircraft,
-                            isInfoBoxEnabled: isInfoBoxEnabled,
-                            currentZoomLevel: aircraftService.currentZoomLevel,
-                            selectedAircraft: $selectedAircraft
-                        )
+                        let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
+
+                        Annotation(
+                            isSimpleLabel ? (aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight) : "",
+                            coordinate: CLLocationCoordinate2D(
+                                latitude: aircraft.lat ?? 0,
+                                longitude: aircraft.lon ?? 0
+                            ),
+                            anchor: .top
+                        ) {
+                            let iconName = aircraft.feederType == .aircraft ? "airplane" : (aircraft.feederType == .groundVehicle ? "car.fill" : "antenna.radiowaves.left.and.right")
+                            let color: Color = aircraft.isEmergency ? .red : (aircraft.isMilitary ? .green : .white)
+                            let rotation = aircraft.feederType == .aircraft ? Double(aircraft.track ?? 0) - 90 : 0
+                            
+                            VStack {
+                                MarkerView(
+                                    size: 30,
+                                    iconSystemName: iconName,
+                                    fillColor: .black.opacity(0.5),
+                                    foregroundColor: color
+                                )
+                                .rotationEffect(.degrees(rotation))
+                                
+                                if !isSimpleLabel {
+                                    Text(aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight)
+                                        .fontWeight(.semibold)
+                                        .font(.caption)
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 2)
+                                        .background(.background.opacity(0.5))
+                                        .cornerRadius(4)
+                                }
+                            }
+                            .onTapGesture {
+                                selectedAircraft = aircraft
+                            }
+                            .zIndex(1)
+                        }
                     }
                 }
                 .onMapCameraChange(frequency: .onEnd) { context in
@@ -319,18 +380,6 @@ struct MapView: View {
                 }
                 .mapStyle(MapStyle.standard)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        NavigationLink {
-                            SettingsView()
-                        } label: {
-                            Label("Settings", systemImage: "gearshape.fill")
-                        }
-                    }
-                    
-                    #if os(iOS)
-                    // ToolbarSpacer(.flexible, placement: .topBarLeading)
-                    #endif
-                    
                     ToolbarItem(placement: .topBarLeading) {
                         MapFilterControlView()
                     }

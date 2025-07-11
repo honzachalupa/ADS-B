@@ -24,21 +24,23 @@ class AppLifecycleManager: ObservableObject {
     // Setup location observing
     private func setupLocationObserving() {
         locationSubscription = locationManager.$location
-            .compactMap { $0 }
             .sink { [weak self] location in
-                guard let self = self else { return }
+                guard let self = self, let location = location else { return }
                 // Update aircraft service with initial location
                 // The actual polling will use map center coordinates
-                self.aircraftService.updateMapCenter(latitude: location.coordinate.latitude, 
-                                                   longitude: location.coordinate.longitude)
+                self.aircraftService.updateMapCenter(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
                 
                 // Start polling with the initial coordinates
-                self.aircraftService.startPolling(latitude: location.coordinate.latitude, 
-                                                longitude: location.coordinate.longitude)
+                self.aircraftService.startPolling(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
                 
-                // Update airports around the current location
-                self.airportService.fetchAirportsAroundLocation(latitude: location.coordinate.latitude, 
-                                                              longitude: location.coordinate.longitude)
+                // Update airports
+                self.airportService.fetchAirports()
             }
     }
     
@@ -49,13 +51,8 @@ class AppLifecycleManager: ObservableObject {
         locationManager.requestLocation()
         
         // Fetch airport data
-        if let location = locationManager.location {
-            airportService.fetchAirportsAroundLocation(latitude: location.coordinate.latitude, 
-                                                     longitude: location.coordinate.longitude)
-        } else {
-            // Default to Prague if location is not available
-            airportService.fetchAirportsAroundLocation(latitude: 50.0755, longitude: 14.4378)
-        }
+        // Fetch airports regardless of location
+        airportService.fetchAirports()
         
         // Start aircraft tracking with a slight delay to allow location to be determined
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -66,30 +63,38 @@ class AppLifecycleManager: ObservableObject {
     // Start aircraft tracking
     private func startTracking() {
         if let location = locationManager.location {
-            aircraftService.startPolling(latitude: location.coordinate.latitude, 
-                                         longitude: location.coordinate.longitude)
+            aircraftService.startPolling(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            )
         } else {
             // Default to Prague if location is not available
-            aircraftService.startPolling(latitude: 50.0755, longitude: 14.4378)
+            aircraftService.startPolling(
+                latitude: 50.0755,
+                longitude: 14.4378
+            )
         }
     }
     
     // Handle scene phase changes
     func handleScenePhaseChange(from oldPhase: ScenePhase, to newPhase: ScenePhase) {
         switch newPhase {
-        case .active:
-            // App is in foreground - restart polling if we have a location
-            if let location = locationManager.location {
-                print("[AppLifecycleManager] App became active - restarting aircraft polling")
-                aircraftService.startPolling(latitude: location.coordinate.latitude, 
-                                           longitude: location.coordinate.longitude)
-            }
-        case .background, .inactive:
-            // App is in background or inactive - stop polling to save data and battery
-            print("[AppLifecycleManager] App entered background - stopping aircraft polling")
-            aircraftService.stopPolling()
-        @unknown default:
-            break
+            case .active:
+                // App is in foreground - restart polling if we have a location
+                if let location = locationManager.location {
+                    print("[AppLifecycleManager] App became active - restarting aircraft polling")
+                    aircraftService.startPolling(
+                        latitude: location.coordinate.latitude,
+                        longitude: location.coordinate.longitude
+                    )
+                }
+            case .background, .inactive:
+                // App is in background or inactive - stop polling to save data and battery
+                print("[AppLifecycleManager] App entered background - stopping aircraft polling")
+                    
+                aircraftService.stopPolling()
+            @unknown default:
+                break
         }
     }
 }
