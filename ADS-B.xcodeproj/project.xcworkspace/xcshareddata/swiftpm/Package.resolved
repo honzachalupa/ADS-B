@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/honzachalupa/SwiftCore",
       "state" : {
-        "revision" : "9320a1acef7af9b2aefd85ab83205be0a1be4e0c",
-        "version" : "1.5.6"
+        "revision" : "8bb9603291c88f1a0a23aa790b4433c58adf5aea",
+        "version" : "1.5.7"
       }
     }
   ],

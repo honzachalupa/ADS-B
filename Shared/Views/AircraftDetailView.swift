@@ -11,19 +11,14 @@ struct AircraftDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    HStack {
-                        if let photo = photoService.photo {
+                if let photo = photoService.photo {
+                    Section {
+                        HStack {
                             photo
                                 .resizable()
                                 .scaledToFill()
                                 .frame(maxWidth: .infinity)
                                 .padding(-20)
-                        } else if photoService.isLoading {
-                            ProgressView()
-                            Text("Downloading photo...")
-                        } else {
-                            Text("No photo available")
                         }
                     }
                 }

@@ -6,13 +6,15 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject private var aircraftService = AircraftService.shared
     @AppStorage(SETTINGS_IS_DEBUG_INFO_BOX_ENABLED_KEY) private var isDebugInfoBoxEnabled: Bool = false
+    @State private var selectedAircraft: Aircraft?
     @State private var isSettingsSheetPresented: Bool = false
+    @State private var selectedTab: String = "Map"
     
     var body: some View {
         Group {
             if horizontalSizeClass == .regular {
                 NavigationSplitView {
-                    ListView()
+                    ListView(selectedAircraft: $selectedAircraft)
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button {
@@ -37,33 +39,39 @@ struct ContentView: View {
                             }
                         }
                 } detail: {
-                    MapView()
+                    MapView(selectedAircraft: $selectedAircraft)
                 }
             } else {
-                TabView {
-                    Tab("Map", systemImage: "map") {
-                        NavigationStack {
-                            MapView()
-                                .toolbar {
-                                    ToolbarItem(placement: .topBarLeading) {
-                                        NavigationLink {
-                                            SettingsView()
-                                        } label: {
-                                            Label("Settings", systemImage: "gearshape.fill")
-                                        }
-                                    }
-                                    
-                                    #if os(iOS)
-                                    // ToolbarSpacer(.flexible, placement: .topBarLeading)
-                                    #endif
+                TabView(selection: $selectedTab) {
+                    Tab("Map", systemImage: "map", value: "Map") {
+                NavigationStack {
+                    MapView(selectedAircraft: $selectedAircraft)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                NavigationLink {
+                                    SettingsView()
+                                } label: {
+                                    Label("Settings", systemImage: "gearshape.fill")
                                 }
+                            }
+                            
+                            #if os(iOS)
+                            // ToolbarSpacer(.flexible, placement: .topBarLeading)
+                            #endif
                         }
+                }
                     }
                     
-                    Tab("List", systemImage: "list.bullet") {
-                        ListView()
+                    Tab("List", systemImage: "list.bullet", value: "List") {
+                        ListView(selectedAircraft: $selectedAircraft)
                     }
                 }
+            }
+        }
+        .onChange(of: selectedAircraft) { _, aircraft in
+            // Switch to Map tab when aircraft is selected on iPhone
+            if aircraft != nil && horizontalSizeClass == .compact {
+                selectedTab = "Map"
             }
         }
         .overlay {

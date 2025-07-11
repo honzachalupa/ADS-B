@@ -4,12 +4,15 @@ import CoreLocation
 import SwiftCore
 
 struct MapView: View {
+    @Binding public var selectedAircraft: Aircraft?
+    @State private var isDetailPresented = false
+    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     @StateObject var messageService = MessageManager.shared
     @ObservedObject private var aircraftService = AircraftService.shared
     @ObservedObject private var locationManager = LocationManager.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
-    @State private var selectedAircraft: Aircraft?
     @State private var selectedMapStyle: MapStyle = .standard
     
     // Aircraft and airport data
@@ -338,70 +341,143 @@ struct MapView: View {
         }
     }
     
+    private func panToAircraft(_ aircraft: Aircraft) {
+        guard let lat = aircraft.lat, let lon = aircraft.lon else { 
+            print("[MapView] Cannot pan to aircraft \(aircraft.hex): no coordinates")
+            return 
+        }
+        
+        print("[MapView] Panning to aircraft \(aircraft.hex) at \(lat), \(lon)")
+        
+        // Calculate offset to keep aircraft visible above the sheet
+        let baseCoordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        let offsetCoordinate: CLLocationCoordinate2D
+        
+        if isDetailPresented && horizontalSizeClass == .compact {
+            // On iPhone with sheet open, offset the center upward so aircraft is visible above sheet
+            // Sheet covers about 50-60% of screen, so offset significantly more
+            let latOffset = 0.05
+            offsetCoordinate = CLLocationCoordinate2D(latitude: lat - latOffset, longitude: lon)
+        } else {
+            offsetCoordinate = baseCoordinate
+        }
+        
+        let region = MKCoordinateRegion(
+            center: offsetCoordinate,
+            latitudinalMeters: 10000, // 10km radius for tighter zoom
+            longitudinalMeters: 10000
+        )
+        
+        withAnimation(.easeInOut(duration: 1.0)) {
+            cameraPosition = .region(region)
+        }
+    }
+    
+    private func aircraftMapAnnotation(for aircraft: Aircraft) -> some MapContent {
+        let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
+        let displayTitle: String = {
+            if isSimpleLabel {
+                return aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
+            } else {
+                return ""
+            }
+        }()
+        let coordinate = CLLocationCoordinate2D(
+            latitude: aircraft.lat ?? 0,
+            longitude: aircraft.lon ?? 0
+        )
+
+        return Annotation(
+            displayTitle,
+            coordinate: coordinate,
+            anchor: .top
+        ) {
+            aircraftMapMarkerView(for: aircraft, isSimpleLabel: isSimpleLabel)
+        }
+    }
+    
+    private func aircraftMapMarkerView(for aircraft: Aircraft, isSimpleLabel: Bool) -> some View {
+        let iconName: String = {
+            switch aircraft.feederType {
+            case .aircraft:
+                return "airplane"
+            case .groundVehicle:
+                return "car.fill"
+            default:
+                return "antenna.radiowaves.left.and.right"
+            }
+        }()
+        let color: Color = {
+            if aircraft.isEmergency {
+                return .red
+            } else if aircraft.isMilitary {
+                return .green
+            } else {
+                return .white
+            }
+        }()
+        let rotation = aircraft.feederType == .aircraft ? Double(aircraft.track ?? 0) - 90 : 0
+        
+        return VStack {
+            MarkerView(
+                size: 30,
+                iconSystemName: iconName,
+                fillColor: .black.opacity(0.5),
+                foregroundColor: color
+            )
+            .rotationEffect(.degrees(rotation))
+            
+            if !isSimpleLabel {
+                let labelText = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
+                Text(labelText)
+                    .fontWeight(.semibold)
+                    .font(.caption)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(.background.opacity(0.5))
+                    .cornerRadius(4)
+            }
+        }
+        .onTapGesture {
+            selectedAircraft = aircraft
+            isDetailPresented = true
+        }
+        .zIndex(1)
+    }
+    
+    var mapView: some View {
+        Map(position: $cameraPosition) {
+            UserAnnotation()
+            
+            ForEach(airportList, id: \.id) { airport in
+                airportMapAnnotation(for: airport)
+            }
+            
+            ForEach(visibleAircraft, id: \.hex) { aircraft in
+                aircraftMapAnnotation(for: aircraft)
+            }
+        }
+    }
+    
+    private func airportMapAnnotation(for airport: Airport) -> some MapContent {
+        Annotation(
+            airport.icao,
+            coordinate: airport.coordinate
+        ) {
+            MarkerView(
+                size: 20,
+                iconSystemName: "airplane.departure",
+                fillColor: .blue.opacity(0.7),
+                foregroundColor: .white
+            )
+            .zIndex(0)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
-                Map(position: $cameraPosition, selection: $selectedAircraft) {
-                    UserAnnotation()
-                    
-                    // Airport markers - rendered first (bottom layer)
-                    ForEach(airportList, id: \.id) { airport in
-                        Annotation(
-                            airport.icao,
-                            coordinate: airport.coordinate
-                        ) {
-                            MarkerView(
-                                size: 20,
-                                iconSystemName: "airplane.departure",
-                                fillColor: .blue.opacity(0.7),
-                                foregroundColor: .white
-                            )
-                            .zIndex(0)
-                        }
-                    }
-                    
-                    // Aircraft markers - rendered second (top layer) - only visible aircraft
-                    ForEach(visibleAircraft, id: \.hex) { aircraft in
-                        let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
-
-                        Annotation(
-                            isSimpleLabel ? (aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight) : "",
-                            coordinate: CLLocationCoordinate2D(
-                                latitude: aircraft.lat ?? 0,
-                                longitude: aircraft.lon ?? 0
-                            ),
-                            anchor: .top
-                        ) {
-                            let iconName = aircraft.feederType == .aircraft ? "airplane" : (aircraft.feederType == .groundVehicle ? "car.fill" : "antenna.radiowaves.left.and.right")
-                            let color: Color = aircraft.isEmergency ? .red : (aircraft.isMilitary ? .green : .white)
-                            let rotation = aircraft.feederType == .aircraft ? Double(aircraft.track ?? 0) - 90 : 0
-                            
-                            VStack {
-                                MarkerView(
-                                    size: 30,
-                                    iconSystemName: iconName,
-                                    fillColor: .black.opacity(0.5),
-                                    foregroundColor: color
-                                )
-                                .rotationEffect(.degrees(rotation))
-                                
-                                if !isSimpleLabel {
-                                    Text(aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight)
-                                        .fontWeight(.semibold)
-                                        .font(.caption)
-                                        .padding(.horizontal, 4)
-                                        .padding(.vertical, 2)
-                                        .background(.background.opacity(0.5))
-                                        .cornerRadius(4)
-                                }
-                            }
-                            .onTapGesture {
-                                selectedAircraft = aircraft
-                            }
-                            .zIndex(1)
-                        }
-                    }
-                }
+                mapView
                 .onMapCameraChange(frequency: .continuous) { context in
                     currentMapRegion = context.region // Track current region for filtering
                 }
@@ -431,11 +507,59 @@ struct MapView: View {
                 }
             }
         }
-        .sheet(item: $selectedAircraft) { (aircraft: Aircraft) in
-            AircraftDetailView(aircraft: aircraft)
+        #if os(iOS)
+        .inspector(isPresented: Binding(
+            get: { isDetailPresented && horizontalSizeClass == .regular },
+            set: { newValue in
+                if !newValue {
+                    isDetailPresented = false
+                    selectedAircraft = nil
+                }
+            }
+        )) {
+            if let selectedAircraft {
+                ZStack(alignment: .topLeading) {
+                    AircraftDetailView(aircraft: selectedAircraft)
+                        .presentationDetents([.medium, .large])
+                        .presentationBackgroundInteraction(.enabled)
+                        .presentationCompactAdaptation(.sheet)
+                        .presentationDragIndicator(.visible)
+                    
+                    if horizontalSizeClass == .regular {
+                        Button {
+                            withAnimation {
+                                isDetailPresented = false
+                                self.selectedAircraft = nil
+                            }
+                        } label: {
+                            Label("Close", systemImage: "xmark")
+                        }
+                        .padding(.leading, 20)
+                        .padding(.bottom, 10)
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { isDetailPresented && horizontalSizeClass == .compact && selectedAircraft != nil },
+            set: { newValue in
+                if !newValue {
+                    isDetailPresented = false
+                    selectedAircraft = nil
+                }
+            }
+        )) {
+            if let selectedAircraft {
+                NavigationStack {
+                    AircraftDetailView(aircraft: selectedAircraft)
+                        .navigationTitle(selectedAircraft.formattedFlight)
+                        .navigationBarTitleDisplayMode(.inline)
+                }
                 .presentationDetents([.medium, .large])
                 .presentationBackgroundInteraction(.enabled)
+            }
         }
+        #endif
         .onAppear {
             startDataUpdates()
             panToUserLocation()
@@ -449,11 +573,23 @@ struct MapView: View {
                 panToUserLocation()
             }
         }
+        .onChange(of: selectedAircraft) { _, aircraft in
+            // Pan to selected aircraft from ListView and show inspector
+            if let aircraft = aircraft {
+                // Add a small delay to ensure the map is fully loaded when switching tabs
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    panToAircraft(aircraft)
+                }
+                isDetailPresented = true
+            } else {
+                isDetailPresented = false
+            }
+        }
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    MapView()
+    MapView(selectedAircraft: .constant(nil))
 }

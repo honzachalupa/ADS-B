@@ -7,11 +7,11 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            MapView()
+            MapView(selectedAircraft: $selectedAircraft)
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
                         NavigationLink {
-                            ListView()
+                            ListView(selectedAircraft: $selectedAircraft)
                         } label: {
                             Label("List", systemImage: "list.bullet")
                         }

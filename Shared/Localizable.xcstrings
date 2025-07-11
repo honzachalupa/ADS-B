@@ -106,16 +106,6 @@
         }
       }
     },
-    "Downloading photo..." : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stahování fotky..."
-          }
-        }
-      }
-    },
     "Emergency" : {
       "localizations" : {
         "cs" : {
@@ -392,16 +382,6 @@
         }
       }
     },
-    "No photo available" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotka není k dispozici"
-          }
-        }
-      }
-    },
     "Operational Status" : {
       "localizations" : {
         "cs" : {
@@ -458,6 +438,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Běžná letadla jsou"
+          }
+        }
+      }
+    },
+    "Search..." : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hledat…"
           }
         }
       }

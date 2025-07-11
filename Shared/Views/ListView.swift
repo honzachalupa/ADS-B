@@ -1,11 +1,22 @@
 import SwiftUI
 
 struct ListView: View {
+    @Binding public var selectedAircraft: Aircraft?
+    
     @ObservedObject private var aircraftService = AircraftService.shared
+    @State private var searchText: String = ""
+    
+    var aircraftFiltered: [Aircraft] {
+        aircraftService.aircraft.filter {
+            searchText.isEmpty ||
+            $0.hex.contains(searchText) ||
+            $0.formattedFlight.contains(searchText)
+        }
+    }
     
     var body: some View {
         NavigationStack {
-            List(aircraftService.aircraft) { aircraft in
+            List(aircraftFiltered) { aircraft in
                 HStack {
                     VStack(alignment: .leading) {
                         Text(aircraft.flight?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "-")
@@ -30,13 +41,21 @@ struct ListView: View {
                         }
                     }
                 }
-                .padding(.vertical, 10)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    selectedAircraft = aircraft
+                }
+                .searchable(text: $searchText, prompt: "Search...")
             }
-            .navigationTitle("Aircrafts")
+            .toolbar {
+                /* if #available(iOS 26, *) {
+                    DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                } */
+            }
         }
     }
 }
 
 #Preview {
-    ListView()
+    ListView(selectedAircraft: .constant(nil))
 }
