@@ -12,12 +12,17 @@ struct DebugInfoView: View {
         return "\(Int(round(interval)))s ago"
     }
     
-    private var militaryAircraft: [Aircraft] {
-        aircraftService.aircraft.filter { aircraft in
-            let flight = aircraft.formattedFlight.uppercased()
-            let militaryCallsigns = ["RCH", "REACH", "CONVOY", "ARMY", "NAVY", "USAF", "MARINES", "USMC"]
-            return militaryCallsigns.contains { flight.hasPrefix($0) }
+    private var refreshStatus: String {
+        let interval = currentTime.timeIntervalSince(aircraftService.lastUpdateTime)
+        if interval > 15 {
+            return "ERROR" // Data is stale
+        } else {
+            return "\(aircraftService.currentInterval)s" // Normal refresh interval
         }
+    }
+    
+    private var militaryAircraft: [Aircraft] {
+        aircraftService.aircraft.filter(\.isMilitary)
     }
     
     private var emergencyAircraft: [Aircraft] {
@@ -26,7 +31,7 @@ struct DebugInfoView: View {
     
     var infoItems: [(String, String)] {
         [
-            ("arrow.trianglehead.2.counterclockwise", "\(timeSinceLastUpdate)/\(aircraftService.currentInterval)s"),
+            ("arrow.trianglehead.2.counterclockwise", refreshStatus == "ERROR" ? "Error" : "\(timeSinceLastUpdate)/\(refreshStatus)"),
             ("plus.magnifyingglass", String(format: "%.1f", aircraftService.currentZoomLevel)),
             ("airplane.departure", "\(airportService.airports.count)"),
             ("airplane.up.right", "\(aircraftService.aircraft.count)")
@@ -64,8 +69,6 @@ struct DebugInfoView: View {
         .onReceive(timer) { time in
             currentTime = time
         }
-        // Force view to update when aircraft count changes
-        .id(aircraftService.aircraft.count)
     }
 }
 

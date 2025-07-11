@@ -21,18 +21,46 @@ struct MapView: View {
     @State private var lastMapCenter: CLLocationCoordinate2D?
     @State private var lastErrorCheck = Date()
     
-    // Aircraft counts for debug info
+    // Map region tracking for performance filtering
+    @State private var currentMapRegion: MKCoordinateRegion?
     
+    // Helper function to filter aircraft by region
+    private func getVisibleAircraft(in region: MKCoordinateRegion?) -> [Aircraft] {
+        guard let region = region else { return aircraftList }
+        
+        return aircraftList.filter { aircraft in
+            guard let lat = aircraft.lat, let lon = aircraft.lon else { return false }
+            
+            let latDelta = region.span.latitudeDelta * 0.6 // Add some buffer
+            let lonDelta = region.span.longitudeDelta * 0.6
+            
+            let minLat = region.center.latitude - latDelta
+            let maxLat = region.center.latitude + latDelta
+            let minLon = region.center.longitude - lonDelta
+            let maxLon = region.center.longitude + lonDelta
+            
+            return lat >= minLat && lat <= maxLat && lon >= minLon && lon <= maxLon
+        }
+    }
+    
+    // Filtered aircraft for performance
+    private var visibleAircraft: [Aircraft] {
+        let visible = getVisibleAircraft(in: currentMapRegion)
+        print("[MapView] Total aircraft: \(aircraftList.count), Visible: \(visible.count), Region: \(currentMapRegion != nil)")
+        return visible
+    }
+    
+    // Aircraft counts for debug info - use visible aircraft for performance
     private var emergencyCount: Int {
-        aircraftList.filter(\.isEmergency).count
+        visibleAircraft.filter(\.isEmergency).count
     }
     
     private var militaryCount: Int {
-        aircraftList.filter(\.isMilitary).count
+        visibleAircraft.filter(\.isMilitary).count
     }
     
     private var whiteCount: Int {
-        aircraftList.count - emergencyCount - militaryCount
+        visibleAircraft.count - emergencyCount - militaryCount
     }
     
     // Helper functions for aircraft display
@@ -135,13 +163,13 @@ struct MapView: View {
         let service = AircraftService.shared
         let newAircraft = service.aircraft
         
-        // Check for service errors (only check every 30 seconds to avoid spam)
+        // Check for service errors - if data is older than 15 seconds, something is wrong
         let now = Date()
-        let shouldCheckError = now.timeIntervalSince(lastErrorCheck) > 30
+        let timeSinceLastUpdate = now.timeIntervalSince(service.lastUpdateTime)
+        let shouldCheckError = now.timeIntervalSince(lastErrorCheck) > 15
         
         if shouldCheckError {
-            let timeSinceLastUpdate = now.timeIntervalSince(service.lastUpdateTime)
-            let hasRecentError = timeSinceLastUpdate > 60
+            let hasRecentError = timeSinceLastUpdate > 15 // Data should be fresher than 15 seconds
             
             if hasRecentError {
                 let formatter = DateFormatter()
@@ -332,8 +360,8 @@ struct MapView: View {
                         }
                     }
                     
-                    // Aircraft markers - rendered second (top layer)
-                    ForEach(aircraftList, id: \.hex) { aircraft in
+                    // Aircraft markers - rendered second (top layer) - only visible aircraft
+                    ForEach(visibleAircraft, id: \.hex) { aircraft in
                         let isSimpleLabel = !isInfoBoxEnabled || aircraftService.currentZoomLevel <= 9
 
                         Annotation(
@@ -373,6 +401,9 @@ struct MapView: View {
                             .zIndex(1)
                         }
                     }
+                }
+                .onMapCameraChange(frequency: .continuous) { context in
+                    currentMapRegion = context.region // Track current region for filtering
                 }
                 .onMapCameraChange(frequency: .onEnd) { context in
                     updateZoomLevel(with: context.region)

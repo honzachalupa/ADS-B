@@ -71,7 +71,7 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     
-                    DebugInfoView()
+                    DebugInfoView() 
                         .padding()
                         .background(.thinMaterial)
                         .clipShape(Capsule())

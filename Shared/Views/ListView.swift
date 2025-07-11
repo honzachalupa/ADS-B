@@ -30,9 +30,9 @@ struct ListView: View {
                         }
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 10)
             }
-            .navigationTitle("List")
+            .navigationTitle("Aircrafts")
         }
     }
 }
