@@ -525,41 +525,18 @@ struct MapView: View {
                     }
             }
         }
-#if os(iOS)
-        .inspector(isPresented: Binding(
-            get: { isDetailPresented && horizontalSizeClass == .regular },
-            set: { newValue in
-                if !newValue {
-                    isDetailPresented = false
-                    selectedAircraft = nil
-                }
-            }
-        )) {
-            if let selectedAircraft {
-                ZStack(alignment: .topLeading) {
-                    AircraftDetailView(aircraft: selectedAircraft)
-                        .presentationDetents([.medium, .large])
-                        .presentationBackgroundInteraction(.enabled)
-                        .presentationCompactAdaptation(.sheet)
-                        .presentationDragIndicator(.visible)
-                    
-                    if horizontalSizeClass == .regular {
-                        Button {
-                            withAnimation {
-                                isDetailPresented = false
-                                self.selectedAircraft = nil
-                            }
-                        } label: {
-                            Label("Close", systemImage: "xmark")
-                        }
-                        .padding(.leading, 20)
-                        .padding(.bottom, 10)
-                    }
-                }
-            }
+        .onChange(of: isDetailPresented && horizontalSizeClass == .compact && selectedAircraft != nil) {
+            print(isDetailPresented, horizontalSizeClass == .compact, selectedAircraft != nil)
         }
         .sheet(isPresented: Binding(
-            get: { isDetailPresented && horizontalSizeClass == .compact && selectedAircraft != nil },
+            get: { 
+                /// Platform-specific sheet presentation: watchOS doesn't have reliable horizontalSizeClass, so we check only isDetailPresented && selectedAircraft on watchOS, while iOS also checks for compact size class
+                #if os(watchOS)
+                return isDetailPresented && selectedAircraft != nil
+                #else
+                return isDetailPresented && horizontalSizeClass == .compact && selectedAircraft != nil
+                #endif
+            },
             set: { newValue in
                 if !newValue {
                     isDetailPresented = false
@@ -568,16 +545,11 @@ struct MapView: View {
             }
         )) {
             if let selectedAircraft {
-                NavigationStack {
-                    AircraftDetailView(aircraft: selectedAircraft)
-                        .navigationTitle(selectedAircraft.formattedFlight)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .presentationDetents([.medium, .large])
-                .presentationBackgroundInteraction(.enabled)
+                AircraftDetailView(aircraft: selectedAircraft)
+                    .presentationDetents([.medium, .large])
+                    .presentationBackgroundInteraction(.enabled)
             }
         }
-#endif
         .onAppear {
             startDataUpdates()
             panToUserLocation()
@@ -585,19 +557,20 @@ struct MapView: View {
         .onDisappear {
             stopDataUpdates()
         }
-        .onChange(of: locationManager.location) { _, newLocation in
+        .onChange(of: locationManager.location) {
             // Pan to user location when it becomes available
-            if newLocation != nil && cameraPosition == .automatic {
+            if locationManager.location != nil && cameraPosition == .automatic {
                 panToUserLocation()
             }
         }
-        .onChange(of: selectedAircraft) { _, aircraft in
+        .onChange(of: selectedAircraft) {
             // Pan to selected aircraft from ListView and show inspector
-            if let aircraft = aircraft {
+            if let aircraft = selectedAircraft {
                 // Add a small delay to ensure the map is fully loaded when switching tabs
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     panToAircraft(aircraft)
                 }
+                
                 isDetailPresented = true
             } else {
                 isDetailPresented = false

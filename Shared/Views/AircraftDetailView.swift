@@ -18,8 +18,8 @@ struct AircraftDetailView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(maxWidth: .infinity)
-                                .padding(-20)
                         }
+                        .listRowInsets(EdgeInsets())
                     }
                 }
                 
@@ -225,6 +225,8 @@ struct AircraftDetailView: View {
                 
                 Toggle("Show details", isOn: $isShowDetails)
             }
+            .navigationTitle(aircraftUpdated.formattedFlight)
+            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
             photoService.clearPhoto()
@@ -237,45 +239,44 @@ struct AircraftDetailView: View {
     // AircraftDetailView()
 }
 
-// MARK: - Helper Functions
 extension AircraftDetailView {
     // Helper function to get icon for navigation mode
     func getNavModeIcon(for mode: String) -> Image {
         switch mode.lowercased() {
-        case "autopilot":
-            return Image(systemName: "airplane.circle")
-        case "vnav", "vnav_path":
-            return Image(systemName: "arrow.up.and.down")
-        case "alt_hold":
-            return Image(systemName: "arrow.left.and.right")
-        case "approach":
-            return Image(systemName: "location.north.fill")
-        case "lnav":
-            return Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
-        case "tcas":
-            return Image(systemName: "dot.radiowaves.left.and.right")
-        default:
-            return Image(systemName: "gearshape")
+            case "autopilot":
+                return Image(systemName: "airplane.circle")
+            case "vnav", "vnav_path":
+                return Image(systemName: "arrow.up.and.down")
+            case "alt_hold":
+                return Image(systemName: "arrow.left.and.right")
+            case "approach":
+                return Image(systemName: "location.north.fill")
+            case "lnav":
+                return Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
+            case "tcas":
+                return Image(systemName: "dot.radiowaves.left.and.right")
+            default:
+                return Image(systemName: "gearshape")
         }
     }
     
     // Helper function to get description for navigation mode
     func getNavModeDescription(for mode: String) -> String {
         switch mode.lowercased() {
-        case "autopilot":
-            return "Autopilot"
-        case "vnav", "vnav_path":
-            return "Vertical Navigation"
-        case "alt_hold":
-            return "Altitude Hold"
-        case "approach":
-            return "Approach Mode"
-        case "lnav":
-            return "Lateral Navigation"
-        case "tcas":
-            return "Traffic Collision Avoidance System"
-        default:
-            return mode
+            case "autopilot":
+                return "Autopilot"
+            case "vnav", "vnav_path":
+                return "Vertical Navigation"
+            case "alt_hold":
+                return "Altitude Hold"
+            case "approach":
+                return "Approach Mode"
+            case "lnav":
+                return "Lateral Navigation"
+            case "tcas":
+                return "Traffic Collision Avoidance System"
+            default:
+                return mode
         }
     }
     

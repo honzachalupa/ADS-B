@@ -54,10 +54,6 @@ struct ContentView: View {
                                             Label("Settings", systemImage: "gearshape.fill")
                                         }
                                     }
-                                    
-#if os(iOS)
-                                    // ToolbarSpacer(.flexible, placement: .topBarLeading)
-#endif
                                 }
                         }
                     }
@@ -69,7 +65,6 @@ struct ContentView: View {
             }
         }
         .onChange(of: selectedAircraft) { _, aircraft in
-            // Switch to Map tab when aircraft is selected on iPhone
             if aircraft != nil && horizontalSizeClass == .compact {
                 selectedTab = "Map"
             }
