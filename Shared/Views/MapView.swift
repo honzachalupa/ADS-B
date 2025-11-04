@@ -8,12 +8,12 @@ struct MapView: View {
     @State private var isDetailPresented = false
     
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @AppStorage("mapStyleSelection") private var mapStyleSelection: String = "standard"
     @AppStorage(SETTINGS_IS_INFO_BOX_ENABLED_KEY) private var isInfoBoxEnabled: Bool = true
     @StateObject var messageService = MessageManager.shared
     @ObservedObject private var aircraftService = AircraftService.shared
     @ObservedObject private var locationManager = LocationManager.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
-    @State private var selectedMapStyle: MapStyle = .standard
     
     // Aircraft and airport data
     @State private var aircraftList: [Aircraft] = []
@@ -478,36 +478,41 @@ struct MapView: View {
         NavigationStack {
             ZStack {
                 mapView
-                .onMapCameraChange(frequency: .continuous) { context in
-                    currentMapRegion = context.region // Track current region for filtering
-                }
-                .onMapCameraChange(frequency: .onEnd) { context in
-                    updateZoomLevel(with: context.region)
-                    updateAircraftServiceLocation(with: context.region)
-                }
-                .mapStyle(MapStyle.standard)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        MapFilterControlView()
+                    .mapStyle(mapStyleSelection == "satelite" ? .hybrid(elevation: .realistic) : .standard)
+                    .mapControls {
+                        MapUserLocationButton()
+                        MapCompass()
+#if !os(watchOS)
+                        MapPitchToggle()
+                        MapScaleView()
+#endif
                     }
-                    
-                    ToolbarItem(placement: .topBarLeading) {
-                        MapLegendView {
-                            Label("Legend", systemImage: "info.circle.fill")
+                    .onMapCameraChange(frequency: .continuous) { context in
+                        currentMapRegion = context.region // Track current region for filtering
+                    }
+                    .onMapCameraChange(frequency: .onEnd) { context in
+                        updateZoomLevel(with: context.region)
+                        updateAircraftServiceLocation(with: context.region)
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            MapFilterControlView()
                         }
+                        
+                        ToolbarItem(placement: .topBarTrailing) {
+                            MapLegendView {
+                                Label("Legend", systemImage: "info.circle.fill")
+                            }
+                        }
+#if !os(watchOS)
+                        ToolbarItem(placement: .topBarTrailing) {
+                            MapStylePickerView(selection: $mapStyleSelection)
+                        }
+#endif
                     }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        MapStyleControlView(mapStyle: $selectedMapStyle)
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        MapUserLocationControlView(cameraPosition: $cameraPosition)
-                    }
-                }
             }
         }
-        #if os(iOS)
+#if os(iOS)
         .inspector(isPresented: Binding(
             get: { isDetailPresented && horizontalSizeClass == .regular },
             set: { newValue in
@@ -559,7 +564,7 @@ struct MapView: View {
                 .presentationBackgroundInteraction(.enabled)
             }
         }
-        #endif
+#endif
         .onAppear {
             startDataUpdates()
             panToUserLocation()
@@ -587,8 +592,6 @@ struct MapView: View {
         }
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     MapView(selectedAircraft: .constant(nil))

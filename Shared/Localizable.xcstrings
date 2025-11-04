@@ -86,16 +86,6 @@
         }
       }
     },
-    "Current location" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktuální poloha"
-          }
-        }
-      }
-    },
     "Description" : {
       "localizations" : {
         "cs" : {
@@ -212,16 +202,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vrtulník"
-          }
-        }
-      }
-    },
-    "Hybrid" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hybridní"
           }
         }
       }
@@ -438,6 +418,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Běžná letadla jsou"
+          }
+        }
+      }
+    },
+    "Satelite" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satelitní"
           }
         }
       }

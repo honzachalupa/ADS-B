@@ -61,8 +61,6 @@
 				Views/ListView.swift,
 				Views/MapControls/MapFilterControlView.swift,
 				Views/MapControls/MapLegendView.swift,
-				Views/MapControls/MapStyleControlView.swift,
-				Views/MapControls/MapUserLocationControlView.swift,
 				Views/MapFilterView.swift,
 				Views/MapView.swift,
 				Views/MarkerView.swift,
