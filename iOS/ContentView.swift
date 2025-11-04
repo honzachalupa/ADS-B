@@ -44,22 +44,22 @@ struct ContentView: View {
             } else {
                 TabView(selection: $selectedTab) {
                     Tab("Map", systemImage: "map", value: "Map") {
-                NavigationStack {
-                    MapView(selectedAircraft: $selectedAircraft)
-                        .toolbar {
-                            ToolbarItem(placement: .topBarLeading) {
-                                NavigationLink {
-                                    SettingsView()
-                                } label: {
-                                    Label("Settings", systemImage: "gearshape.fill")
+                        NavigationStack {
+                            MapView(selectedAircraft: $selectedAircraft)
+                                .toolbar {
+                                    ToolbarItem(placement: .topBarLeading) {
+                                        NavigationLink {
+                                            SettingsView()
+                                        } label: {
+                                            Label("Settings", systemImage: "gearshape.fill")
+                                        }
+                                    }
+                                    
+#if os(iOS)
+                                    // ToolbarSpacer(.flexible, placement: .topBarLeading)
+#endif
                                 }
-                            }
-                            
-                            #if os(iOS)
-                            // ToolbarSpacer(.flexible, placement: .topBarLeading)
-                            #endif
                         }
-                }
                     }
                     
                     Tab("List", systemImage: "list.bullet", value: "List") {
@@ -79,7 +79,7 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     
-                    DebugInfoView() 
+                    DebugInfoView()
                         .padding()
                         .background(.thinMaterial)
                         .clipShape(Capsule())
@@ -88,12 +88,6 @@ struct ContentView: View {
                 }
             }
         }
-        /* .tabViewBottomAccessory {
-            if isDebugInfoBoxEnabled {
-                DebugInfoView()
-            }
-        }
-        .tabBarMinimizeBehavior(.onScrollDown) */
         .messageManagerOverlay()
     }
 }

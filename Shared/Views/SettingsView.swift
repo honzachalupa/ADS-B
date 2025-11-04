@@ -21,22 +21,22 @@ struct SettingsView: View {
                 privacyPolicy: privacyPolicyString,
                 termsOfService: termsOfServiceString
             ) {
-                #if os(watchOS)
+#if os(watchOS)
                 Section("Filter") {
                     MapFilterView()
                     MapLegendView {
                         Text("Legend")
                     }
                 }
-                #endif
+#endif
                 
                 Section {
                     Toggle("Show info box below aircraft icon", isOn: $isInfoBoxEnabled)
                     Toggle("Use metric units", isOn: $isMetricUnits)
                     
-                    #if os(iOS)
+#if os(iOS)
                     Toggle("Show debug info box", isOn: $isDebugInfoBoxEnabled)
-                    #endif
+#endif
                 }
             }
             .navigationTitle("Settings")

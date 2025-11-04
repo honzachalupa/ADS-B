@@ -399,14 +399,15 @@ struct MapView: View {
     private func aircraftMapMarkerView(for aircraft: Aircraft, isSimpleLabel: Bool) -> some View {
         let iconName: String = {
             switch aircraft.feederType {
-            case .aircraft:
-                return "airplane"
-            case .groundVehicle:
-                return "car.fill"
-            default:
-                return "antenna.radiowaves.left.and.right"
+                case .aircraft:
+                    return "airplane"
+                case .groundVehicle:
+                    return "car.fill"
+                default:
+                    return "antenna.radiowaves.left.and.right"
             }
         }()
+        
         let color: Color = {
             if aircraft.isEmergency {
                 return .red
@@ -416,6 +417,7 @@ struct MapView: View {
                 return .white
             }
         }()
+        
         let rotation = aircraft.feederType == .aircraft ? Double(aircraft.track ?? 0) - 90 : 0
         
         return VStack {
@@ -429,13 +431,24 @@ struct MapView: View {
             
             if !isSimpleLabel {
                 let labelText = aircraft.formattedFlight.isEmpty ? aircraft.hex : aircraft.formattedFlight
-                Text(labelText)
-                    .fontWeight(.semibold)
-                    .font(.caption)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
-                    .background(.background.opacity(0.5))
-                    .cornerRadius(4)
+                
+                VStack {
+                    Text(labelText)
+                        .fontWeight(.semibold)
+                    
+                    if let altitude = aircraft.alt_baro {
+                        Text(formatAltitude(altitude))
+                    }
+                    
+                    if let speed = aircraft.gs {
+                        Text(formatSpeed(speed))
+                    }
+                }
+                .font(.caption)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(.background.opacity(0.5))
+                .cornerRadius(4)
             }
         }
         .onTapGesture {

@@ -432,16 +432,6 @@
         }
       }
     },
-    "Search..." : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hledat…"
-          }
-        }
-      }
-    },
     "Settings" : {
       "localizations" : {
         "cs" : {

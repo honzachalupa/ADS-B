@@ -17,41 +17,38 @@ struct ListView: View {
     
     var body: some View {
         NavigationStack {
-            BackgroundGradient { isBackgroundGradientEnabled in
-                List(aircraftFiltered) { aircraft in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(aircraft.flight?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "-")
-                                .font(.headline)
-                            
-                            Text(aircraft.hex.uppercased())
+            List(aircraftFiltered) { aircraft in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(aircraft.flight?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "-")
+                            .font(.headline)
+                        
+                        Text(aircraft.hex.uppercased())
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .trailing) {
+                        if let altitude = aircraft.alt_baro {
+                            Text(formatAltitude(altitude))
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
                         }
                         
-                        Spacer()
-                        
-                        VStack(alignment: .trailing) {
-                            if let altitude = aircraft.alt_baro {
-                                Text(formatAltitude(altitude))
-                                    .font(.subheadline)
-                            }
-                            
-                            if let speed = aircraft.gs {
-                                Text(formatSpeed(speed))
-                                    .font(.subheadline)
-                            }
+                        if let speed = aircraft.gs {
+                            Text(formatSpeed(speed))
+                                .font(.subheadline)
                         }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        selectedAircraft = aircraft
-                    }
-                    .searchable(text: $searchText, prompt: "Search...")
                 }
-                .scrollContentBackground(isBackgroundGradientEnabled ? .hidden : .automatic)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    selectedAircraft = aircraft
+                }
+                .searchable(text: $searchText)
             }
-            .navigationTitle("List")
+            .navigationTitle("Aircraft")
         }
     }
 }
